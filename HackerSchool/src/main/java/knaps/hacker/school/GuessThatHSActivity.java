@@ -1,5 +1,7 @@
 package knaps.hacker.school;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -12,9 +14,12 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,6 +30,7 @@ import android.widget.Toast;
 import knaps.hacker.school.R;
 import knaps.hacker.school.data.HSDataContract;
 import knaps.hacker.school.data.HSDatabaseHelper;
+import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
@@ -33,6 +39,10 @@ import knaps.hacker.school.networking.ImageDownloads;
 public class GuessThatHSActivity extends FragmentActivity implements View.OnClickListener,
         LoaderManager.LoaderCallbacks<Cursor>, TextView.OnEditorActionListener {
 
+    private static final String GUESS_COUNT = "guess_count";
+    private static final String CORRECT_COUNT = "correct_count";
+    private static final String SUCCESS_MESSAGE_COUNT = "success_count";
+    private static final String HINT_MESSAGE_COUNT = "hint_count";
     private ImageView mHsPicture;
     private EditText mEditGuess;
     private TextView mTextScore;
@@ -45,6 +55,8 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     private LruCache<String, Bitmap> mMemoryCache;
     private RetainFragment mRetainedFragment;
+
+    private boolean mIsRestart = false;
 
     private static final String SAVED_CURSOR = "saved_cursor";
 
@@ -59,6 +71,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mTextScore = (TextView) findViewById(R.id.textScore);
         mGuess = (Button) findViewById(R.id.buttomGuess);
         mGuess.setOnClickListener(this);
+        mGuess.setEnabled(false);
 
         // TODO: save high score to preferences (so you can beat yourself!)
         // TODO: Settings -- save your email and password
@@ -80,12 +93,16 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             mRetainedFragment.mRetainedCache = mMemoryCache;
         }
 
-        mStudentCursor = mRetainedFragment.mRetainedCursor;
-        if (mStudentCursor == null || mStudentCursor.isClosed()) {
-            getSupportLoaderManager().initLoader(0, null, this);
+        mIsRestart = savedInstanceState != null;
+        if (savedInstanceState != null) {
+            mCurrentGuesses = savedInstanceState.getInt(GUESS_COUNT);
+            mCurrentScore = savedInstanceState.getInt(CORRECT_COUNT);
+            mSuccessMessageCount = savedInstanceState.getInt(SUCCESS_MESSAGE_COUNT);
+            mHintCount = savedInstanceState.getInt(HINT_MESSAGE_COUNT);
         }
-    }
 
+        getSupportLoaderManager().initLoader(0, null, this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,6 +113,10 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     protected void onSaveInstanceState(Bundle icicle) {
+        icicle.putInt(GUESS_COUNT, mCurrentGuesses);
+        icicle.putInt(CORRECT_COUNT, mCurrentScore);
+        icicle.putInt(SUCCESS_MESSAGE_COUNT, mSuccessMessageCount);
+        icicle.putInt(HINT_MESSAGE_COUNT, mHintCount);
     }
 
     @Override
@@ -150,11 +171,15 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             showEndGame();
         }
         else {
-            mCurrentStudent = new Student(mStudentCursor);
-            mEditGuess.setText("");
-            mHintCount = 0;
-            new HSImageDownloadTask(mCurrentStudent.mImageUrl, mHsPicture).execute();
+            showStudent();
         }
+    }
+
+    private void showStudent() {
+        mCurrentStudent = new Student(mStudentCursor);
+        mEditGuess.setText("");
+        mHintCount = 0;
+        new HSImageDownloadTask(mCurrentStudent.mImageUrl, mHsPicture).execute();
     }
 
     private void showEndGame() {
@@ -174,7 +199,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     }
 
     int mSuccessMessageCount = 0;
-    String[] mSuccessMessages = { "010110010110010101110011", "Correct.", "Yes." };
+    String[] mSuccessMessages = { "010110010110010101110011.", "Correct.", "Yes." };
     private void showSuccess() {
         if (!"".equals(mCurrentStudent.mSkills) && mCurrentStudent.mSkills != null && mSuccessMessageCount % 3 == 2) {
             String[] skills = mCurrentStudent.mSkills.split(",");
@@ -190,7 +215,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
                     Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(this, mSuccessMessages[mSuccessMessageCount], Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, mSuccessMessages[mSuccessMessageCount] + " You know " + mCurrentStudent.mName, Toast.LENGTH_SHORT).show();
         }
         incrementSuccess();
         mTextScore.postDelayed(new Runnable() {
@@ -216,20 +241,21 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        SQLiteCursorLoader loader = new SQLiteCursorLoader(this, new HSDatabaseHelper(this),
-                HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
+        final SQLiteCursorLoader loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
                 HSDataContract.StudentEntry.SORT_DEFAULT);
-        if (mStudentCursor != null && !mStudentCursor.isClosed()) {
-            loader.deliverResult(mStudentCursor);
-        }
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        mStudentCursor = o;
-        mRetainedFragment.mRetainedCursor = o;
-        showNextStudent(true);
+        mStudentCursor = new HSRandomCursorWrapper(o);
+        if (!mIsRestart) {
+            showNextStudent(true);
+        } else {
+            showStudent();
+        }
+        mGuess.setEnabled(true);
+        displayScore();
     }
 
     @Override
@@ -239,8 +265,11 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (event != null && event.getKeyCode() == KeyEvent.FLAG_EDITOR_ACTION) {
+        if ((event != null && event.getKeyCode() == KeyEvent.FLAG_EDITOR_ACTION) ||
+                (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO)) {
             mGuess.performClick();
+            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mEditGuess.getWindowToken(), 0);
             return true;
         }
         return false;
@@ -274,12 +303,12 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
+            if (mImageView != null) mImageView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+
             if (bitmap != null && mImageView != null) {
                 mImageView.setImageBitmap(bitmap);
-                mImageView.setBackgroundDrawable(null);
             }
             else if (mImageView != null) {
-                mImageView.setBackgroundDrawable(null);
                 mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
                 Toast.makeText(GuessThatHSActivity.this, "Error loading image.", Toast.LENGTH_SHORT).show();
             }
@@ -289,7 +318,6 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     static class RetainFragment extends Fragment {
         private static final String TAG = "RetainFragment";
         public LruCache<String, Bitmap> mRetainedCache;
-        public Cursor mRetainedCursor;
 
         public RetainFragment() {}
 

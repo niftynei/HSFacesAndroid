@@ -100,7 +100,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    class LoginAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    class LoginAsyncTask extends AsyncTask<Void, Void, String> {
 
         final String mPassword;
         final String mEmail;
@@ -116,64 +116,60 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             // run a network request to log me into hacker school.
             try {
-                DefaultHttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost(Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
-//                HttpClientParams.setRedirecting(httpClient.getParams(), false);
-
-                List<NameValuePair> formData = new ArrayList<NameValuePair>(2);
+                final DefaultHttpClient httpClient = new DefaultHttpClient();
+                final HttpPost httpPost = new HttpPost(Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
+                final List<NameValuePair> formData = new ArrayList<NameValuePair>(2);
                 formData.add(new BasicNameValuePair("email", mEmail));
                 formData.add(new BasicNameValuePair("password", mPassword));
                 httpPost.setEntity(new UrlEncodedFormEntity(formData));
 
-                HttpResponse response = httpClient.execute(httpPost);
-                HttpEntity entity = response.getEntity();
+                final HttpResponse response = httpClient.execute(httpPost);
+                final HttpEntity entity = response.getEntity();
 
-                for (Header h : response.getAllHeaders()) {
-                    Log.d("XML HEADERS", h.toString());
-                }
+                // TODO: save session cookie??
+//                for (final Header h : response.getAllHeaders()) {
+//                    Log.d("XML HEADERS", h.toString());
+//                }
 
-                // TODO: Error messages
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode != 302 && statusCode != 200) {
-                    Log.d("XML ERROR WITH STATUS CODE?", response.getStatusLine().toString());
-                    return false;
+                    return "Request failed. Error:" + statusCode + " Check username and password.";
                 }
-                // TODO: save session cookie??
                 final ArrayList<Student> students = HSParser.parseBatches(entity.getContent());
                 if (students.size() > 0) {
                     HSParser.writeStudentsToDatabase(students, LoginActivity.this);
-                    return true;
+                    return null;
+                } else {
+                    return "No results returned. Check username and password.";
                 }
 
             } catch (UnsupportedEncodingException e) {
                 Log.e("Error", "error!!", e);
-                return false;
+                return "Error code 100";
             } catch (ClientProtocolException e) {
                 Log.e("Error", "error!!", e);
-                return false;
+                return "Error code 200";
             } catch (IOException e) {
                 Log.e("Error", "error!!", e);
-                return false;
+                return "Error code 300";
             }
-
-            return false;
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(String result) {
             if (mDestroyed) return;
 
             mLoadingView.setVisibility(View.GONE);
-            if (result) {
+            if (result == null) {
                 // navigate to the game page
                 Intent intent = new Intent(LoginActivity.this, HSListActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             } else {
-                Toast.makeText(LoginActivity.this, "Login error. Try again.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Login error. " + result, Toast.LENGTH_LONG).show();
             }
         }
     }

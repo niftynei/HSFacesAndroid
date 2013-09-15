@@ -3,6 +3,7 @@ package knaps.hacker.school.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.support.v4.content.AsyncTaskLoader;
@@ -42,18 +43,15 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
     private static final int DELETE = 3;
     private static final int EXEC = 4;
 
-    SQLiteOpenHelper mDb;
     Cursor mLastCursor = null;
 
     String mTableName;
     String[] mProjection;
     String mSortOrder;
 
-    public SQLiteCursorLoader(Context context, SQLiteOpenHelper helper,
+    public SQLiteCursorLoader(Context context,
                               String tableName, String[] projection, String sortOrder) {
         super(context);
-        mDb = helper;
-
         mTableName = tableName;
         mProjection = projection;
         mSortOrder = sortOrder;
@@ -61,7 +59,8 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public Cursor loadInBackground() {
-        final Cursor cursor = mDb.getReadableDatabase().query(
+        final SQLiteDatabase db = new HSDatabaseHelper(getContext()).getReadableDatabase();
+        final Cursor cursor = db.query(
                 mTableName,
                 mProjection,
                 null,
@@ -104,7 +103,8 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
         if (mLastCursor != null) {
             deliverResult(mLastCursor);
         }
-        if (mLastCursor == null) {
+        // register observer
+        if (mLastCursor == null || takeContentChanged()) {
             forceLoad();
         }
     }
@@ -116,6 +116,8 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public void onCanceled(Cursor cursor) {
+        super.onCanceled(cursor);
+
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
@@ -123,13 +125,14 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
     @Override
     public void onReset() {
-        super.onReset();
         onStopLoading();
+
         if (mLastCursor != null && !mLastCursor.isClosed()) {
             mLastCursor.close();
         }
-
         mLastCursor = null;
+
+        // unregister observer
     }
 
     @Override
@@ -205,21 +208,22 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
         @Override
         protected Void doInBackground(DbTransportObject... params) {
             DbTransportObject dbStuffs = params[0];
+            final SQLiteDatabase db = new HSDatabaseHelper(getContext()).getWritableDatabase();
             switch (mCommand) {
                 case INSERT:
-                    mDb.getWritableDatabase().insert(dbStuffs.table, dbStuffs.nullColumnHack, dbStuffs.values);
+                    db.insert(dbStuffs.table, dbStuffs.nullColumnHack, dbStuffs.values);
                     break;
                 case REPLACE:
-                    mDb.getWritableDatabase().replace(dbStuffs.table, dbStuffs.nullColumnHack, dbStuffs.values);
+                    db.replace(dbStuffs.table, dbStuffs.nullColumnHack, dbStuffs.values);
                     break;
                 case UPDATE:
-                    mDb.getWritableDatabase().update(dbStuffs.table, dbStuffs.values, dbStuffs.whereClause, dbStuffs.whereArgs);
+                    db.update(dbStuffs.table, dbStuffs.values, dbStuffs.whereClause, dbStuffs.whereArgs);
                     break;
                 case DELETE:
-                    mDb.getWritableDatabase().delete(dbStuffs.table, dbStuffs.whereClause, dbStuffs.whereArgs);
+                    db.delete(dbStuffs.table, dbStuffs.whereClause, dbStuffs.whereArgs);
                     break;
                 case EXEC:
-                    mDb.getWritableDatabase().execSQL(dbStuffs.sql, dbStuffs.bindParams);
+                    db.execSQL(dbStuffs.sql, dbStuffs.bindParams);
                 default:
                     // do nothing
             }

@@ -63,7 +63,7 @@ public class HSListActivity extends FragmentActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new SQLiteCursorLoader(this, new HSDatabaseHelper(this),
+        return new SQLiteCursorLoader(this,
                 HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
                 HSDataContract.StudentEntry.SORT_DEFAULT);
     }
