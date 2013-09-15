@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.transform.OutputKeys;
@@ -42,7 +43,7 @@ import knaps.hacker.school.models.Student;
  */
 public class HSParser {
 
-    public static ArrayList<Student> parseBatches(final InputStream xml) {
+    public static ArrayList<Student> parseBatches(final InputStream xml, HashSet<String> existingBatches) {
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath path = factory.newXPath();
         final MutableNamespaceContext nc = new MutableNamespaceContext();
@@ -59,15 +60,16 @@ public class HSParser {
             for (int i = 0; i < batches.getLength(); i++) {
                 final Element batch = (Element) batches.item(i);
                 final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
-                final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id");
+                final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
                 Log.d("XML - - parsing batch ..", batchName + ":" + batchId);
-                // TODO: check if batch already exists in database
 
-                final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
-
-                for (int j = 0; j < students.getLength(); j++) {
-                    final Element student = (Element) students.item(j);
-                    studentList.add(new Student(batchName, batchId, student, path));
+                // only add the students if this batch has not already been parsed
+                if (!existingBatches.contains(batchId)) {
+                    final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
+                    for (int j = 0; j < students.getLength(); j++) {
+                        final Element student = (Element) students.item(j);
+                        studentList.add(new Student(batchName, batchId, student, path));
+                    }
                 }
             }
         } catch (XPathExpressionException e) {
@@ -132,7 +134,7 @@ public class HSParser {
             contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_GITHUB, student.mGithubUrl);
             contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_TWITTER, student.mTwitterUrl);
             contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_BATCH, student.mBatch);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID, student.mBatch);
+            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID, student.mBatchId);
 
             db.insert(
                 HSDataContract.StudentEntry.TABLE_NAME,

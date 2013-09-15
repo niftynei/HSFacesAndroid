@@ -58,8 +58,6 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     private boolean mIsRestart = false;
 
-    private static final String SAVED_CURSOR = "saved_cursor";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +73,6 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
         // TODO: save high score to preferences (so you can beat yourself!)
         // TODO: Settings -- save your email and password
-        // TODO: randomize how hackerschoolers are selected
         // TODO: check network connectivity!?!?!
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);

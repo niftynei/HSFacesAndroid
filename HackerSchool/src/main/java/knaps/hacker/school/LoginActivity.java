@@ -2,6 +2,7 @@ package knaps.hacker.school;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -29,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import knaps.hacker.school.data.HSDataContract;
@@ -44,6 +46,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     EditText mEmailView;
     EditText mPasswordView;
     boolean mDestroyed;
+    boolean mHasData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         long results = DatabaseUtils.queryNumEntries(db, HSDataContract.StudentEntry.TABLE_NAME);
         if (results > 0) {
+            mHasData = true;
             Button goToGameButton = (Button) findViewById(R.id.buttonGame);
             goToGameButton.setVisibility(View.VISIBLE);
             goToGameButton.setOnClickListener(this);
@@ -138,11 +142,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 if (statusCode != 302 && statusCode != 200) {
                     return "Request failed. Error:" + statusCode + " Check username and password.";
                 }
-                final ArrayList<Student> students = HSParser.parseBatches(entity.getContent());
+
+                final HashSet<String> existingBatches = getExistingBatches();
+                final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
                 if (students.size() > 0) {
                     HSParser.writeStudentsToDatabase(students, LoginActivity.this);
                     return null;
-                } else {
+                }
+                else if (existingBatches.size() > 0 && mHasData) {
+                    return null;
+                }
+                else {
                     return "No results returned. Check username and password.";
                 }
 
@@ -172,5 +182,23 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 Toast.makeText(LoginActivity.this, "Login error. " + result, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private HashSet<String> getExistingBatches() {
+        final HashSet<String> batches = new HashSet<String>();
+        // sql statement for distinct batch names
+        final SQLiteDatabase db = new HSDatabaseHelper(this).getReadableDatabase();
+        final Cursor cursor = db.query(true, HSDataContract.StudentEntry.TABLE_NAME, new String[]{HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID}, null,
+                null, HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID, null, null, null);
+
+        Log.d("XML -- cursor for batch", DatabaseUtils.dumpCursorToString(cursor));
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                batches.add(cursor.getString(
+                        cursor.getColumnIndex(HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID)).trim().toLowerCase());
+            }
+        }
+        cursor.close();
+        return batches;
     }
 }
