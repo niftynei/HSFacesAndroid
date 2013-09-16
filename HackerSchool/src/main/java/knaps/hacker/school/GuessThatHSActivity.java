@@ -146,17 +146,21 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttomGuess:
+                mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
                     Toast.makeText(this, String.format(mHintMessages[mHintCount], mCurrentStudent.mName.charAt(0)), Toast.LENGTH_SHORT).show();
                     incrementHint();
+                    mGuess.setClickable(true);
                 }
                 else if (runGuess(guess)) {
+                    mEditGuess.setEnabled(false);
                     showSuccess();
                     mCurrentScore++;
                     mCurrentGuesses++;
                 }
                 else {
+                    mEditGuess.setEnabled(false);
                     showFail();
                     mCurrentGuesses++;
                 }
@@ -192,6 +196,8 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
                 mStudentCursor.moveToNext();
             }
             showStudent();
+            mGuess.setClickable(true);
+            mEditGuess.setEnabled(true);
         }
     }
 

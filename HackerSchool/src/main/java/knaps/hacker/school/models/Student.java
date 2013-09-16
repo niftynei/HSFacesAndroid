@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -51,6 +52,7 @@ public class Student implements Serializable {
 
     public Student(String batch, String batchId, Node student, XPath path) throws XPathExpressionException {
 
+        // TODO: why is this so slow??
         mBatch = batch;
         mBatchId = batchId;
 
@@ -66,8 +68,27 @@ public class Student implements Serializable {
         }
         mSkills = path.evaluate("html:span[@class='skills']/text()", student);
 
-        // TODO: email, github, and twitter
-        // TODO: why is this so slow??
+        final NodeList contacts = (NodeList) path.evaluate("html:div[@class='icon-links']/html:a", student, XPathConstants.NODESET);
+        if (contacts.getLength() > 0) {
+            for (int i = 0; i < contacts.getLength(); i++) {
+                Element node = (Element) contacts.item(i);
+                String url = node.getAttribute("href").trim();
+                figureOutContactUrl(url);
+            }
+        }
+    }
+
+    private void figureOutContactUrl(String url) {
+        if (url.contains("github")) {
+            mGithubUrl = url;
+        }
+        else if (url.contains("twitter")) {
+            mTwitterUrl = url;
+        }
+        else if (url.contains("mailto:")) {
+            mEmail = url.replace("mailto:", "");
+            Log.d("XML -- parsing", "emails !" + mEmail);
+        }
     }
 
     private int getPersonId(String personLink) {
