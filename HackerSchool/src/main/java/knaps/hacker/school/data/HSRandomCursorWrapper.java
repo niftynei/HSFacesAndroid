@@ -38,6 +38,11 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
     }
 
     @Override
+    public int getPosition() {
+        return mCurrentIndex;
+    }
+
+    @Override
     public boolean move(int offset) {
         mCurrentIndex = mCurrentIndex + offset;
         if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
@@ -84,4 +89,25 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
         }
         return getWrappedCursor().moveToPosition(randomizedOrder.get(mCurrentIndex));
     }
+
+    @Override
+    public boolean isLast() {
+        return mCurrentIndex == randomizedOrder.size() - 1;
+    }
+
+    @Override
+    public boolean isFirst() {
+        return mCurrentIndex == 0;
+    }
+
+    @Override
+    public boolean isAfterLast() {
+        return mCurrentIndex >= randomizedOrder.size();
+    }
+
+    @Override
+    public boolean isBeforeFirst() {
+        return mCurrentIndex < 0;
+    }
+
 }

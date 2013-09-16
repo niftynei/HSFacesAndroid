@@ -11,79 +11,63 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_world"
-            android:id="@+id/textView1"/>
 
         <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:id="@+id/button"
-            android:layout_below="@+id/textView4"
-            android:layout_alignRight="@+id/textView4"
-            android:layout_marginTop="11dp"
-            android:layout_alignLeft="@+id/textView3" />
+            android:layout_below="@+id/textPasswordNotice"
+            android:layout_centerHorizontal="true" />
 
         <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/editPassword"
-                android:layout_below="@+id/editEmail"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="16dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:hint="Password"
+            android:id="@+id/editPassword"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/button" />
 
         <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:ems="10"
-                android:id="@+id/editEmail"
-                android:layout_below="@+id/textView1"
-                android:layout_alignLeft="@+id/editPassword">
-                <requestFocus/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:hint="Email"
+            android:id="@+id/editEmail"
+            android:layout_above="@+id/editPassword"
+            android:layout_alignLeft="@+id/editPassword">
+            <requestFocus/>
         </EditText>
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email: "
-                android:id="@+id/textView2"
-                android:layout_alignBaseline="@id/editEmail"
-                android:layout_toLeftOf="@+id/editEmail"/>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password: "
-                android:id="@+id/textView3"
-                android:layout_alignBaseline="@id/editPassword"
-                android:layout_toLeftOf="@+id/editPassword"/>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/darker_gray"
-                android:text="Your password will not be stored or saved."
-                android:id="@+id/textView4"
-                android:layout_below="@+id/editPassword"
-                android:layout_alignLeft="@+id/editPassword"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/darker_gray"
+            android:text="Your password will not be stored or saved."
+            android:id="@+id/textPasswordNotice"
+            android:layout_below="@+id/editPassword"
+            android:layout_alignLeft="@+id/editPassword"/>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_playing"
             android:id="@+id/buttonGame"
-            android:layout_below="@+id/button"
-            android:layout_alignRight="@+id/button"
-            android:layout_marginTop="11dp"
             android:visibility="gone"
+            android:layout_below="@+id/button"
             android:layout_alignLeft="@+id/button" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Browse Hacker Schoolers"
+            android:id="@+id/buttonBrowse"
+            android:visibility="gone"
+            android:layout_below="@+id/buttonGame"
+            android:layout_alignLeft="@+id/buttonGame" />
     </RelativeLayout>
     <FrameLayout
         android:layout_height="match_parent"

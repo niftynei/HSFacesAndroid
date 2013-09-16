@@ -38,38 +38,48 @@ import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.data.HSParser;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
+import knaps.hacker.school.networking.ImageDownloads;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
-
 
     View mLoadingView;
     EditText mEmailView;
     EditText mPasswordView;
     boolean mDestroyed;
     boolean mHasData;
+    private View mPasswordWarning;
+    private Button mLoginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final Button loginButton = (Button) findViewById(R.id.button);
-        loginButton.setOnClickListener(this);
+        mLoginButton = (Button) findViewById(R.id.button);
+        mLoginButton.setOnClickListener(this);
 
         mLoadingView = findViewById(R.id.loading_view);
         mEmailView = (EditText) findViewById(R.id.editEmail);
         mPasswordView = (EditText) findViewById(R.id.editPassword);
+        mPasswordWarning = findViewById(R.id.textPasswordNotice);
         final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
 
-        HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        long results = DatabaseUtils.queryNumEntries(db, HSDataContract.StudentEntry.TABLE_NAME);
+        final HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final long results = DatabaseUtils.queryNumEntries(db, HSDataContract.StudentEntry.TABLE_NAME);
         if (results > 0) {
             mHasData = true;
             Button goToGameButton = (Button) findViewById(R.id.buttonGame);
             goToGameButton.setVisibility(View.VISIBLE);
             goToGameButton.setOnClickListener(this);
+            Button viewAllButton = (Button) findViewById(R.id.buttonBrowse);
+            viewAllButton.setVisibility(View.VISIBLE);
+            viewAllButton.setOnClickListener(this);
+            mLoginButton.setText("Refresh Data?");
+            mEmailView.setVisibility(View.GONE);
+            mPasswordView.setVisibility(View.GONE);
+            mPasswordWarning.setVisibility(View.GONE);
         }
     }
 
@@ -79,26 +89,35 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         super.onDestroy();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.login, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.login, menu);
+//        return true;
+//    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
+                if (mHasData && mPasswordView.getVisibility() == View.GONE) {
+                    mPasswordView.setVisibility(View.VISIBLE);
+                    mEmailView.setVisibility(View.VISIBLE);
+                    mPasswordWarning.setVisibility(View.VISIBLE);
+                    mLoginButton.setText("Login");
+                }
+                else if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
                     new LoginAsyncTask(mEmailView.getText().toString(), mPasswordView.getText().toString()).execute();
                 }
                 break;
             case R.id.buttonGame:
                 final Intent intent = new Intent(this, GuessThatHSActivity.class);
                 startActivity(intent);
-                this.finish();
                 break;
+            case R.id.buttonBrowse:
+                Intent browse = new Intent(LoginActivity.this, HSListActivity.class);
+                browse.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(browse);
             default:
                 // no default
         }
@@ -122,49 +141,54 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         @Override
         protected String doInBackground(Void... params) {
             // run a network request to log me into hacker school.
-            try {
-                final DefaultHttpClient httpClient = new DefaultHttpClient();
-                final HttpPost httpPost = new HttpPost(Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
-                final List<NameValuePair> formData = new ArrayList<NameValuePair>(2);
-                formData.add(new BasicNameValuePair("email", mEmail));
-                formData.add(new BasicNameValuePair("password", mPassword));
-                httpPost.setEntity(new UrlEncodedFormEntity(formData));
+            if (ImageDownloads.isOnline(LoginActivity.this)) {
+                try {
+                    final DefaultHttpClient httpClient = new DefaultHttpClient();
+                    final HttpPost httpPost = new HttpPost(Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
+                    final List<NameValuePair> formData = new ArrayList<NameValuePair>(2);
+                    formData.add(new BasicNameValuePair("email", mEmail));
+                    formData.add(new BasicNameValuePair("password", mPassword));
+                    httpPost.setEntity(new UrlEncodedFormEntity(formData));
 
-                final HttpResponse response = httpClient.execute(httpPost);
-                final HttpEntity entity = response.getEntity();
+                    final HttpResponse response = httpClient.execute(httpPost);
+                    final HttpEntity entity = response.getEntity();
 
-                // TODO: save session cookie??
-//                for (final Header h : response.getAllHeaders()) {
-//                    Log.d("XML HEADERS", h.toString());
-//                }
+                    // TODO: save session cookie??
+    //                for (final Header h : response.getAllHeaders()) {
+    //                    Log.d("XML HEADERS", h.toString());
+    //                }
 
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode != 302 && statusCode != 200) {
-                    return "Request failed. Error:" + statusCode + " Check username and password.";
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    if (statusCode != 302 && statusCode != 200) {
+                        return "Request failed. Error:" + statusCode + " Check username and password.";
+                    }
+
+                    final HashSet<String> existingBatches = getExistingBatches();
+                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    if (students.size() > 0) {
+                        HSParser.writeStudentsToDatabase(students, LoginActivity.this);
+                        return null;
+                    }
+                    else if (existingBatches.size() > 0 && mHasData) {
+                        return null;
+                    }
+                    else {
+                        return "No results returned. Check username and password.";
+                    }
+
+                } catch (UnsupportedEncodingException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error code 100";
+                } catch (ClientProtocolException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error code 200";
+                } catch (IOException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error code 300";
                 }
-
-                final HashSet<String> existingBatches = getExistingBatches();
-                final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
-                if (students.size() > 0) {
-                    HSParser.writeStudentsToDatabase(students, LoginActivity.this);
-                    return null;
-                }
-                else if (existingBatches.size() > 0 && mHasData) {
-                    return null;
-                }
-                else {
-                    return "No results returned. Check username and password.";
-                }
-
-            } catch (UnsupportedEncodingException e) {
-                Log.e("Error", "error!!", e);
-                return "Error code 100";
-            } catch (ClientProtocolException e) {
-                Log.e("Error", "error!!", e);
-                return "Error code 200";
-            } catch (IOException e) {
-                Log.e("Error", "error!!", e);
-                return "Error code 300";
+            }
+            else {
+                return "Network unavailable. Make sure you're connected, then try again.";
             }
         }
 
@@ -175,7 +199,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             mLoadingView.setVisibility(View.GONE);
             if (result == null) {
                 // navigate to the game page
-                Intent intent = new Intent(LoginActivity.this, HSListActivity.class);
+                Intent intent = new Intent(LoginActivity.this, GuessThatHSActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
             } else {

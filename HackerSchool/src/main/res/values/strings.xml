@@ -10,5 +10,6 @@
     <string name="submit_guess">Submit Guess</string>
     <string name="guess_name">guess name</string>
     <string name="start_playing">Start Playing</string>
+    <string name="title_activity_hsprofile">Profile</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.util.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,10 @@ import knaps.hacker.school.data.HSDataContract;
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
-public class Student {
+public class Student implements Serializable {
+
+    private static final long serialVersionUID = 0L;
+
     public int mId = 0;
     public String mName = "";
     public String mImageUrl = "";

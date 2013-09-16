@@ -50,4 +50,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="17dp" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Again?"
+        android:id="@+id/buttonRestart"
+        android:visibility="gone"
+        android:layout_below="@id/imageStudent"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

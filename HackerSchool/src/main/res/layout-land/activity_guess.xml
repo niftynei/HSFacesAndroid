@@ -17,8 +17,7 @@
         android:src="@drawable/ic_launcher"
         android:id="@+id/imageStudent"
         android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="24dp" />
+        android:layout_alignParentLeft="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -28,23 +27,31 @@
         android:ems="10"
         android:imeOptions="actionDone"
         android:id="@+id/editGuess"
-        android:layout_above="@+id/buttomGuess"
-        android:layout_toRightOf="@+id/imageStudent" />
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/imageStudent"
+        android:layout_alignParentRight="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit_guess"
         android:id="@+id/buttomGuess"
-        android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/editGuess" />
+        android:layout_below="@+id/editGuess"
+        android:layout_alignRight="@+id/textScore" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textScore"
-        android:layout_alignBottom="@+id/imageStudent"
-        android:layout_alignRight="@+id/buttomGuess" />
-
+        android:layout_above="@+id/imageStudent"
+        android:layout_alignParentRight="true" />
+   <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Again?"
+        android:id="@+id/buttonRestart"
+       android:visibility="gone"
+       android:layout_centerVertical="true"
+       android:layout_centerHorizontal="true" />
 </RelativeLayout>
