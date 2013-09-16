@@ -19,6 +19,9 @@ gen
 tmp/
 junit/
 
+# keystore
+*.keystore
+
 # except all .bat and .php files
 !*.php
 !*.bat
