@@ -16,9 +16,24 @@ android {
     compileSdkVersion 18
     buildToolsVersion "18.0.1"
 
+    signingConfigs {
+        release {
+            storeFile file("hackerschool.keystore")
+            storePassword project['password']
+            keyAlias "hackerschool"
+            keyPassword project['password']
+        }
+    }
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 18
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            runProguard true
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+        }
     }
 }
 
