@@ -3,6 +3,7 @@ package knaps.hacker.school.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import org.ccil.cowan.tagsoup.Parser;
@@ -44,6 +45,7 @@ import knaps.hacker.school.models.Student;
 public class HSParser {
 
     public static ArrayList<Student> parseBatches(final InputStream xml, HashSet<String> existingBatches) {
+        long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath path = factory.newXPath();
         final MutableNamespaceContext nc = new MutableNamespaceContext();
@@ -84,6 +86,7 @@ public class HSParser {
             Log.e("XML - - error parsing xpath", "error parsing xpath", e);
         }
 
+        Log.d("XML _ timing", "Total time for parsing: " + (System.currentTimeMillis() - startTime) + "ms");
         return studentList;
     }
 
@@ -118,28 +121,31 @@ public class HSParser {
     }
 
 
-    public static void writeStudentsToDatabase(List<Student> students, Context context) {
-        HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
-        SQLiteDatabase db =   mDbHelper.getWritableDatabase();
+    public static void writeStudentsToDatabase(final List<Student> students, final Context context) {
+        long startTime = System.currentTimeMillis();
+        final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
+        final SQLiteDatabase db =   mDbHelper.getWritableDatabase();
+        db.beginTransaction();
+        final SQLiteStatement stmt = db.compileStatement(HSDataContract.StudentEntry.SQL_INSERT_ALL);
 
         for (Student student : students) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_ID, student.mId);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_FULL_NAME, student.mName);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_IMAGE_URL, student.mImageUrl);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_JOB, student.mJob);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_JOB_URL, student.mJobUrl);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_SKILLS, student.mSkills);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_EMAIL, student.mEmail);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_GITHUB, student.mGithubUrl);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_TWITTER, student.mTwitterUrl);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_BATCH, student.mBatch);
-            contentValues.put(HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID, student.mBatchId);
-
-            db.insert(
-                HSDataContract.StudentEntry.TABLE_NAME,
-                null,
-                contentValues);
+            stmt.bindLong(1, student.mId);
+            stmt.bindString(2, student.mName);
+            stmt.bindString(3, student.mImageUrl);
+            stmt.bindString(4, student.mJob);
+            stmt.bindString(5, student.mJobUrl);
+            stmt.bindString(6, student.mSkills);
+            stmt.bindString(7, student.mEmail);
+            stmt.bindString(8, student.mGithubUrl);
+            stmt.bindString(9, student.mTwitterUrl);
+            stmt.bindString(10, student.mBatchId);
+            stmt.bindString(11, student.mBatch);
+            stmt.execute();
+            stmt.clearBindings();
         }
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        Log.d("XML _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }

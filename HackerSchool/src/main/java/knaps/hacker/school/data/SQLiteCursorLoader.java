@@ -47,7 +47,9 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
     String mTableName;
     String[] mProjection;
-    String mSortOrder;
+    String mSortOrder = null;
+    private String mRawQuery = null;
+    private String[] mSelectionArgs = null;
 
     public SQLiteCursorLoader(Context context,
                               String tableName, String[] projection, String sortOrder) {
@@ -57,18 +59,30 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
         mSortOrder = sortOrder;
     }
 
+    public SQLiteCursorLoader(Context context, String rawQuery, String[] selectionArgs) {
+        super(context);
+        mRawQuery = rawQuery;
+        mSelectionArgs = selectionArgs;
+    }
+
     @Override
     public Cursor loadInBackground() {
         final SQLiteDatabase db = new HSDatabaseHelper(getContext()).getReadableDatabase();
-        final Cursor cursor = db.query(
-                mTableName,
-                mProjection,
-                null,
-                null,
-                null,
-                null,
-                mSortOrder
-        );
+        final Cursor cursor;
+        if (mRawQuery != null) {
+           cursor = db.rawQuery(mRawQuery, mSelectionArgs);
+        }
+        else {
+            cursor = db.query(
+                    mTableName,
+                    mProjection,
+                    null,
+                    null,
+                    null,
+                    null,
+                    mSortOrder
+            );
+        }
 
         if (cursor != null) {
             cursor.getCount();

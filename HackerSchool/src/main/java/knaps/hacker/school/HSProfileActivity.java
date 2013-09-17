@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 import android.annotation.TargetApi;
@@ -57,7 +56,7 @@ public class HSProfileActivity extends Activity implements View.OnClickListener 
     }
 
     private void populateViews(Student student) {
-        new ImageDownloads.HSImageDownloadTask(student.mImageUrl, mImageView, this).execute();
+        new ImageDownloads.HSGetImageTask(student.mImageUrl, mImageView, this).execute();
         mNameView.setText(student.mName);
         mBatchView.setText(student.mBatch);
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -44,9 +45,9 @@ public class ImageDownloads {
         try {
             bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Log.e("Error!", "Unable to write to file", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("Error!", "Unable to write to file", e);
         }
         return bitmap;
     }
@@ -83,6 +84,31 @@ public class ImageDownloads {
         }
     }
 
+    public static class SaveToDisk extends AsyncTask<Void, Void, Void> {
+
+        private final String mUrl;
+        private final Context mContext;
+        private final Bitmap mBitmap;
+
+        public SaveToDisk(Context context, String url, Bitmap bitmap) {
+            mUrl = url;
+            mContext = context;
+            mBitmap = bitmap;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ImageSaver saver = new ImageSaver();
+
+            final String filename = saver.getFilenameFromImageUrl(mUrl);
+            boolean saved = saver.writeBitmapToFile(mContext, mBitmap, filename);
+            if (saved) {
+                saver.saveFilenameToDatabase(mContext, filename, mUrl);
+            }
+            return null;
+        }
+    }
+
     public static class RetainFragment extends Fragment {
         private static final String TAG = "RetainFragment";
         public LruCache<String, Bitmap> mRetainedCache;
@@ -104,13 +130,13 @@ public class ImageDownloads {
         }
     }
 
-    public static class HSImageDownloadTask extends AsyncTask<Void, Void, Bitmap> {
+    public static class HSGetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         final private String mUrl;
         final private ImageView mImageView;
         final private Activity mContext;
 
-        public HSImageDownloadTask(String url, ImageView imageView, Activity context) {
+        public HSGetImageTask(String url, ImageView imageView, Activity context) {
             mUrl = url;
             mImageView = imageView;
             mContext = context;
@@ -123,14 +149,20 @@ public class ImageDownloads {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             bitmap = getBitmapMemoryCache().get(mUrl);
 
             if (bitmap == null) {
-                if (isOnline(mContext)) {
-                    bitmap = ImageDownloads.loadBitmap(Constants.HACKER_SCHOOL_URL + mUrl);
-                    new ImageDownloads.SaveToCacheTask(getBitmapMemoryCache(), bitmap, mUrl).execute();
+                final String filename = ImageSaver.databaseHasImage(mContext, mUrl);
+                if (filename != null) {
+                    final ImageSaver saver = new ImageSaver();
+                    bitmap = saver.getBitmapFromFile(mContext, filename);
                 }
+                if (isOnline(mContext) && bitmap == null) {
+                    bitmap = ImageDownloads.loadBitmap(Constants.HACKER_SCHOOL_URL + mUrl);
+                    new SaveToDisk(mContext, mUrl, bitmap).execute();
+                }
+                new SaveToCacheTask(getBitmapMemoryCache(), bitmap, mUrl).execute();
             }
             return bitmap;
         }

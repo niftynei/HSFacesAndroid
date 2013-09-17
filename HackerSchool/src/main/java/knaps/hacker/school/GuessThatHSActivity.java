@@ -2,7 +2,6 @@ package knaps.hacker.school;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -10,11 +9,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -188,7 +185,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         if (mStudentCursor.isLast() || mGameMax <= mStudentCursor.getPosition()) {
             showEndGame();
         }
-        else {
+        else if (mStudentCursor.getCount() > 0) {
             if (isFirst) {
                 mStudentCursor.moveToFirst();
             }
@@ -199,13 +196,17 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             mGuess.setClickable(true);
             mEditGuess.setEnabled(true);
         }
+        else {
+            Toast.makeText(this, "No valid students found. Try connecting to the internet.", Toast.LENGTH_SHORT).show();
+            this.finish();
+        }
     }
 
     private void showStudent() {
         mCurrentStudent = new Student(mStudentCursor);
         mEditGuess.setText("");
         mHintCount = 0;
-        new ImageDownloads.HSImageDownloadTask(mCurrentStudent.mImageUrl, mHsPicture, this).execute();
+        new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, mHsPicture, this).execute();
     }
 
     private void restartGame() {
@@ -297,8 +298,14 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final SQLiteCursorLoader loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
+        SQLiteCursorLoader loader;
+        if (!ImageDownloads.isOnline(this)) {
+            loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.SQL_GET_ALL_SAVED_TO_DISK, null);
+        }
+        else {
+            loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
                 HSDataContract.StudentEntry.SORT_DEFAULT);
+        }
         return loader;
     }
 
