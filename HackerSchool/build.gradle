@@ -12,6 +12,8 @@ repositories {
     mavenCentral()
 }
 
+def password = (project.hasProperty("password")) ? project['password'] : ""
+
 android {
     compileSdkVersion 18
     buildToolsVersion "18.0.1"
@@ -19,9 +21,9 @@ android {
     signingConfigs {
         release {
             storeFile file("hackerschool.keystore")
-            storePassword project['password']
+            storePassword password
             keyAlias "hackerschool"
-            keyPassword project['password']
+            keyPassword password
         }
     }
     defaultConfig {
