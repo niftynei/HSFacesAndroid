@@ -13,8 +13,7 @@ go through the set up process again.  When a new batch is added, there is an opt
 Inital load is quite lengthy (due to XPath processing. This could use some optimization). Most of it is in app processing, 
 not data downloaded from the network.
 
-Images are not yet stored locally. They're cached in memory, but are lost once game play ends.  Keep this in mind when
-using a mobile data connection.  Unlike the ios verison, an internet connection is required for play.
+Images are stored locally in internal storage.  This could probably use some more error checking.  Offline play uses only the images that are already stored locally.
 
 ## Game Play
 
@@ -30,7 +29,8 @@ Hacker Schooler.
 # Onward and upward
 ## Proposed future work
 
-- [ ] Use disk based cache for images / allow for 'offline' play
+- [x] Use disk based cache for images / allow for 'offline' play
+- [ ] Faster XML parsing
 - [ ] Give users option to play by batch
 - [ ] Style toasts to for Correct and Wrong
 - [ ] add some more custom styling to fonts

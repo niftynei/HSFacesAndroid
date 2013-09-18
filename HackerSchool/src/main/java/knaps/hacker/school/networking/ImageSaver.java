@@ -61,8 +61,6 @@ public class ImageSaver {
 
     public boolean writeBitmapToFile(final Context context, final Bitmap bitmap, final String filename) {
         if (context == null || bitmap == null || filename == null) return false;
-
-        boolean success = false;
         // let's just use internal storage. Makes life easier.
 //        if (isExternalStorageWritable()) {
 //           file = getPrivatePicturesExternalStorage(context, filename);
@@ -74,8 +72,13 @@ public class ImageSaver {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         final byte[] bitmapdata = bos.toByteArray();
 
-        final byte[] buffer = new byte[8 * 1024];
         final InputStream is = new ByteArrayInputStream(bitmapdata);
+        return writeStreamToDisk(file, is);
+    }
+
+    public boolean writeStreamToDisk(File file, InputStream is) {
+        final byte[] buffer = new byte[8 * 1024];
+        boolean success = false;
         OutputStream output = null;
         try {
             int bytesRead;
