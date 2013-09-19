@@ -31,7 +31,7 @@ Hacker Schooler.
 
 - [x] Use disk based cache for images / allow for 'offline' play
 - [ ] Faster XML parsing
-- [ ] Give users option to play by batch
+- [x] Give users option to play by batch
 - [ ] Style toasts to for Correct and Wrong
 - [ ] add some more custom styling to fonts
 - [ ] animations for win

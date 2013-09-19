@@ -94,6 +94,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         if (getIntent() != null) {
             mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, 40);
             mBatchName = getIntent().getStringExtra(Constants.BATCH_NAME);
+
         }
         if (savedInstanceState != null) {
             mIsRestart = true;
@@ -320,15 +321,14 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         if (!ImageDownloads.isOnline(this)) {
             selection = HSData.Student.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
         }
-        if (mGameMax != Integer.MAX_VALUE) {
+        if (mGameMax != Integer.MAX_VALUE && mGameMax > 0) {
            limit = mGameMax + "";
         }
-        if (!TextUtils.isEmpty(mBatchName)) {
+        if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
             if (selection != null) selection += HSData.STMT_AND + HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
             else selection = HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
             selectionArgs = new String[] {mBatchName};
         }
-        Log.d("XML -- sql queryin'", String.format("limit: %s, selection %s, args %s", limit, selection, Arrays.toString(selectionArgs)));
         return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.Student.TABLE_NAME)
                 .columns(HSData.Student.PROJECTION_ALL)
                 .selection(selection)

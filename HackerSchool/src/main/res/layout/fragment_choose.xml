@@ -1,61 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFFFFF"
     >
-
-    <RelativeLayout
+    <View
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        />
+    <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Choose a batch:"
-            android:id="@+id/textChoose"
-            />
+        android:id="@+id/spinnerBatch"
+        />
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnerBatch"
-            android:layout_gravity="right|center_vertical"
-            android:layout_toRightOf="@+id/chooseBatch" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
+    <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Limit play:"
-            android:id="@+id/textLimit"
-            />
-
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinnerLimit"
-            android:layout_toRightOf="@+id/textLimit" />
-
-    </RelativeLayout>
+        android:id="@+id/spinnerLimit"
+        />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play"
         android:id="@+id/buttonPlay"
+        android:text="Play"
         android:layout_gravity="center" />
-
+    <View
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        />
 </LinearLayout>
