@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import knaps.hacker.school.data.HSDataContract;
+import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
 
 /**
@@ -124,11 +124,11 @@ public class ImageSaver {
         final SQLiteDatabase db = new HSDatabaseHelper(context).getWritableDatabase();
 
         final ContentValues values = new ContentValues(1);
-        values.put(HSDataContract.StudentEntry.COLUMN_NAME_IMAGE_FILENAME, filename);
+        values.put(HSData.Student.COLUMN_NAME_IMAGE_FILENAME, filename);
 
-        int rowsAffected = db.update(HSDataContract.StudentEntry.TABLE_NAME, // table name
+        int rowsAffected = db.update(HSData.Student.TABLE_NAME, // table name
                 values, // values to update
-                HSDataContract.StudentEntry.COLUMN_NAME_IMAGE_URL + " = ?", // where
+                HSData.Student.COLUMN_NAME_IMAGE_URL + " = ?", // where
                 new String[]{url}
         );
 
@@ -137,7 +137,7 @@ public class ImageSaver {
 
     public static String databaseHasImage(Context context, String url) {
         final SQLiteDatabase db = new HSDatabaseHelper(context).getWritableDatabase();
-        return DatabaseUtils.stringForQuery(db, HSDataContract.StudentEntry.SQL_GET_FILENAME,
+        return DatabaseUtils.stringForQuery(db, HSData.Student.SQL_GET_FILENAME,
                 new String[]{url});
     }
 }

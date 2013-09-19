@@ -1,8 +1,13 @@
 package knaps.hacker.school.data;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.HashSet;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.
@@ -18,17 +23,51 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(HSDataContract.StudentEntry.SQL_CREATE);
+        db.execSQL(HSData.Student.SQL_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Since we're just storing data from online, delete old table
-        db.execSQL(HSDataContract.StudentEntry.SQL_DELETE);
+        db.execSQL(HSData.Student.SQL_DELETE);
     }
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public HashSet<String> getExistingBatches() {
+        final HashSet<String> batches = new HashSet<String>();
+        // sql statement for distinct batch names
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.query(true, HSData.Student.TABLE_NAME, new String[]{HSData.Student.COLUMN_NAME_BATCH_ID}, null,
+                null, HSData.Student.COLUMN_NAME_BATCH_ID, null, null, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                batches.add(cursor.getString(
+                        cursor.getColumnIndex(HSData.Student.COLUMN_NAME_BATCH_ID)).trim().toLowerCase());
+            }
+        }
+        cursor.close();
+        return batches;
+    }
+
+    public HashSet<String> getExistingBatchesByName() {
+        final HashSet<String> batches = new HashSet<String>();
+        // sql statement for distinct batch names
+        final SQLiteDatabase db = getReadableDatabase();
+        final Cursor cursor = db.query(true, HSData.Student.TABLE_NAME, new String[]{HSData.Student.COLUMN_NAME_BATCH}, null,
+                null, HSData.Student.COLUMN_NAME_BATCH, null, null, null);
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                batches.add(cursor.getString(
+                        cursor.getColumnIndex(HSData.Student.COLUMN_NAME_BATCH)));
+            }
+        }
+        cursor.close();
+        return batches;
     }
 }

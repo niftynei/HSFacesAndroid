@@ -1,6 +1,5 @@
 package knaps.hacker.school.data;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -37,21 +36,19 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import knaps.hacker.school.models.Student;
-
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
 public class HSParser {
 
-    public static ArrayList<Student> parseBatches(final InputStream xml, HashSet<String> existingBatches) {
+    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, HashSet<String> existingBatches) {
         long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath path = factory.newXPath();
         final MutableNamespaceContext nc = new MutableNamespaceContext();
         nc.setNamespace("html", "http://www.w3.org/1999/xhtml");
         path.setNamespaceContext(nc);
-        final ArrayList<Student> studentList = new ArrayList<Student>();
+        final ArrayList<knaps.hacker.school.models.Student> studentList = new ArrayList<knaps.hacker.school.models.Student>();
 
         try {
             final Node cleanedDom = getHtmlUrlNode(xml);
@@ -70,7 +67,7 @@ public class HSParser {
                     final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
                     for (int j = 0; j < students.getLength(); j++) {
                         final Element student = (Element) students.item(j);
-                        studentList.add(new Student(batchName, batchId, student, path));
+                        studentList.add(new knaps.hacker.school.models.Student(batchName, batchId, student, path));
                     }
                 }
             }
@@ -121,14 +118,14 @@ public class HSParser {
     }
 
 
-    public static void writeStudentsToDatabase(final List<Student> students, final Context context) {
+    public static void writeStudentsToDatabase(final List<knaps.hacker.school.models.Student> students, final Context context) {
         long startTime = System.currentTimeMillis();
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
         final SQLiteDatabase db =   mDbHelper.getWritableDatabase();
         db.beginTransaction();
-        final SQLiteStatement stmt = db.compileStatement(HSDataContract.StudentEntry.SQL_INSERT_ALL);
+        final SQLiteStatement stmt = db.compileStatement(HSData.Student.SQL_INSERT_ALL);
 
-        for (Student student : students) {
+        for (knaps.hacker.school.models.Student student : students) {
             stmt.bindLong(1, student.mId);
             stmt.bindString(2, student.mName);
             stmt.bindString(3, student.mImageUrl);

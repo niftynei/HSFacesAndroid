@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -45,24 +44,74 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
     Cursor mLastCursor = null;
 
-    String mTableName;
-    String[] mProjection;
-    String mSortOrder = null;
+    private String mTableName;
+    private String[] mProjection;
     private String mRawQuery = null;
     private String[] mSelectionArgs = null;
+    private String mLimit = null;
+    private String mOrderBy = null;
+    private String mHaving = null;
+    private String mGroupBy = null;
+    private String mSelection = null;
 
     public SQLiteCursorLoader(Context context,
                               String tableName, String[] projection, String sortOrder) {
         super(context);
         mTableName = tableName;
         mProjection = projection;
-        mSortOrder = sortOrder;
+        mOrderBy = sortOrder;
     }
 
     public SQLiteCursorLoader(Context context, String rawQuery, String[] selectionArgs) {
         super(context);
         mRawQuery = rawQuery;
         mSelectionArgs = selectionArgs;
+    }
+
+    public SQLiteCursorLoader(Context context, String table, String[] columns,
+                              String selection, String[] selectionArgs, String groupBy,
+                              String having, String orderBy, String limit) {
+        super(context);
+        mTableName = table;
+        mProjection = columns;
+        mSelection = selection;
+        mSelectionArgs = selectionArgs;
+        mGroupBy = groupBy;
+        mHaving = having;
+        mOrderBy = orderBy;
+        mLimit = limit;
+    }
+
+    public static class SQLiteCursorBuilder {
+
+        private final Context mContext;
+        private final String mTable;
+        private String mLimit = null;
+        private String[] mColumns = null;
+        private String mSelection = null;
+        private String[] mSelectionArgs = null;
+        private String mGroupBy = null;
+        private String mHaving = null;
+        private String mOrderBy = null;
+
+        public SQLiteCursorBuilder(Context context, String table) {
+            mContext = context;
+            mTable = table;
+        }
+
+        public SQLiteCursorBuilder columns(String[] cols) { mColumns = cols; return this; }
+        public SQLiteCursorBuilder selection(String selection) { mSelection = selection; return this; }
+        public SQLiteCursorBuilder selectionArgs(String[] selectionArgs) { mSelectionArgs = selectionArgs; return this; }
+        public SQLiteCursorBuilder groupBy(String groupBy) { mGroupBy = groupBy; return this; }
+        public SQLiteCursorBuilder having(String having) { mHaving = having; return this; }
+        public SQLiteCursorBuilder orderBy(String orderBy) { mOrderBy = orderBy; return this; }
+        public SQLiteCursorBuilder limit(String limit) { mLimit = limit; return this; }
+
+        public SQLiteCursorLoader build() {
+            return new SQLiteCursorLoader(mContext, mTable, mColumns, mSelection, mSelectionArgs,
+                    mGroupBy, mHaving, mOrderBy, mLimit);
+        }
+
     }
 
     @Override
@@ -76,11 +125,12 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
             cursor = db.query(
                     mTableName,
                     mProjection,
-                    null,
-                    null,
-                    null,
-                    null,
-                    mSortOrder
+                    mSelection,
+                    mSelectionArgs,
+                    mGroupBy,
+                    mHaving,
+                    mOrderBy,
+                    mLimit
             );
         }
 

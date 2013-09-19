@@ -11,7 +11,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import knaps.hacker.school.data.HSDataContract;
-import knaps.hacker.school.data.HSDatabaseHelper;
+import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 
 public class HSListActivity extends FragmentActivity implements
@@ -49,7 +45,7 @@ public class HSListActivity extends FragmentActivity implements
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        String[] fromColumns = {HSDataContract.StudentEntry.COLUMN_NAME_FULL_NAME};
+        String[] fromColumns = {HSData.Student.COLUMN_NAME_FULL_NAME};
         int[] toViews = {android.R.id.text1};
 
         mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, fromColumns, toViews, 0);
@@ -97,8 +93,8 @@ public class HSListActivity extends FragmentActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new SQLiteCursorLoader(this,
-                HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
-                HSDataContract.StudentEntry.SORT_DEFAULT);
+                HSData.Student.TABLE_NAME, HSData.Student.PROJECTION_ALL,
+                HSData.Student.SORT_DEFAULT);
     }
 
     @Override
@@ -114,7 +110,7 @@ public class HSListActivity extends FragmentActivity implements
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Cursor cursor = (Cursor) mAdapter.getItem(position);
-        final Student student = new Student(cursor);
+        final knaps.hacker.school.models.Student student = new knaps.hacker.school.models.Student(cursor);
         final Intent intent = new Intent(this, HSProfileActivity.class);
         intent.putExtra(Constants.STUDENT, student);
         startActivity(intent);

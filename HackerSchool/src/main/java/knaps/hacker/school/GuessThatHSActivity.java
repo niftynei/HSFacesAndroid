@@ -11,6 +11,8 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +24,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import knaps.hacker.school.data.HSDataContract;
+import java.util.Arrays;
+
+import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
@@ -40,11 +43,13 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     private ImageView mHsPicture;
     private EditText mEditGuess;
-    private TextView mTextScore;
     private Button mGuess;
     private Button mRestartButton;
+    private String mBatchName;
+    private TextView mGuessCounter;
+    private TextView mBatchText;
 
-    private Student mCurrentStudent;
+    private knaps.hacker.school.models.Student mCurrentStudent;
     private static Cursor mStudentCursor;
     private int mCurrentScore;
     private int mCurrentGuesses;
@@ -68,12 +73,13 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mHsPicture = (ImageView) findViewById(R.id.imageStudent);
         mEditGuess = (EditText) findViewById(R.id.editGuess);
         mEditGuess.setOnEditorActionListener(this);
-        mTextScore = (TextView) findViewById(R.id.textScore);
         mGuess = (Button) findViewById(R.id.buttomGuess);
         mGuess.setOnClickListener(this);
         mGuess.setEnabled(false);
         mRestartButton = (Button) findViewById(R.id.buttonRestart);
         mRestartButton.setOnClickListener(this);
+        mGuessCounter = (TextView) findViewById(R.id.textGuessCount);
+        mBatchText = (TextView) findViewById(R.id.textBatchName);
 
         // TODO: save high score to preferences (so you can beat yourself!)
         // TODO: Settings -- save your email and password
@@ -86,7 +92,8 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         }
 
         if (getIntent() != null) {
-            mGameMax = getIntent().getIntExtra(Constants.GAME_COUNT, 40);
+            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, 40);
+            mBatchName = getIntent().getStringExtra(Constants.BATCH_NAME);
         }
         if (savedInstanceState != null) {
             mIsRestart = true;
@@ -94,8 +101,13 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             mCurrentScore = savedInstanceState.getInt(CORRECT_COUNT);
             mSuccessMessageCount = savedInstanceState.getInt(SUCCESS_MESSAGE_COUNT);
             mHintCount = savedInstanceState.getInt(HINT_MESSAGE_COUNT);
-            mGameMax = savedInstanceState.getInt(Constants.GAME_COUNT);
+            mGameMax = savedInstanceState.getInt(Constants.GAME_MAX);
             mGameOver = savedInstanceState.getBoolean(GAME_OVER);
+            mBatchName= savedInstanceState.getString(Constants.BATCH_NAME);
+        }
+
+        if (mBatchName != null) {
+            mBatchText.setText(mBatchName);
         }
 
         getSupportLoaderManager().initLoader(0, null, this);
@@ -135,8 +147,9 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         icicle.putInt(CORRECT_COUNT, mCurrentScore);
         icicle.putInt(SUCCESS_MESSAGE_COUNT, mSuccessMessageCount);
         icicle.putInt(HINT_MESSAGE_COUNT, mHintCount);
-        icicle.putInt(Constants.GAME_COUNT, mGameMax);
+        icicle.putInt(Constants.GAME_MAX, mGameMax);
         icicle.putBoolean(GAME_OVER, mGameOver);
+        icicle.putString(Constants.BATCH_NAME, mBatchName);
     }
 
     @Override
@@ -175,9 +188,12 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     }
 
     private void displayScore() {
-        if (mCurrentGuesses != 0) {
-            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
-            mTextScore.setText(getString(R.string.current_score, score));
+//        if (mCurrentGuesses != 0) {
+//            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
+//        }
+        if (mStudentCursor != null) {
+            int count = mStudentCursor.getCount() - mCurrentGuesses;
+            mGuessCounter.setText(String.valueOf(count));
         }
     }
 
@@ -203,7 +219,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     }
 
     private void showStudent() {
-        mCurrentStudent = new Student(mStudentCursor);
+        mCurrentStudent = new knaps.hacker.school.models.Student(mStudentCursor);
         mEditGuess.setText("");
         mHintCount = 0;
         new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, mHsPicture, this).execute();
@@ -230,7 +246,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mRestartButton.setVisibility(View.VISIBLE);
         mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
         double finalScore = mCurrentScore / (mCurrentGuesses * 1.0) * 100;
-        mTextScore.setText(String.format("Final Score: %.2f%%", finalScore));
+        mGuessCounter.setText(String.format("Final Score: %.0f%%", finalScore));
         String message;
         if (finalScore >= 90) {
             message = "Aces!";
@@ -249,7 +265,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     private void showFail() {
         Toast.makeText(this, "This is " + mCurrentStudent.mName, Toast.LENGTH_SHORT).show();
-        mTextScore.postDelayed(new Runnable() {
+        mGuessCounter.postDelayed(new Runnable() {
             @Override
             public void run() {
                 showNextStudent(false);
@@ -275,7 +291,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             Toast.makeText(this, mSuccessMessages[mSuccessMessageCount] + " You know " + mCurrentStudent.mName, Toast.LENGTH_SHORT).show();
         }
         incrementSuccess();
-        mTextScore.postDelayed(new Runnable() {
+        mGuessCounter.postDelayed(new Runnable() {
             @Override
             public void run() {
                 showNextStudent(false);
@@ -298,15 +314,26 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        SQLiteCursorLoader loader;
+        String limit = null;
+        String selection = null;
+        String[] selectionArgs = null;
         if (!ImageDownloads.isOnline(this)) {
-            loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.SQL_GET_ALL_SAVED_TO_DISK, null);
+            selection = HSData.Student.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
         }
-        else {
-            loader = new SQLiteCursorLoader(this, HSDataContract.StudentEntry.TABLE_NAME, HSDataContract.StudentEntry.PROJECTION_ALL,
-                HSDataContract.StudentEntry.SORT_DEFAULT);
+        if (mGameMax != Integer.MAX_VALUE) {
+           limit = mGameMax + "";
         }
-        return loader;
+        if (!TextUtils.isEmpty(mBatchName)) {
+            if (selection != null) selection += HSData.STMT_AND + HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
+            else selection = HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
+            selectionArgs = new String[] {mBatchName};
+        }
+        Log.d("XML -- sql queryin'", String.format("limit: %s, selection %s, args %s", limit, selection, Arrays.toString(selectionArgs)));
+        return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.Student.TABLE_NAME)
+                .columns(HSData.Student.PROJECTION_ALL)
+                .selection(selection)
+                .selectionArgs(selectionArgs)
+                .limit(limit).build();
     }
 
     @Override

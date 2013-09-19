@@ -2,21 +2,20 @@ package knaps.hacker.school;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,7 +24,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -33,14 +31,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import knaps.hacker.school.data.HSDataContract;
+import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.data.HSParser;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
-public class LoginActivity extends Activity implements View.OnClickListener {
+public class LoginActivity extends FragmentActivity implements View.OnClickListener {
 
     View mLoadingView;
     EditText mEmailView;
@@ -67,7 +64,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         final HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        final long results = DatabaseUtils.queryNumEntries(db, HSDataContract.StudentEntry.TABLE_NAME);
+        final long results = DatabaseUtils.queryNumEntries(db, HSData.Student.TABLE_NAME);
         if (results > 0) {
             mHasData = true;
             Button goToGameButton = (Button) findViewById(R.id.buttonGame);
@@ -111,8 +108,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.buttonGame:
-                final Intent intent = new Intent(this, GuessThatHSActivity.class);
-                startActivity(intent);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.add(android.R.id.content, new ChooseGameFragment(), null);
+                transaction.commit();
                 break;
             case R.id.buttonBrowse:
                 Intent browse = new Intent(LoginActivity.this, HSListActivity.class);
@@ -163,8 +161,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 
-                    final HashSet<String> existingBatches = getExistingBatches();
-                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    final HashSet<String> existingBatches = new HSDatabaseHelper(LoginActivity.this).getExistingBatches();
+                    final ArrayList<knaps.hacker.school.models.Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
                     if (students.size() > 0) {
                         HSParser.writeStudentsToDatabase(students, LoginActivity.this);
                         return null;
@@ -208,21 +206,4 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private HashSet<String> getExistingBatches() {
-        final HashSet<String> batches = new HashSet<String>();
-        // sql statement for distinct batch names
-        final SQLiteDatabase db = new HSDatabaseHelper(this).getReadableDatabase();
-        final Cursor cursor = db.query(true, HSDataContract.StudentEntry.TABLE_NAME, new String[]{HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID}, null,
-                null, HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID, null, null, null);
-
-        Log.d("XML -- cursor for batch", DatabaseUtils.dumpCursorToString(cursor));
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                batches.add(cursor.getString(
-                        cursor.getColumnIndex(HSDataContract.StudentEntry.COLUMN_NAME_BATCH_ID)).trim().toLowerCase());
-            }
-        }
-        cursor.close();
-        return batches;
-    }
 }

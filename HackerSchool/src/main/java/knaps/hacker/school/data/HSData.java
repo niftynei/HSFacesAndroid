@@ -5,24 +5,27 @@ import android.provider.BaseColumns;
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
-public final class HSDataContract {
+public final class HSData {
 
-    public HSDataContract() {}
+    public HSData() {}
 
-    private static final String TEXT_TYPE = " TEXT";
-    private static final String INT_TYPE = " INTEGER";
-    private static final String PRIMARY_KEY_TYPE = INT_TYPE + " PRIMARY KEY";
-    private static final String COMMA_SEP = ", ";
-    private static final String STMT_CREATE_TABLE = "CREATE TABLE ";
-    private static final String STMT_DROP_TABLE = "DROP TABLE IF EXISTS ";
-    private static final String STMT_SELECT = "SELECT ";
-    private static final String STMT_FROM = " FROM ";
-    private static final String STMT_WHERE = " WHERE ";
-    private static final String STMT_INSERT = "INSERT INTO ";
-    private static final String STMT_IS_NOT_NULL = " IS NOT NULL ";
+    public static final String TEXT_TYPE = " TEXT";
+    public static final String INT_TYPE = " INTEGER";
+    public static final String PRIMARY_KEY_TYPE = INT_TYPE + " PRIMARY KEY";
+    public static final String COMMA_SEP = ", ";
+    public static final String STMT_CREATE_TABLE = "CREATE TABLE ";
+    public static final String STMT_DROP_TABLE = "DROP TABLE IF EXISTS ";
+    public static final String STMT_SELECT = "SELECT ";
+    public static final String STMT_FROM = " FROM ";
+    public static final String STMT_WHERE = " WHERE ";
+    public static final String STMT_INSERT = "INSERT INTO ";
+    public static final String STMT_IS_NOT_NULL = " IS NOT NULL ";
+    public static final String STMT_LIMIT = " LIMIT ";
+    public static final String STMT_AND = " AND ";
+    public static final String STMT_EQUALS_Q = " = ?";
 
 
-    public static abstract class StudentEntry implements BaseColumns {
+    public static abstract class Student implements BaseColumns {
         public static final String TABLE_NAME = "students";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FULL_NAME = "fullName";
@@ -89,16 +92,43 @@ public final class HSDataContract {
                 "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
+        public static final String GET_ALL = STMT_SELECT + _ALL + STMT_FROM + TABLE_NAME;
 
         public static final String SQL_GET_FILENAME =
                 STMT_SELECT + COLUMN_NAME_IMAGE_FILENAME +
                 STMT_FROM + TABLE_NAME +
-                STMT_WHERE + COLUMN_NAME_IMAGE_URL + " = ?";
+                STMT_WHERE + COLUMN_NAME_IMAGE_URL + " = ? ";
 
         public static final String SQL_GET_ALL_SAVED_TO_DISK =
                 STMT_SELECT + _ALL +
                 STMT_FROM + TABLE_NAME +
                 STMT_WHERE + COLUMN_NAME_IMAGE_FILENAME + STMT_IS_NOT_NULL;
+
+        public static final String SQL_GET_ALL_DISK_BY_BATCH =
+                SQL_GET_ALL_SAVED_TO_DISK +
+                        STMT_AND + COLUMN_NAME_BATCH + " = ? ";
+
+        public static final String SQL_GET_ALL_DISK_BATCH_WITH_LIMIT =
+                SQL_GET_ALL_DISK_BY_BATCH +
+                        STMT_LIMIT + " ? ";
+
+        public static final String SQL_GET_ALL_SAVED_TO_DISK_WITH_LIMIT =
+                SQL_GET_ALL_SAVED_TO_DISK +
+                STMT_LIMIT + " ?";
+
+        public static final String SQL_GET_ALL_BATCH =
+                STMT_SELECT + _ALL +
+                STMT_FROM + TABLE_NAME +
+                STMT_WHERE + COLUMN_NAME_BATCH + " = ? ";
+
+        public static final String SQL_GET_ALL_LIMIT =
+                STMT_SELECT + _ALL +
+                STMT_FROM + TABLE_NAME +
+                STMT_LIMIT + " ?";
+
+        public static final String SQL_GET_ALL_BATCH_LIMIT =
+                SQL_GET_ALL_BATCH +
+                STMT_LIMIT + " ?";
 
         public static final String[] PROJECTION_ALL = {
                 _ID,
