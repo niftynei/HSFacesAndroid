@@ -54,7 +54,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     private int mCurrentScore;
     private int mCurrentGuesses;
     private int mHintCount = 0;
-    private int mGameMax = 40;
+    private int mGameMax = Integer.MAX_VALUE;
     private int mSuccessMessageCount = 0;
     private String[] mSuccessMessages = { "Yup.", "Correct.", "Yes." };
     private String[] mHintMessages = new String[] { "Give it a try.", "Not a guess?", "Hint: Starts with %s" };
@@ -92,7 +92,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         }
 
         if (getIntent() != null) {
-            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, 40);
+            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Integer.MAX_VALUE);
             mBatchName = getIntent().getStringExtra(Constants.BATCH_NAME);
 
         }
