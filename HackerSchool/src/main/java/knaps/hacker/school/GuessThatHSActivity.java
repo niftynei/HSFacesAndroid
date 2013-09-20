@@ -104,7 +104,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
             mBatchName= savedInstanceState.getString(Constants.BATCH_NAME);
         }
 
-        if (mBatchName != null) {
+        if (mBatchName != null && !Constants.BATCH_NAME.equals(mBatchName)) {
             mBatchText.setText(mBatchName);
         }
 
