@@ -12,7 +12,6 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +22,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Arrays;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
@@ -73,7 +70,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mHsPicture = (ImageView) findViewById(R.id.imageStudent);
         mEditGuess = (EditText) findViewById(R.id.editGuess);
         mEditGuess.setOnEditorActionListener(this);
-        mGuess = (Button) findViewById(R.id.buttomGuess);
+        mGuess = (Button) findViewById(R.id.buttonGuess);
         mGuess.setOnClickListener(this);
         mGuess.setEnabled(false);
         mRestartButton = (Button) findViewById(R.id.buttonRestart);
@@ -92,7 +89,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         }
 
         if (getIntent() != null) {
-            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Integer.MAX_VALUE);
+            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Constants.INVALID_MIN);
             mBatchName = getIntent().getStringExtra(Constants.BATCH_NAME);
 
         }
@@ -156,7 +153,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.buttomGuess:
+            case R.id.buttonGuess:
                 mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
@@ -185,7 +182,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     }
 
     private void incrementHint() {
-        mHintCount = Math.min(mHintCount + 1, 2);
+        mHintCount = Math.min(mHintCount + 1, mHintMessages.length - 1);
     }
 
     private void displayScore() {
@@ -321,7 +318,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         if (!ImageDownloads.isOnline(this)) {
             selection = HSData.Student.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
         }
-        if (mGameMax != Integer.MAX_VALUE && mGameMax > 0) {
+        if (mGameMax > 0) {
            limit = mGameMax + "";
         }
         if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
@@ -338,6 +335,10 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
+        if (mGameMax == Constants.INVALID_MIN) {
+            mGameMax = o.getCount();
+        }
+
         if (mGameOver) {
             showEndGame();
         } else {

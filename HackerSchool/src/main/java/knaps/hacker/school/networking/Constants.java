@@ -15,4 +15,5 @@ public final class Constants {
     public static final String BATCH_NAME = "batch_name";
     public static final String RUNTIME_STRING = "Run Time";
     public static final String BATCH_STRING = "Batch";
+    public static final int INVALID_MIN = -1;
 }

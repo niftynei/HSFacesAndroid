@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.zip.Inflater;
 
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.networking.Constants;
@@ -47,12 +44,12 @@ public class ChooseGameFragment extends Fragment implements View.OnClickListener
         }
 
         limitCounts = new KeyMap[] {
-                KeyMap.make(-1,  Constants.RUNTIME_STRING),
+                KeyMap.make(Constants.INVALID_MIN,  Constants.RUNTIME_STRING),
                 KeyMap.make(5, "o(1)"),
                 KeyMap.make(10, "o(n)"),
                 KeyMap.make(20, "o(n^2)"),
                 KeyMap.make(50, "o(n^n)"),
-                KeyMap.make(Integer.MAX_VALUE, "o(n!)"),
+                KeyMap.make(Constants.INVALID_MIN, "o(n!)"),
 
         };
     }
