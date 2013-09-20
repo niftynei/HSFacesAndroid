@@ -107,9 +107,9 @@ public class LoginActivity extends FragmentActivity implements View.OnClickListe
                 }
                 break;
             case R.id.buttonGame:
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.add(android.R.id.content, new ChooseGameFragment(), null);
-                transaction.commit();
+                Intent playGame = new Intent(LoginActivity.this, GuessThatHSActivity.class);
+                playGame.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(playGame);
                 break;
             case R.id.buttonBrowse:
                 Intent browse = new Intent(LoginActivity.this, HSListActivity.class);

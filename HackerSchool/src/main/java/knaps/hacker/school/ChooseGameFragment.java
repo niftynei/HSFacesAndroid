@@ -3,6 +3,7 @@ package knaps.hacker.school;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -22,12 +23,23 @@ import knaps.hacker.school.networking.Constants;
 /**
  * Created by lisaneigut on 17 Sep 2013.
  */
-public class ChooseGameFragment extends Fragment implements View.OnClickListener {
+public class ChooseGameFragment extends DialogFragment implements View.OnClickListener {
 
     KeyMap[] limitCounts;
     KeyMap[] batches;
     private Spinner mBatchSpinner;
     private Spinner mCountSpinner;
+    private OnChooseGameListener mListener;
+
+    interface OnChooseGameListener {
+        public void onChooseGame(String batch, int gameMax);
+    }
+
+    public ChooseGameFragment() {}
+
+    public void setOnChooseGameListener(OnChooseGameListener listener) {
+        mListener = listener;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,9 +107,11 @@ public class ChooseGameFragment extends Fragment implements View.OnClickListener
             final Intent intent = new Intent(getActivity(), GuessThatHSActivity.class);
             final KeyMap countItem = (KeyMap) mCountSpinner.getSelectedItem();
             final KeyMap batchItem = (KeyMap) mBatchSpinner.getSelectedItem();
-            intent.putExtra(Constants.GAME_MAX, countItem.sKey);
-            intent.putExtra(Constants.BATCH_NAME, batchItem.sValue);
-            startActivity(intent);
+
+            if (mListener != null) {
+                mListener.onChooseGame(batchItem.sValue, countItem.sKey);
+            }
+            this.dismissAllowingStateLoss();
         }
     }
 

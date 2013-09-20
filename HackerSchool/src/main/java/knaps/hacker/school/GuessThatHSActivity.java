@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
+import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
@@ -46,7 +48,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
     private TextView mGuessCounter;
     private TextView mBatchText;
 
-    private knaps.hacker.school.models.Student mCurrentStudent;
+    private Student mCurrentStudent;
     private static Cursor mStudentCursor;
     private int mCurrentScore;
     private int mCurrentGuesses;
@@ -110,6 +112,24 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 
         getSupportLoaderManager().initLoader(0, null, this);
         setupActionBar();
+
+        if (!mIsRestart) {
+            showGameSettingsDialog();
+        }
+    }
+
+    private void showGameSettingsDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ChooseGameFragment fragment = new ChooseGameFragment();
+        fragment.setOnChooseGameListener(new ChooseGameFragment.OnChooseGameListener() {
+            @Override
+            public void onChooseGame(String batch, int gameMax) {
+                mBatchName = batch;
+                mGameMax = gameMax;
+                restartGame();
+            }
+        });
+        fragment.show(fm, "fragment_choose_dialog");
     }
 
     /**
@@ -175,7 +195,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
                 displayScore();
                 break;
             case R.id.buttonRestart:
-                restartGame();
+                showGameSettingsDialog();
             default:
                 //no default
         }
@@ -190,8 +210,8 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 //            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
 //        }
         if (mStudentCursor != null) {
-            int count = mStudentCursor.getCount() - mCurrentGuesses;
-            mGuessCounter.setText(String.valueOf(count));
+            int count = mGameMax - mCurrentGuesses;
+            if (count > 0) mGuessCounter.setText(String.valueOf(count));
         }
     }
 
@@ -234,7 +254,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mRestartButton.setVisibility(View.GONE);
         mGuess.setVisibility(View.VISIBLE);
         mEditGuess.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     private void showEndGame() {
