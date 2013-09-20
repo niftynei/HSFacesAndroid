@@ -32,7 +32,7 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
         for (int i = 0; i < cursor.getCount(); i++) {
             randomizedOrder.add(i);
         }
-        long seed = System.nanoTime();
+        long seed = System.nanoTime() % 1000000;
         Collections.shuffle(randomizedOrder, new Random(seed));
         mCurrentIndex = 0;
     }
