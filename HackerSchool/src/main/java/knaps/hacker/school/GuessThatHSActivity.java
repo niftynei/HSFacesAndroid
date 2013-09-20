@@ -13,6 +13,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -192,7 +193,6 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
                     showFail();
                     mCurrentGuesses++;
                 }
-                displayScore();
                 break;
             case R.id.buttonRestart:
                 showGameSettingsDialog();
@@ -210,13 +210,13 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 //            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
 //        }
         if (mStudentCursor != null) {
-            int count = mGameMax - mCurrentGuesses;
+            int count = mGameMax - mCurrentGuesses - 1;
             if (count > -1) mGuessCounter.setText(String.valueOf(count));
         }
     }
 
     private void showNextStudent(boolean isFirst) {
-        if (mStudentCursor.isLast() || mGameMax <= mStudentCursor.getPosition()) {
+        if (mStudentCursor.isLast() || mGameMax - 1 <= mStudentCursor.getPosition()) {
             showEndGame();
         }
         else if (mStudentCursor.getCount() > 0) {
@@ -227,6 +227,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
                 mStudentCursor.moveToNext();
             }
             showStudent();
+            displayScore();
             mGuess.setClickable(true);
             mEditGuess.setEnabled(true);
         }
@@ -254,7 +255,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         mRestartButton.setVisibility(View.GONE);
         mGuess.setVisibility(View.VISIBLE);
         mEditGuess.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     private void showEndGame() {
@@ -338,13 +339,11 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         if (!ImageDownloads.isOnline(this)) {
             selection = HSData.HSer.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
         }
-        if (mGameMax > 0) {
-           limit = mGameMax + "";
-        }
         if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
             if (selection != null) selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
-            else selection = HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
+            else selection = HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_LIKE_Q;
             selectionArgs = new String[] {mBatchName};
+            Log.d("XML --- debugging", selection);
         }
         return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
                 .columns(HSData.HSer.PROJECTION_ALL)

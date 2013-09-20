@@ -23,6 +23,7 @@ public final class HSData {
     public static final String STMT_LIMIT = " LIMIT ";
     public static final String STMT_AND = " AND ";
     public static final String STMT_EQUALS_Q = " = ?";
+    public static final String STMT_LIKE_Q = " LIKE ?";
 
 
     public static abstract class HSer implements BaseColumns {
