@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textGuessCount"
+        style="@style/CodeStyleFont"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true" />
 
@@ -21,6 +22,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/textBatchName"
+        style="@style/CodeStyleFont"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="2dp"
         android:layout_below="@+id/textGuessCount"
@@ -43,6 +45,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="@string/guess_name"
+        style="@style/CodeStyleFont"
         android:ems="10"
         android:id="@+id/editGuess"
         android:imeOptions="actionDone"
@@ -55,6 +58,7 @@
         android:layout_height="wrap_content"
         android:text="@string/submit_guess"
         android:id="@+id/buttonGuess"
+        style="@style/CodeStyleFont"
         android:layout_below="@+id/editGuess"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="13dp" />
@@ -64,6 +68,7 @@
         android:layout_height="wrap_content"
         android:text="Play Again?"
         android:id="@+id/buttonRestart"
+        style="@style/CodeStyleFont"
         android:visibility="gone"
         android:layout_below="@id/imageStudent"
         android:layout_centerHorizontal="true" />

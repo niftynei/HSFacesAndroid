@@ -86,6 +86,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:id="@+id/textName"
+        style="@style/CodeStyleFont.Bold"
         />
 
     <TextView
@@ -95,6 +96,7 @@
         android:layout_gravity="center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textBatch"
+        style="@style/CodeStyleFont"
     />
     <LinearLayout
         android:layout_width="match_parent"
@@ -109,6 +111,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Working at:"
         android:id="@+id/textJobLabel"
+        style="@style/CodeStyleFont.Bold"
         android:layout_marginRight="8dp"
         />
     <TextView
@@ -117,6 +120,7 @@
         android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="some hot company"
+        style="@style/CodeStyleFont"
         android:id="@+id/textJob"
         />
     </LinearLayout>
@@ -125,6 +129,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
+        style="@style/CodeStyleFont"
         android:layout_marginTop="8dp"
         >
     <TextView
@@ -133,6 +138,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Skills: "
         android:id="@+id/textSkillsLabel"
+        style="@style/CodeStyleFont.Bold"
         android:layout_marginRight="8dp"
     />
     <TextView
@@ -141,6 +147,7 @@
         android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Skills content"
+        style="@style/CodeStyleFont"
         android:id="@+id/textPasswordNotice"
     />
         </LinearLayout>

@@ -38,6 +38,7 @@
             android:gravity="center"
             android:paddingTop="4dp"
             android:id="@+id/textBatchName"
+            style="@style/CodeStyleFont"
         />
         <View
             android:layout_height="0dp"
@@ -56,6 +57,7 @@
         android:id="@+id/editGuess"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/layoutImage"
+        style="@style/CodeStyleFont"
         android:layout_alignParentRight="true" />
 
     <Button
@@ -64,6 +66,7 @@
         android:text="@string/submit_guess"
         android:id="@+id/buttonGuess"
         android:layout_below="@+id/editGuess"
+        style="@style/CodeStyleFont"
         android:layout_alignParentRight="true" />
 
     <TextView
@@ -72,6 +75,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textGuessCount"
         android:layout_alignParentTop="true"
+        style="@style/CodeStyleFont"
         android:layout_alignParentRight="true" />
    <Button
         android:layout_width="wrap_content"
@@ -79,6 +83,7 @@
         android:text="Play Again?"
         android:id="@+id/buttonRestart"
        android:visibility="gone"
+       style="@style/CodeStyleFont"
        android:layout_centerVertical="true"
        android:layout_centerHorizontal="true" />
 </RelativeLayout>

@@ -17,4 +17,11 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="CodeStyleFont">
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="CodeStyleFont.Bold" parent="CodeStyleFont">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

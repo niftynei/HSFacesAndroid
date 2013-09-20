@@ -17,6 +17,7 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:id="@+id/button"
+            style="@style/CodeStyleFont"
             android:layout_below="@+id/textPasswordNotice"
             android:layout_centerHorizontal="true" />
 
@@ -27,6 +28,7 @@
             android:ems="10"
             android:hint="Password"
             android:id="@+id/editPassword"
+            style="@style/CodeStyleFont"
             android:layout_centerVertical="true"
             android:layout_alignRight="@+id/button" />
 
@@ -37,6 +39,7 @@
             android:ems="10"
             android:hint="Email"
             android:id="@+id/editEmail"
+            style="@style/CodeStyleFont"
             android:layout_above="@+id/editPassword"
             android:layout_alignLeft="@+id/editPassword">
             <requestFocus/>
@@ -49,6 +52,7 @@
             android:textColor="@android:color/darker_gray"
             android:text="Your password will not be stored or saved."
             android:id="@+id/textPasswordNotice"
+            style="@style/CodeStyleFont"
             android:layout_below="@+id/editPassword"
             android:layout_alignLeft="@+id/editPassword"/>
 
@@ -57,6 +61,7 @@
             android:layout_height="wrap_content"
             android:text="@string/start_playing"
             android:id="@+id/buttonGame"
+            style="@style/CodeStyleFont"
             android:layout_below="@+id/button"
             android:layout_alignLeft="@+id/button" />
         <Button
@@ -64,6 +69,7 @@
             android:layout_height="wrap_content"
             android:text="Browse Hacker Schoolers"
             android:id="@+id/buttonBrowse"
+            style="@style/CodeStyleFont"
             android:layout_below="@+id/buttonGame"
             android:layout_alignLeft="@+id/buttonGame" />
     </RelativeLayout>

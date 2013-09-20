@@ -9,6 +9,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -64,6 +65,12 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
                 KeyMap.make(Constants.INVALID_MIN, "o(n!)"),
 
         };
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
     }
 
     @Override
