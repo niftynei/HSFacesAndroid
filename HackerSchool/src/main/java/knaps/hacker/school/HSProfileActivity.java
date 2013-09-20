@@ -18,7 +18,7 @@ import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
-public class HSProfileActivity extends Activity implements View.OnClickListener {
+public class HSProfileActivity extends BaseFragmentActivity implements View.OnClickListener {
 
     private ImageView mImageView;
     private TextView mNameView;

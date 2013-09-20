@@ -33,7 +33,7 @@ Hacker Schooler.
 - [ ] Faster XML parsing
 - [x] Give users option to play by batch
 - [ ] Style toasts to for Correct and Wrong
-- [ ] add some more custom styling to fonts
+- [x] add some more custom styling to fonts
 - [ ] animations for win
 - [ ] User & skill search
 - [ ] Store user login data (if requested) and high score

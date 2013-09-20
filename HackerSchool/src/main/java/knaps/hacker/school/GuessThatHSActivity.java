@@ -32,7 +32,7 @@ import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
-public class GuessThatHSActivity extends FragmentActivity implements View.OnClickListener,
+public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,
         LoaderManager.LoaderCallbacks<Cursor>, TextView.OnEditorActionListener {
 
     private static final String GUESS_COUNT = "guess_count";
@@ -149,6 +149,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 //        getMenuInflater().inflate(R.menu.guess_that_h, menu);
 //        return true;
 //    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

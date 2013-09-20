@@ -23,7 +23,7 @@ import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.networking.Constants;
 
-public class HSListActivity extends FragmentActivity implements
+public class HSListActivity extends BaseFragmentActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
 
     SimpleCursorAdapter mAdapter;

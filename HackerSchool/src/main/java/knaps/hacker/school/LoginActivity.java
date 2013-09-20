@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.google.analytics.tracking.android.Tracker;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,7 +40,7 @@ import knaps.hacker.school.data.HSParser;
 import knaps.hacker.school.networking.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
-public class LoginActivity extends FragmentActivity implements View.OnClickListener {
+public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener {
 
     View mLoadingView;
     EditText mEmailView;
@@ -83,6 +87,18 @@ public class LoginActivity extends FragmentActivity implements View.OnClickListe
     protected void onDestroy() {
         mDestroyed = true;
         super.onDestroy();
+    }
+
+    private void logTiming(long time, String eventName) {
+        Tracker easyTracker = EasyTracker.getInstance(this);
+
+        if (easyTracker != null)
+            easyTracker.send(MapBuilder
+                    .createTiming("app_inits",    // Timing category (required)
+                            time,       // Timing interval in milliseconds (required)
+                            eventName,  // Timing name
+                            null)           // Timing label
+                    .build());
     }
 
 //    @Override
@@ -147,8 +163,11 @@ public class LoginActivity extends FragmentActivity implements View.OnClickListe
                     formData.add(new BasicNameValuePair("password", mPassword));
                     httpPost.setEntity(new UrlEncodedFormEntity(formData));
 
+                    long starTimingDownload = System.currentTimeMillis();
                     final HttpResponse response = httpClient.execute(httpPost);
                     final HttpEntity entity = response.getEntity();
+                    long endTimingDownload = System.currentTimeMillis() - starTimingDownload;
+                    logTiming(endTimingDownload, "download_data");
 
                     // TODO: save session cookie??
     //                for (final Header h : response.getAllHeaders()) {
@@ -161,9 +180,17 @@ public class LoginActivity extends FragmentActivity implements View.OnClickListe
                     }
 
                     final HashSet<String> existingBatches = new HSDatabaseHelper(LoginActivity.this).getExistingBatches();
+
+                    long startTimingBatches = System.currentTimeMillis();
                     final ArrayList<knaps.hacker.school.models.Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
+                    logTiming(endTimingBatches, "parse_batches");
+
                     if (students.size() > 0) {
+                        long startTimingWriteDb = System.currentTimeMillis();
                         HSParser.writeStudentsToDatabase(students, LoginActivity.this);
+                        long endTimingWriteDb = System.currentTimeMillis() - startTimingWriteDb;
+                        logTiming(endTimingWriteDb, "write_db");
                         return null;
                     }
                     else if (existingBatches.size() > 0 && mHasData) {
