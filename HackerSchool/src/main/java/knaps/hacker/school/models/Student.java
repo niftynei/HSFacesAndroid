@@ -37,17 +37,17 @@ public class Student implements Serializable {
     public String mBatchId = "";
 
     public Student(Cursor cursor) {
-        mId = cursor.getInt(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_ID));
-        mName = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_FULL_NAME));
-        mImageUrl = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_IMAGE_URL));
-        mJob = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_JOB));
-        mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_JOB_URL));
-        mSkills = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_SKILLS));
-        mEmail = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_EMAIL));
-        mGithubUrl = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_GITHUB));
-        mTwitterUrl = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_TWITTER));
-        mBatch = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_BATCH));
-        mBatchId = cursor.getString(cursor.getColumnIndex(HSData.Student.COLUMN_NAME_BATCH_ID));
+        mId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
+        mName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FULL_NAME));
+        mImageUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
+        mJob = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB));
+        mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
+        mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));
+        mEmail = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_EMAIL));
+        mGithubUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_GITHUB));
+        mTwitterUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_TWITTER));
+        mBatch = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH));
+        mBatchId = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
     }
 
     public Student(String batch, String batchId, Node student, XPath path) throws XPathExpressionException {

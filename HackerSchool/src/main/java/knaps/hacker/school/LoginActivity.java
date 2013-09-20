@@ -6,7 +6,6 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -64,7 +63,7 @@ public class LoginActivity extends FragmentActivity implements View.OnClickListe
 
         final HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        final long results = DatabaseUtils.queryNumEntries(db, HSData.Student.TABLE_NAME);
+        final long results = DatabaseUtils.queryNumEntries(db, HSData.HSer.TABLE_NAME);
         if (results > 0) {
             mHasData = true;
             Button goToGameButton = (Button) findViewById(R.id.buttonGame);

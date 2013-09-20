@@ -316,18 +316,18 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
         String selection = null;
         String[] selectionArgs = null;
         if (!ImageDownloads.isOnline(this)) {
-            selection = HSData.Student.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
+            selection = HSData.HSer.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
         }
         if (mGameMax > 0) {
            limit = mGameMax + "";
         }
         if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
-            if (selection != null) selection += HSData.STMT_AND + HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
-            else selection = HSData.Student.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
+            if (selection != null) selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
+            else selection = HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
             selectionArgs = new String[] {mBatchName};
         }
-        return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.Student.TABLE_NAME)
-                .columns(HSData.Student.PROJECTION_ALL)
+        return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
+                .columns(HSData.HSer.PROJECTION_ALL)
                 .selection(selection)
                 .selectionArgs(selectionArgs)
                 .limit(limit).build();

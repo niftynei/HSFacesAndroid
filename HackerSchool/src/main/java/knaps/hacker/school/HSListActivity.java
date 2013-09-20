@@ -45,7 +45,7 @@ public class HSListActivity extends FragmentActivity implements
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
-        String[] fromColumns = {HSData.Student.COLUMN_NAME_FULL_NAME};
+        String[] fromColumns = {HSData.HSer.COLUMN_NAME_FULL_NAME};
         int[] toViews = {android.R.id.text1};
 
         mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, fromColumns, toViews, 0);
@@ -93,8 +93,8 @@ public class HSListActivity extends FragmentActivity implements
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new SQLiteCursorLoader(this,
-                HSData.Student.TABLE_NAME, HSData.Student.PROJECTION_ALL,
-                HSData.Student.SORT_DEFAULT);
+                HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL,
+                HSData.HSer.SORT_DEFAULT);
     }
 
     @Override

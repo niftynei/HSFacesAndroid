@@ -25,7 +25,7 @@ public final class HSData {
     public static final String STMT_EQUALS_Q = " = ?";
 
 
-    public static abstract class Student implements BaseColumns {
+    public static abstract class HSer implements BaseColumns {
         public static final String TABLE_NAME = "students";
         public static final String COLUMN_NAME_ID = "id";
         public static final String COLUMN_NAME_FULL_NAME = "fullName";
