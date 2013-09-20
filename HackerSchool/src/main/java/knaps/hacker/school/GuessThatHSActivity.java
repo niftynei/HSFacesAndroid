@@ -211,7 +211,7 @@ public class GuessThatHSActivity extends FragmentActivity implements View.OnClic
 //        }
         if (mStudentCursor != null) {
             int count = mGameMax - mCurrentGuesses;
-            if (count > 0) mGuessCounter.setText(String.valueOf(count));
+            if (count > -1) mGuessCounter.setText(String.valueOf(count));
         }
     }
 
