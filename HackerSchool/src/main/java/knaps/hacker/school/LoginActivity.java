@@ -96,15 +96,17 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     }
 
     private void logTiming(long time, String eventName) {
-        Tracker easyTracker = EasyTracker.getInstance(this);
+        if (!BuildConfig.DEBUG) {
+            final Tracker easyTracker = EasyTracker.getInstance(this);
 
-        if (easyTracker != null)
-            easyTracker.send(MapBuilder
-                    .createTiming("app_inits",    // Timing category (required)
-                            time,       // Timing interval in milliseconds (required)
-                            eventName,  // Timing name
-                            null)           // Timing label
-                    .build());
+            if (easyTracker != null)
+                easyTracker.send(MapBuilder
+                        .createTiming("app_inits",    // Timing category (required)
+                                time,       // Timing interval in milliseconds (required)
+                                eventName,  // Timing name
+                                null)           // Timing label
+                        .build());
+        }
     }
 
 //    @Override
