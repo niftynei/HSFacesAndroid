@@ -28,12 +28,16 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
@@ -172,11 +176,6 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
                     long endTimingDownload = System.currentTimeMillis() - starTimingDownload;
                     logTiming(endTimingDownload, "download_data");
 
-                    // TODO: save session cookie??
-    //                for (final Header h : response.getAllHeaders()) {
-    //                    Log.d("XML HEADERS", h.toString());
-    //                }
-
                     int statusCode = response.getStatusLine().getStatusCode();
                     if (statusCode != 302 && statusCode != 200) {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
@@ -205,13 +204,22 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
 
                 } catch (UnsupportedEncodingException e) {
                     Log.e("Error", "error!!", e);
-                    return "Error code 100";
+                    return "Error with network request: 100";
                 } catch (ClientProtocolException e) {
                     Log.e("Error", "error!!", e);
-                    return "Error code 200";
+                    return "Error with network request: 200";
                 } catch (IOException e) {
                     Log.e("Error", "error!!", e);
-                    return "Error code 300";
+                    return "Error with network request: 300";
+                } catch (SAXException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error with parsing: 400";
+                } catch (XPathExpressionException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error with parsing: 500";
+                } catch (TransformerConfigurationException e) {
+                    Log.e("Error", "error!!", e);
+                    return "Error with parsing: 600";
                 }
             }
             else {

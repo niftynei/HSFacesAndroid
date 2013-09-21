@@ -41,7 +41,8 @@ import javax.xml.xpath.XPathFactory;
  */
 public class HSParser {
 
-    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, HashSet<String> existingBatches) {
+    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, HashSet<String> existingBatches)
+            throws IOException, SAXException, TransformerConfigurationException, XPathExpressionException {
         long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath path = factory.newXPath();
@@ -50,37 +51,25 @@ public class HSParser {
         path.setNamespaceContext(nc);
         final ArrayList<knaps.hacker.school.models.Student> studentList = new ArrayList<knaps.hacker.school.models.Student>();
 
-        try {
-            final Node cleanedDom = getHtmlUrlNode(xml);
+        final Node cleanedDom = getHtmlUrlNode(xml);
 //            Log.d("XML - - cleaned dom..", dumpNode(cleanedDom, true));
-            final NodeList batches = (NodeList) path.evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
-            Log.d("XML - - batch count..", batches.getLength()+"");
+        final NodeList batches = (NodeList) path.evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
+        Log.d("XML - - batch count..", batches.getLength()+"");
 
-            for (int i = 0; i < batches.getLength(); i++) {
-                final Element batch = (Element) batches.item(i);
-                final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
-                final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
-                Log.d("XML - - parsing batch ..", batchName + ":" + batchId);
+        for (int i = 0; i < batches.getLength(); i++) {
+            final Element batch = (Element) batches.item(i);
+            final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
+            final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
+            Log.d("XML - - parsing batch ..", batchName + ":" + batchId);
 
-                // only add the students if this batch has not already been parsed
-                if (!existingBatches.contains(batchId)) {
-                    final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
-                    for (int j = 0; j < students.getLength(); j++) {
-                        final Element student = (Element) students.item(j);
-                        studentList.add(new knaps.hacker.school.models.Student(batchName, batchId, student, path));
-                    }
+            // only add the students if this batch has not already been parsed
+            if (!existingBatches.contains(batchId)) {
+                final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
+                for (int j = 0; j < students.getLength(); j++) {
+                    final Element student = (Element) students.item(j);
+                    studentList.add(new knaps.hacker.school.models.Student(batchName, batchId, student, path));
                 }
             }
-        } catch (XPathExpressionException e) {
-            Log.e("XML - - error parsing xpath", "error parsing xpath", e);
-        } catch (SAXException e) {
-            Log.e("XML - - error parsing xpath", "error parsing xpath", e);
-        } catch (TransformerConfigurationException e) {
-            Log.e("XML - - error parsing xpath", "error parsing xpath", e);
-        } catch (IOException e) {
-            Log.e("XML - - error parsing xpath", "error parsing xpath", e);
-        } catch (TransformerException e) {
-            Log.e("XML - - error parsing xpath", "error parsing xpath", e);
         }
 
         Log.d("XML _ timing", "Total time for parsing: " + (System.currentTimeMillis() - startTime) + "ms");
