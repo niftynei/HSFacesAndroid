@@ -59,12 +59,18 @@ public class ImageDownloads {
             sMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
                 @Override
                 protected int sizeOf(String key, Bitmap bitmap) {
-                    return bitmap.getByteCount() / 1024;
+                    return (int) (getSizeInBytes(bitmap) / 1024);
+                }
+
+                private long getSizeInBytes(final Bitmap bitmap) {
+                    return bitmap.getRowBytes() * bitmap.getHeight();
                 }
             };
+
         }
         return sMemoryCache;
     }
+
 
     public static class SaveToCacheTask extends AsyncTask<Void, Void, Void> {
 
