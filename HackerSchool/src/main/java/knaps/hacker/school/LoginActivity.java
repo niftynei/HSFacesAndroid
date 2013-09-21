@@ -2,6 +2,7 @@ package knaps.hacker.school;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -55,6 +56,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mDestroyed = false;
         mLoginButton = (Button) findViewById(R.id.button);
         mLoginButton.setOnClickListener(this);
 
@@ -119,6 +121,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
                     mLoginButton.setText("Login");
                 }
                 else if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
                     new LoginAsyncTask(mEmailView.getText().toString(), mPasswordView.getText().toString()).execute();
                 }
                 break;
@@ -220,6 +223,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         protected void onPostExecute(String result) {
             if (mDestroyed) return;
 
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             mLoadingView.setVisibility(View.GONE);
             if (result == null) {
                 // navigate to the game page
