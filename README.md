@@ -10,7 +10,7 @@ School student and saves it to a SQLite database on disk.  Note that if you clea
 go through the set up process again.  When a new batch is added, there is an option for refreshing the data from online. Past data
  is not updated unless all data has been cleared out.  
 
-Inital load is quite lengthy (due to XPath processing. This could use some optimization). Most of it is in app processing, 
+Initial load is quite lengthy (due to XPath processing. This could use some optimization). Most of it is in app processing, 
 not data downloaded from the network.
 
 Images are stored locally in internal storage.  This could probably use some more error checking.  Offline play uses only the images that are already stored locally.
