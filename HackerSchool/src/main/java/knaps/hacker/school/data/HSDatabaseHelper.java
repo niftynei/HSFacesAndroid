@@ -2,9 +2,12 @@ package knaps.hacker.school.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -36,8 +39,8 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public HashSet<String> getExistingBatches() {
-        final HashSet<String> batches = new HashSet<String>();
+    public ArrayList<String> getExistingBatches() {
+        final ArrayList<String> batches = new ArrayList<String>();
         // sql statement for distinct batch names
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.query(true, HSData.HSer.TABLE_NAME, new String[]{HSData.HSer.COLUMN_NAME_BATCH_ID}, null,
@@ -54,12 +57,12 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         return batches;
     }
 
-    public HashSet<String> getExistingBatchesByName() {
-        final HashSet<String> batches = new HashSet<String>();
+    public ArrayList<String> getExistingBatchesByName() {
+        final ArrayList<String> batches = new ArrayList<String>();
         // sql statement for distinct batch names
         final SQLiteDatabase db = getReadableDatabase();
         final Cursor cursor = db.query(true, HSData.HSer.TABLE_NAME, new String[]{HSData.HSer.COLUMN_NAME_BATCH}, null,
-                null, HSData.HSer.COLUMN_NAME_BATCH, null, null, null);
+                null, HSData.HSer.COLUMN_NAME_BATCH, null, HSData.HSer.SORT_BATCH, null);
 
         if (cursor != null) {
             while (cursor.moveToNext()) {

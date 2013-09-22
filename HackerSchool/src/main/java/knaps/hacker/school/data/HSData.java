@@ -158,5 +158,8 @@ public final class HSData {
         public static final String SORT_DEFAULT =
                 COLUMN_NAME_BATCH_ID + " DESC" + COMMA_SEP +
                 COLUMN_NAME_FULL_NAME + " ASC";
+
+        public static final String SORT_BATCH =
+                COLUMN_NAME_BATCH_ID + " ASC";
     }
 }

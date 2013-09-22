@@ -41,7 +41,7 @@ import javax.xml.xpath.XPathFactory;
  */
 public class HSParser {
 
-    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, HashSet<String> existingBatches)
+    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, ArrayList<String> existingBatches)
             throws IOException, SAXException, TransformerConfigurationException, XPathExpressionException {
         long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();

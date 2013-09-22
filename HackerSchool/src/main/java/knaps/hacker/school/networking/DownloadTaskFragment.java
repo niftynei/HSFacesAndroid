@@ -33,6 +33,7 @@ import knaps.hacker.school.BuildConfig;
 import knaps.hacker.school.LoginActivity;
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.data.HSParser;
+import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
 
 /**
@@ -126,10 +127,10 @@ public class DownloadTaskFragment extends Fragment {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 
-                    final HashSet<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
+                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
 
                     long startTimingBatches = System.currentTimeMillis();
-                    final ArrayList<knaps.hacker.school.models.Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
                     long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
                     logTiming(endTimingBatches, "parse_batches");
 

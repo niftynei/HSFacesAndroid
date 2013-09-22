@@ -45,10 +45,7 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final HashSet<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatchesByName();
-        ArrayList<String> batchNames = new ArrayList<String>(existingBatches);
-        Collections.sort(batchNames);
-
+        final ArrayList<String> batchNames = new HSDatabaseHelper(getActivity()).getExistingBatchesByName();
         batches = new KeyMap[batchNames.size() + 1];
         batches[0] = KeyMap.make(-1, Constants.BATCH_STRING);
         for (int i = 0; i < batchNames.size(); i++) {
@@ -57,11 +54,11 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
 
         limitCounts = new KeyMap[] {
                 KeyMap.make(Constants.INVALID_MIN,  Constants.RUNTIME_STRING),
-                KeyMap.make(5, "o(1)"),
-                KeyMap.make(10, "o(n)"),
-                KeyMap.make(20, "o(n^2)"),
-                KeyMap.make(50, "o(n^n)"),
-                KeyMap.make(Constants.INVALID_MIN, "o(n!)"),
+                KeyMap.make(5, "O(1)"),
+                KeyMap.make(10, "O(n)"),
+                KeyMap.make(20, "O(n^2)"),
+                KeyMap.make(50, "O(n^n)"),
+                KeyMap.make(Constants.INVALID_MIN, "O(n!)"),
 
         };
     }
@@ -82,7 +79,7 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
         mCountSpinner = (Spinner) view.findViewById(R.id.spinnerLimit);
         Pair<Integer, String>[] paris = null;
         mCountSpinner.setAdapter(new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, limitCounts));
-        mCountSpinner.setPrompt("Run Time");
+        mCountSpinner.setPrompt("Run Number");
 
         view.findViewById(R.id.buttonPlay).setOnClickListener(this);
         return view;

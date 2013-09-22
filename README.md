@@ -33,12 +33,13 @@ Hacker Schooler.
 - [ ] Faster XML parsing
 - [x] Give users option to play by batch
 - [ ] Style toasts to for Correct and Wrong
-- [x] add some more custom styling to fonts
 - [ ] animations for win
+- [x] add some more custom styling to fonts
 - [ ] User & skill search
 - [x] Store user login data (if requested) and high score
 - [ ] Display current user's image after they've logged in
 - [ ] Better tablet design for list and drill down
+- [ ] Keep list of common nicknames
 
 ## Contributions
 
