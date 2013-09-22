@@ -112,7 +112,7 @@ public class HSParser {
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
         final SQLiteDatabase db =   mDbHelper.getWritableDatabase();
         db.beginTransaction();
-        final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_INSERT_ALL);
+        final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 
         for (knaps.hacker.school.models.Student student : students) {
             stmt.bindLong(1, student.mId);
@@ -132,6 +132,7 @@ public class HSParser {
 
         db.setTransactionSuccessful();
         db.endTransaction();
+        db.close();
         Log.d("XML _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }

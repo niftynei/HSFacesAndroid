@@ -19,6 +19,7 @@ public final class HSData {
     public static final String STMT_FROM = " FROM ";
     public static final String STMT_WHERE = " WHERE ";
     public static final String STMT_INSERT = "INSERT INTO ";
+    public static final String STMT_INSERT_OR_REPLACE = "INSERT OR REPLACE INTO ";
     public static final String STMT_IS_NOT_NULL = " IS NOT NULL ";
     public static final String STMT_LIMIT = " LIMIT ";
     public static final String STMT_AND = " AND ";
@@ -77,8 +78,8 @@ public final class HSData {
         public static final String SQL_DELETE =
                 STMT_DROP_TABLE + TABLE_NAME;
 
-        public static final String SQL_INSERT_ALL =
-                STMT_INSERT + TABLE_NAME + "(" +
+        public static final String SQL_UPSERT_ALL =
+                STMT_INSERT_OR_REPLACE + TABLE_NAME + "(" +
                 COLUMN_NAME_ID + COMMA_SEP +
                 COLUMN_NAME_FULL_NAME + COMMA_SEP +
                 COLUMN_NAME_IMAGE_URL + COMMA_SEP +
