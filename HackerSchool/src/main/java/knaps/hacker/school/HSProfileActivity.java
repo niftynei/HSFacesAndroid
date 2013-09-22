@@ -1,6 +1,7 @@
 package knaps.hacker.school;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,12 +13,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
-public class HSProfileActivity extends BaseFragmentActivity implements View.OnClickListener {
+public class HSProfileActivity extends BaseFragmentActivity implements View.OnClickListener, ImageDownloads.ImageDownloadCallback {
 
     private ImageView mImageView;
     private TextView mNameView;
@@ -55,7 +58,8 @@ public class HSProfileActivity extends BaseFragmentActivity implements View.OnCl
     }
 
     private void populateViews(Student student) {
-        new ImageDownloads.HSGetImageTask(student.mImageUrl, mImageView, this).execute();
+        new ImageDownloads.HSGetImageTask(student.mImageUrl, this, this).execute();
+
         mNameView.setText(student.mName);
         mBatchView.setText(student.mBatch);
 
@@ -141,6 +145,25 @@ public class HSProfileActivity extends BaseFragmentActivity implements View.OnCl
                 break;
             default:
                 // do nothing
+        }
+    }
+
+    @Override
+    public void onPreImageDownload() {
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+    }
+
+    @Override
+    public void onImageDownloaded(Bitmap bitmap) {
+        mImageView.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onImageFailed() {
+        mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        mImageView.setAlpha(100);
+        if (ImageDownloads.isOnline(this)) {
+            Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
         }
     }
 }

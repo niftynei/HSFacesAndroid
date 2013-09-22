@@ -36,7 +36,7 @@ import knaps.hacker.school.utils.SharedPrefsUtil;
 import knaps.hacker.school.utils.StringUtil;
 
 public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,
-        LoaderManager.LoaderCallbacks<Cursor>, TextView.OnEditorActionListener {
+        LoaderManager.LoaderCallbacks<Cursor>, TextView.OnEditorActionListener, ImageDownloads.ImageDownloadCallback {
 
     private static final String GUESS_COUNT = "guess_count";
     private static final String CORRECT_COUNT = "correct_count";
@@ -84,9 +84,6 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mRestartButton.setOnClickListener(this);
         mGuessCounter = (TextView) findViewById(R.id.textGuessCount);
         mBatchText = (TextView) findViewById(R.id.textBatchName);
-
-        // TODO: save high score to preferences (so you can beat yourself!)
-        // TODO: Settings -- save your email and password
 
         mRetainedFragment = ImageDownloads.RetainFragment.findOrCreateRetainFragment(getSupportFragmentManager());
         mMemoryCache = mRetainedFragment.mRetainedCache;
@@ -247,7 +244,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             imm.toggleSoftInputFromWindow(mEditGuess.getWindowToken(), InputMethodManager.SHOW_FORCED, 0);
         }
 
-        new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, mHsPicture, this).execute();
+        new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, this, this).execute();
     }
 
     private void restartGame() {
@@ -404,5 +401,23 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onPreImageDownload() {
+        mHsPicture.setImageBitmap(null);
+        mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+    }
+
+    @Override
+    public void onImageDownloaded(Bitmap bitmap) {
+        mHsPicture.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onImageFailed() {
+        mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
+        showNextStudent(false);
     }
 }

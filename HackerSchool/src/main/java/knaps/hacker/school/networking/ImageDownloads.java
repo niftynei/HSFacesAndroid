@@ -32,6 +32,12 @@ public class ImageDownloads {
     private static final int IO_BUFFER_SIZE = 4 * 1024;
     private static LruCache<String, Bitmap> sMemoryCache;
 
+    public interface ImageDownloadCallback {
+        public void onPreImageDownload();
+        public void onImageDownloaded(Bitmap bitmap);
+        public void onImageFailed();
+    }
+
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -142,19 +148,18 @@ public class ImageDownloads {
     public static class HSGetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         final private String mUrl;
-        final private ImageView mImageView;
         final private Activity mContext;
+        final private ImageDownloadCallback mCallbacks;
 
-        public HSGetImageTask(String url, ImageView imageView, Activity context) {
+        public HSGetImageTask(String url, Activity context, ImageDownloadCallback callback) {
             mUrl = url;
-            mImageView = imageView;
             mContext = context;
+            mCallbacks = callback;
         }
 
         @Override
         protected void onPreExecute() {
-            mImageView.setImageBitmap(null);
-            mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher));
+            if (mCallbacks != null) mCallbacks.onPreImageDownload();
         }
 
         @Override
@@ -179,17 +184,15 @@ public class ImageDownloads {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (mContext != null) {
+            if (mCallbacks == null) return;
 
-                if (bitmap != null && mImageView != null) {
-                    mImageView.setImageBitmap(bitmap);
-                }
-                else if (mImageView != null) {
-                    mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher));
-                    Toast.makeText(mContext, "Error loading image.", Toast.LENGTH_SHORT).show();
-                }
-
+            if (bitmap != null) {
+                mCallbacks.onImageDownloaded(bitmap);
             }
+            else {
+                mCallbacks.onImageFailed();
+            }
+
         }
     }
 }
