@@ -329,11 +329,14 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mSuccessMessageCount = mSuccessMessageCount % 3;
     }
 
-    private boolean runGuess(final String guess) {
+    private boolean runGuess(String guess) {
         boolean returnValue = false;
+        guess = StringUtil.removeAccents(guess).toLowerCase();
         final String name = StringUtil.removeAccents(mCurrentStudent.mName).toLowerCase();
         final String[] names = name.split(" ");
-        if (guess.equals(name) || guess.equals(names[0]) || guess.equals(names[names.length - 1])) {
+        if (guess.equals(name)
+                || guess.equals(names[0])
+                || guess.equals(names[names.length - 1])) {
             mCurrentScore++;
             returnValue = true;
         }
