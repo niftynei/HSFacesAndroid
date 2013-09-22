@@ -23,6 +23,7 @@ public final class HSData {
     public static final String STMT_IS_NOT_NULL = " IS NOT NULL ";
     public static final String STMT_LIMIT = " LIMIT ";
     public static final String STMT_AND = " AND ";
+    public static final String STMT_OR = " OR ";
     public static final String STMT_EQUALS_Q = " = ?";
     public static final String STMT_LIKE_Q = " LIKE ?";
 
@@ -92,6 +93,12 @@ public final class HSData {
                 COLUMN_NAME_BATCH_ID + COMMA_SEP +
                 COLUMN_NAME_BATCH + ")  VALUES (" +
                 "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        public static final String GET_ALL_FILTERED =
+                STMT_SELECT + _ALL +
+                STMT_FROM + TABLE_NAME +
+                STMT_WHERE + COLUMN_NAME_FULL_NAME + STMT_LIKE_Q +
+                STMT_OR + COLUMN_NAME_SKILLS + STMT_LIKE_Q;
 
 
         public static final String GET_ALL = STMT_SELECT + _ALL + STMT_FROM + TABLE_NAME;

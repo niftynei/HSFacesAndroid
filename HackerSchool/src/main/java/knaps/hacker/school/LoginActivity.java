@@ -44,6 +44,7 @@ import knaps.hacker.school.data.HSParser;
 import knaps.hacker.school.networking.DownloadTaskFragment;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
+import knaps.hacker.school.utils.SharedPrefsUtil;
 
 public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener,
         DownloadTaskFragment.TaskCallbacks {
@@ -132,12 +133,14 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
                     mEmailView.setVisibility(View.VISIBLE);
                     mPasswordWarning.setVisibility(View.VISIBLE);
                     mLoginButton.setText("Login");
+                    mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
                 }
                 else if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
                     final String email = mEmailView.getText().toString();
                     final String password = mPasswordView.getText().toString();
                     mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
                     getSupportFragmentManager().beginTransaction().add(mDownloadFragment, "download_task").commit();
+                    SharedPrefsUtil.saveUserEmail(this, email);
                 }
                 break;
             case R.id.buttonGame:

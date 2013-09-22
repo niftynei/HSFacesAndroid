@@ -30,7 +30,15 @@
         <activity
             android:name="knaps.hacker.school.HSListActivity"
             android:label="@string/title_activity_list"
+            android:launchMode="singleTop"
             android:parentActivityName="knaps.hacker.school.LoginActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"
+                />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="knaps.hacker.school.LoginActivity" />

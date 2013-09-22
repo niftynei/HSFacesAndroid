@@ -36,7 +36,7 @@ Hacker Schooler.
 - [x] add some more custom styling to fonts
 - [ ] animations for win
 - [ ] User & skill search
-- [ ] Store user login data (if requested) and high score
+- [x] Store user login data (if requested) and high score
 - [ ] Display current user's image after they've logged in
 - [ ] Better tablet design for list and drill down
 

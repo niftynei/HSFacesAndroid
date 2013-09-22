@@ -1,6 +1,8 @@
 package knaps.hacker.school;
 
 import android.annotation.TargetApi;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -9,7 +11,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +21,11 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
+import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
 public class HSListActivity extends BaseFragmentActivity implements
@@ -27,6 +33,8 @@ public class HSListActivity extends BaseFragmentActivity implements
 
     SimpleCursorAdapter mAdapter;
     ListView mListView;
+
+    private String mCurrentFilter = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +60,25 @@ public class HSListActivity extends BaseFragmentActivity implements
 
         mListView.setOnItemClickListener(this);
 
-        getSupportLoaderManager().initLoader(0, null, this);
+        handleIntent(getIntent());
         setupActionBar();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim();
+        }
+
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY);
+        }
+
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     /**
@@ -65,6 +90,23 @@ public class HSListActivity extends BaseFragmentActivity implements
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.list, menu);
+
+        if(AppUtil.isHoneycomb()){
+//            final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//            searchView.setIconifiedByDefault(false);
+        }
+
+        return true;
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -79,18 +121,29 @@ public class HSListActivity extends BaseFragmentActivity implements
                 //
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+//            case R.id.search:
+//                onSearchRequested();
+//                return true;
         }
         return super.onOptionsItemSelected(item);
     }
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.list, menu);
-//        return true;
-//    }
+
+    @Override
+    public void onBackPressed() {
+        if (true) {
+
+        }
+        super.onBackPressed();
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (!TextUtils.isEmpty(mCurrentFilter)) {
+            return new SQLiteCursorLoader(this,
+                    HSData.HSer.GET_ALL_FILTERED,
+                    new String[] { "%" + mCurrentFilter + "%",  "%" + mCurrentFilter + "%"});
+        }
+
         return new SQLiteCursorLoader(this,
                 HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL,
                 HSData.HSer.SORT_DEFAULT);

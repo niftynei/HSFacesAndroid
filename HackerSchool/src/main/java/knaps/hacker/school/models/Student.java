@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 import knaps.hacker.school.data.HSData;
+import knaps.hacker.school.utils.StringUtil;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.

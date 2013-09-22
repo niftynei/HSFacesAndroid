@@ -2,6 +2,7 @@ package knaps.hacker.school;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,8 @@ import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
+import knaps.hacker.school.utils.SharedPrefsUtil;
+import knaps.hacker.school.utils.StringUtil;
 
 public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,
         LoaderManager.LoaderCallbacks<Cursor>, TextView.OnEditorActionListener {
@@ -57,6 +61,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private int mSuccessMessageCount = 0;
     private String[] mSuccessMessages = { "Yup.", "Correct.", "Yes." };
     private String[] mHintMessages = new String[] { "Give it a try.", "Not a guess?", "Hint: Starts with %s" };
+
 
     private LruCache<String, Bitmap> mMemoryCache;
     private ImageDownloads.RetainFragment mRetainedFragment;
@@ -182,16 +187,10 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                     incrementHint();
                     mGuess.setClickable(true);
                 }
-                else if (runGuess(guess)) {
-                    mEditGuess.setEnabled(false);
-                    showSuccess();
-                    mCurrentScore++;
-                    mCurrentGuesses++;
-                }
                 else {
+                    if (runGuess(guess)) { showSuccess(); }
+                    else { showFail(); }
                     mEditGuess.setEnabled(false);
-                    showFail();
-                    mCurrentGuesses++;
                 }
                 break;
             case R.id.buttonRestart:
@@ -230,6 +229,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             displayScore();
             mGuess.setClickable(true);
             mEditGuess.setEnabled(true);
+
         }
         else {
             Toast.makeText(this, "No valid students found. Try connecting to the internet.", Toast.LENGTH_SHORT).show();
@@ -241,6 +241,12 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mCurrentStudent = new knaps.hacker.school.models.Student(mStudentCursor);
         mEditGuess.setText("");
         mHintCount = 0;
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInputFromWindow(mEditGuess.getWindowToken(), InputMethodManager.SHOW_FORCED, 0);
+        }
+
         new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, mHsPicture, this).execute();
     }
 
@@ -266,6 +272,9 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
         double finalScore = mCurrentScore / (mCurrentGuesses * 1.0) * 100;
         mGuessCounter.setText(String.format("Final Score: %.0f%%", finalScore));
+
+        SharedPrefsUtil.saveUserHighScore(this, (int) Math.round(finalScore));
+
         String message;
         if (finalScore >= 90) {
             message = "Aces!";
@@ -324,11 +333,19 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private boolean runGuess(final String guess) {
-        final String first = mCurrentStudent.mName.split(" ")[0];
-        if (guess.equals(mCurrentStudent.mName.toLowerCase()) || guess.equals(first.toLowerCase())) {
-            return true;
+        boolean returnValue = false;
+        final String name = StringUtil.removeAccents(mCurrentStudent.mName).toLowerCase();
+        final String[] names = name.split(" ");
+        if (guess.equals(name) || guess.equals(names[0]) || guess.equals(names[names.length - 1])) {
+            mCurrentScore++;
+            returnValue = true;
         }
-        return false;
+        else if (guess.equals(names[names.length -1])) {
+            mCurrentScore++;
+            returnValue = true;
+        }
+        mCurrentGuesses++;
+        return returnValue;
     }
 
     @Override
@@ -388,6 +405,4 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         }
         return false;
     }
-
-
 }

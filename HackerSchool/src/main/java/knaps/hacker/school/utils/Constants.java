@@ -5,7 +5,6 @@ package knaps.hacker.school.utils;
  */
 public final class Constants {
 
-
     private Constants() {}
 
     public final static String HACKER_SCHOOL_URL = "https://www.hackerschool.com";
