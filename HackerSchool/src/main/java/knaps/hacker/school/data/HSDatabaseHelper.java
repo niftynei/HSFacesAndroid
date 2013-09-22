@@ -28,6 +28,7 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Since we're just storing data from online, delete old table
         db.execSQL(HSData.HSer.SQL_DELETE);
+        onCreate(db);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
         return batches;
     }
 
@@ -66,6 +68,7 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
         return batches;
     }
 }

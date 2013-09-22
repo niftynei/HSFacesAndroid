@@ -1,4 +1,4 @@
-package knaps.hacker.school.networking;
+package knaps.hacker.school.utils;
 
 /**
  * Created by lisaneigut on 15 Sep 2013.

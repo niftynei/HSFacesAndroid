@@ -3,7 +3,6 @@ package knaps.hacker.school;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
@@ -15,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import knaps.hacker.school.models.Student;
-import knaps.hacker.school.networking.Constants;
+import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
 public class HSProfileActivity extends BaseFragmentActivity implements View.OnClickListener {

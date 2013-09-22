@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import knaps.hacker.school.data.HSDatabaseHelper;
-import knaps.hacker.school.networking.Constants;
+import knaps.hacker.school.utils.Constants;
 
 /**
  * Created by lisaneigut on 17 Sep 2013.

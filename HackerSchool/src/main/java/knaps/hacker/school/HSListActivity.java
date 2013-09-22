@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
@@ -21,7 +20,7 @@ import android.widget.ProgressBar;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
-import knaps.hacker.school.networking.Constants;
+import knaps.hacker.school.utils.Constants;
 
 public class HSListActivity extends BaseFragmentActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
@@ -29,7 +28,7 @@ import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
-import knaps.hacker.school.networking.Constants;
+import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 
 public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,

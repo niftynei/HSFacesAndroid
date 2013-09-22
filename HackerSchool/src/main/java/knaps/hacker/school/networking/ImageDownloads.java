@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import knaps.hacker.school.R;
+import knaps.hacker.school.utils.AppUtil;
+import knaps.hacker.school.utils.Constants;
 
 /**
  * Created by lisaneigut on 15 Sep 2013.
@@ -55,7 +57,8 @@ public class ImageDownloads {
     public static LruCache<String, Bitmap> getBitmapMemoryCache() {
         if (sMemoryCache == null) {
             final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-            final int cacheSize = maxMemory / 8;
+            int divisor = !AppUtil.isHoneycomb() ? 16 : 8;
+            final int cacheSize = maxMemory / divisor;
             sMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
                 @Override
                 protected int sizeOf(String key, Bitmap bitmap) {
@@ -150,6 +153,7 @@ public class ImageDownloads {
 
         @Override
         protected void onPreExecute() {
+            mImageView.setImageBitmap(null);
             mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher));
         }
 
