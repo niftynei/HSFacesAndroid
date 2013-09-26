@@ -23,7 +23,7 @@
                 android:text="@string/start_playing"
                 android:id="@+id/buttonGame"
                 android:visibility="gone"
-                style="@style/CodeStyleFont"
+                style="@style/HSButton"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
             <Button
@@ -32,7 +32,7 @@
                 android:text="Browse Hacker Schoolers"
                 android:visibility="gone"
                 android:id="@+id/buttonBrowse"
-                style="@style/CodeStyleFont"
+                style="@style/HSButton"
                 android:paddingBottom="24dp"
                 android:layout_below="@+id/buttonGame"
                 android:layout_centerHorizontal="true" />
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Login"
-            style="@style/CodeStyleFont"
+            style="@style/HSButton"
                 android:id="@+id/button"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true" />

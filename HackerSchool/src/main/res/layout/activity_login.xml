@@ -13,13 +13,13 @@
         >
 
         <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Login"
-                android:id="@+id/button"
-            style="@style/CodeStyleFont"
-            android:layout_below="@+id/textPasswordNotice"
-            android:layout_centerHorizontal="true" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/button"
+            style="@style/HSButton"
+            android:layout_above="@+id/buttonGame"
+            />
 
         <EditText
             android:layout_width="wrap_content"
@@ -61,16 +61,17 @@
             android:layout_height="wrap_content"
             android:text="@string/start_playing"
             android:id="@+id/buttonGame"
-            style="@style/CodeStyleFont"
-            android:layout_below="@+id/button"
+            style="@style/HSButton"
+            android:layout_above="@+id/buttonBrowse"
             android:layout_alignLeft="@+id/button" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Browse Hacker Schoolers"
             android:id="@+id/buttonBrowse"
-            style="@style/CodeStyleFont"
-            android:layout_below="@+id/buttonGame"
+            style="@style/HSButton"
+            android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/buttonGame" />
     </RelativeLayout>
     <FrameLayout

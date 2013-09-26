@@ -66,7 +66,7 @@
         android:text="@string/submit_guess"
         android:id="@+id/buttonGuess"
         android:layout_below="@+id/editGuess"
-        style="@style/CodeStyleFont"
+        style="@style/HSButton"
         android:layout_alignParentRight="true" />
 
     <TextView
@@ -83,7 +83,7 @@
         android:text="Play Again?"
         android:id="@+id/buttonRestart"
        android:visibility="gone"
-       style="@style/CodeStyleFont"
+       style="@style/HSButton"
        android:layout_centerVertical="true"
        android:layout_centerHorizontal="true" />
 </RelativeLayout>

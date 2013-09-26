@@ -30,6 +30,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/buttonPlay"
         android:text="Play"
-        style="@style/CodeStyleFont"
+        style="@style/HSButton"
         android:layout_gravity="center" />
 </LinearLayout>

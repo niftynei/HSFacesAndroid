@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:text="@string/submit_guess"
         android:id="@+id/buttonGuess"
-        style="@style/CodeStyleFont"
+        style="@style/HSButton"
         android:layout_below="@+id/editGuess"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="13dp" />
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:text="Play Again?"
         android:id="@+id/buttonRestart"
-        style="@style/CodeStyleFont"
+        style="@style/HSButton"
         android:visibility="gone"
         android:layout_below="@id/imageStudent"
         android:layout_centerHorizontal="true" />

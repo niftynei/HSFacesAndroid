@@ -24,4 +24,15 @@
     <style name="CodeStyleFont.Bold" parent="CodeStyleFont">
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="CodeStyleFont.White" parent="CodeStyleFont">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="HSButton">
+        <item name="android:textAppearance">@style/CodeStyleFont.White</item>
+        <item name="android:background">@drawable/black_selector</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14dp</item>
+    </style>
 </resources>
