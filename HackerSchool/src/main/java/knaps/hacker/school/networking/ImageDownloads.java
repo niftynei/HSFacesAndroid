@@ -173,7 +173,7 @@ public class ImageDownloads {
                     final ImageSaver saver = new ImageSaver();
                     bitmap = saver.getBitmapFromFile(mContext, filename);
                 }
-                if (isOnline(mContext) && bitmap == null && !mUrl.contains("no_photo")) {
+                if (isOnline(mContext) && bitmap == null) {
                     bitmap = ImageDownloads.loadBitmap(Constants.HACKER_SCHOOL_URL + mUrl);
                     new SaveToDisk(mContext, mUrl, bitmap).execute();
                 }

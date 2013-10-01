@@ -123,7 +123,7 @@ public class DownloadTaskFragment extends Fragment {
                     logTiming(endTimingDownload, "download_data");
 
                     int statusCode = response.getStatusLine().getStatusCode();
-                    if (statusCode != 302 && statusCode != 200) {
+                    if (statusCode != 200) {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 

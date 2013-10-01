@@ -7,6 +7,7 @@ import android.provider.BaseColumns;
  */
 public final class HSData {
 
+
     public HSData() {}
 
     public static final String TEXT_TYPE = " TEXT";
@@ -28,6 +29,7 @@ public final class HSData {
     public static final String STMT_OR = " OR ";
     public static final String STMT_EQUALS_Q = " = ?";
     public static final String STMT_LIKE_Q = " LIKE ?";
+    public static final String STMT_NOT_LIKE_Q = " NOT LIKE ?";
     public static final String PARENS_OPEN = " (";
     public static final String PARENS_CLOSE = ") ";
     public static final String STMT_ON = " ON ";

@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -66,6 +68,8 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     private View mPasswordWarning;
     private Button mLoginButton;
     private DownloadTaskFragment mDownloadFragment;
+    private Button goToGameButton;
+    private Button viewAllButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,12 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
 
         mLoginButton = (Button) findViewById(R.id.button);
         mLoginButton.setOnClickListener(this);
+
+        goToGameButton = (Button) findViewById(R.id.buttonGame);
+        goToGameButton.setOnClickListener(this);
+
+        viewAllButton = (Button) findViewById(R.id.buttonBrowse);
+        viewAllButton.setOnClickListener(this);
 
         mLoadingView = findViewById(R.id.loading_view);
         mLoadingView.setOnTouchListener(new View.OnTouchListener() {
@@ -91,6 +101,12 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         FragmentManager fm = getSupportFragmentManager();
         mDownloadFragment = (DownloadTaskFragment) fm.findFragmentByTag("download_task");
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         final HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
         long numHackerSchoolers = 0;
@@ -100,24 +116,18 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         finally {
             db.close();
         }
+
         if (mDownloadFragment != null && mDownloadFragment.isTaskRunning()) {
             freezeViews();
         }
-        else if (numHackerSchoolers > 0) {
+
+        if (numHackerSchoolers > 0) {
             mHasData = true;
-            Button goToGameButton = (Button) findViewById(R.id.buttonGame);
-            goToGameButton.setVisibility(View.VISIBLE);
-            goToGameButton.setOnClickListener(this);
-            Button viewAllButton = (Button) findViewById(R.id.buttonBrowse);
-            viewAllButton.setVisibility(View.VISIBLE);
-            viewAllButton.setOnClickListener(this);
-            mLoginButton.setText("Refresh Data?");
-            mEmailView.setVisibility(View.GONE);
-            mPasswordView.setVisibility(View.GONE);
-            mPasswordWarning.setVisibility(View.GONE);
+            hideLogin();
             new LoadUserData().execute();
 
         }
+
     }
 
     private void freezeViews() {
@@ -134,25 +144,61 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         mPasswordView.setEnabled(true);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.login, menu);
-//        return true;
-//    }
+    private void hideLogin() {
+        goToGameButton.setVisibility(View.VISIBLE);
+        viewAllButton.setVisibility(View.VISIBLE);
+        mLoginButton.setVisibility(View.GONE);
+        mEmailView.setVisibility(View.GONE);
+        mPasswordView.setVisibility(View.GONE);
+        mPasswordWarning.setVisibility(View.GONE);
+    }
+
+    private void showLogin() {
+        mPasswordView.setVisibility(View.VISIBLE);
+        mEmailView.setVisibility(View.VISIBLE);
+        mPasswordWarning.setVisibility(View.VISIBLE);
+        mLoginButton.setVisibility(View.VISIBLE);
+
+//        goToGameButton.setVisibility(View.GONE);
+//        viewAllButton.setVisibility(View.GONE);
+        mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.login, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (false) {
+            menu.findItem(R.id.action_refresh_data).setVisible(true);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh_data:
+                showLogin();
+                break;
+            default:
+                return super.onMenuItemSelected(featureId, item);
+        }
+
+        return true;
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                if (mHasData && mPasswordView.getVisibility() == View.GONE) {
-                    mPasswordView.setVisibility(View.VISIBLE);
-                    mEmailView.setVisibility(View.VISIBLE);
-                    mPasswordWarning.setVisibility(View.VISIBLE);
-                    mLoginButton.setText("Login");
-                    mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
-                }
-                else if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
+                if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
                     final String email = mEmailView.getText().toString();
                     final String password = mPasswordView.getText().toString();
                     mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
@@ -196,7 +242,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         sb.append("Lifetime Score: ");
         sb.append(SharedPrefsUtil.getAllTimeScore(this));
         sb.append("\n");
-        sb.append("Total Faces Guessed: ");
+        sb.append("Total Faces Seen: ");
         sb.append(SharedPrefsUtil.getTries(this));
         return sb;
     }
@@ -214,6 +260,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             Intent intent = new Intent(LoginActivity.this, GuessThatHSActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
+            mDownloadFragment = null;
         } else {
             Toast.makeText(LoginActivity.this, "Login error. " + result, Toast.LENGTH_LONG).show();
         }

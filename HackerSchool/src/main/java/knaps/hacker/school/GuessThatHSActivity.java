@@ -360,7 +360,9 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
             if (selection != null) selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
             else selection = HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_LIKE_Q;
-            selectionArgs = new String[] {mBatchName};
+
+            selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_IMAGE_URL + HSData.STMT_NOT_LIKE_Q;
+            selectionArgs = new String[] {mBatchName, "%no_photo%"};
             Log.d("XML --- debugging", selection);
         }
         return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
