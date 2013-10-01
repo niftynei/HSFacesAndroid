@@ -1,6 +1,9 @@
 package knaps.hacker.school;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -165,9 +169,36 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
                 Intent browse = new Intent(LoginActivity.this, HSListActivity.class);
                 browse.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(browse);
+                break;
+            case R.id.textName:
+                // open a dialog to show your highest score :0
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(getHighScores().toString());
+                builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                final AlertDialog dialog = builder.create();
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.show();
+                break;
             default:
                 // no default
         }
+    }
+
+    private StringBuilder getHighScores() {
+        StringBuilder sb = new StringBuilder("High Score: ");
+        sb.append(String.format("%.2f%%", (double) SharedPrefsUtil.getHighScore(this)));
+        sb.append("\n");
+        sb.append("Lifetime Score: ");
+        sb.append(SharedPrefsUtil.getAllTimeScore(this));
+        sb.append("\n");
+        sb.append("Total Attempts: ");
+        sb.append(SharedPrefsUtil.getTries(this));
+        return sb;
     }
 
     @Override
@@ -225,6 +256,8 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
            int dimens = Math.round(dm.density * 15);
            final Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, dimens, dimens, true));
            user.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+
+           user.setOnClickListener(LoginActivity.this);
        }
 
        @Override

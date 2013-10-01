@@ -35,4 +35,9 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">14dp</item>
     </style>
+
+    <style name="FullHeightDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

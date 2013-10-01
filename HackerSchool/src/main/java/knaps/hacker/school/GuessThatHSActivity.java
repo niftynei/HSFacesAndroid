@@ -271,6 +271,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mGuessCounter.setText(String.format("Final Score: %.0f%%", finalScore));
 
         SharedPrefsUtil.saveUserHighScore(this, (int) Math.round(finalScore));
+        SharedPrefsUtil.saveUserStats(this, mCurrentScore, mCurrentGuesses);
 
         String message;
         if (finalScore >= 90) {
