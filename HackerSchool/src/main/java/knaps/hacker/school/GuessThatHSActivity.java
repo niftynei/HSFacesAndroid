@@ -206,7 +206,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 //            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
 //        }
         if (mStudentCursor != null) {
-            int count = mGameMax - mCurrentGuesses - 1;
+            int count = Math.min(mGameMax - mCurrentGuesses - 1, mStudentCursor.getCount() - mCurrentGuesses - 1);
             if (count > -1) mGuessCounter.setText(String.valueOf(count));
         }
     }
