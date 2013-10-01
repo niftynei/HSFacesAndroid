@@ -8,7 +8,7 @@ for former and current students.
 On begin, you must login with your Hacker School email and password.  This then scrapes the Hacker School website, downloads all the data for each Hacker
 School student and saves it to a SQLite database on disk.  Note that if you clear out the data for the app, you'll have to
 go through the set up process again.  When a new batch is added, there is an option for refreshing the data from online. Past data
- is not updated unless all data has been cleared out.  
+ is not updated unless all data has been cleared out.
 
 Initial load is quite lengthy (due to XPath processing. This could use some optimization). Most of it is in app processing, 
 not data downloaded from the network.
@@ -40,6 +40,15 @@ Hacker Schooler.
 - [ ] Faster XML parsing
 - [ ] Better tablet design for list and drill down
 - [ ] Keep list of common nicknames
+
+## How to build
+
+1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html)
+2. In Android Studio use the SDK Manager (button in toolbar or in menu under Tools -> Android) to install Android Support Repository, Google Repository (in Extras) and sources for API 18 (or one supported by your device)
+3. Open (not import) the project in Android Studio
+4. Copy over local.properties.sample to local.properties, edit if you installed Android Studio in a different location
+5. "Sync Project with Gradle Files" (button in toolbar or in menu under Tools -> Android)
+6. Run project (button in toolbar or in menu under Run)
 
 ## Contributions
 
