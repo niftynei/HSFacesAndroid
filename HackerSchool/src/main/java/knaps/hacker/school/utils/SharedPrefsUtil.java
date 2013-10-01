@@ -55,7 +55,7 @@ public class SharedPrefsUtil {
         int tries = prefs.getInt(USER_TOTAL_TRIES, 1);
         int correct = prefs.getInt(USER_TOTAL_CORRECT, 1);
 
-        return String.format("%.2f%%", (double) tries * 100.0d / (correct* (1.0d)));
+        return String.format("%.2f%%", (correct * 100.0d) / (tries * (1.0d)));
     }
 
     public static int getTries(Context context) {

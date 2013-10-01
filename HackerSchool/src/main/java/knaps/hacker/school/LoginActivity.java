@@ -196,7 +196,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         sb.append("Lifetime Score: ");
         sb.append(SharedPrefsUtil.getAllTimeScore(this));
         sb.append("\n");
-        sb.append("Total Attempts: ");
+        sb.append("Total Faces Guessed: ");
         sb.append(SharedPrefsUtil.getTries(this));
         return sb;
     }
