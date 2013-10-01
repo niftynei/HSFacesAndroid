@@ -14,19 +14,23 @@ public final class HSData {
     public static final String PRIMARY_KEY_TYPE = INT_TYPE + " PRIMARY KEY";
     public static final String COMMA_SEP = ", ";
     public static final String STMT_CREATE_TABLE = "CREATE TABLE ";
+    public static final String STMT_CREATE_INDEX = "CREATE UNIQUE INDEX ";
+    public static final String STMT_IF_NOT_EXISTS = " IF NOT EXISTS ";
     public static final String STMT_DROP_TABLE = "DROP TABLE IF EXISTS ";
     public static final String STMT_SELECT = "SELECT ";
     public static final String STMT_FROM = " FROM ";
     public static final String STMT_WHERE = " WHERE ";
     public static final String STMT_INSERT = "INSERT INTO ";
-    public static final String STMT_INSERT_OR_REPLACE = "INSERT OR REPLACE INTO ";
+    public static final String STMT_REPLACE = "REPLACE INTO ";
     public static final String STMT_IS_NOT_NULL = " IS NOT NULL ";
     public static final String STMT_LIMIT = " LIMIT ";
     public static final String STMT_AND = " AND ";
     public static final String STMT_OR = " OR ";
     public static final String STMT_EQUALS_Q = " = ?";
     public static final String STMT_LIKE_Q = " LIKE ?";
-
+    public static final String PARENS_OPEN = " (";
+    public static final String PARENS_CLOSE = ") ";
+    public static final String STMT_ON = " ON ";
 
     public static abstract class HSer implements BaseColumns {
         public static final String TABLE_NAME = "students";
@@ -42,6 +46,7 @@ public final class HSData {
         public static final String COLUMN_NAME_GITHUB = "githubUrl";
         public static final String COLUMN_NAME_BATCH = "batchName";
         public static final String COLUMN_NAME_BATCH_ID = "batchId";
+        public static final String IDX_ID = "index_hackerschool_id";
 
         public static final String _ALL =
                 _ID + COMMA_SEP +
@@ -58,6 +63,7 @@ public final class HSData {
                 COLUMN_NAME_BATCH_ID + COMMA_SEP +
                 COLUMN_NAME_BATCH
                 ;
+
 
         public static final String SQL_CREATE =
                 STMT_CREATE_TABLE + TABLE_NAME + " (" +
@@ -76,11 +82,15 @@ public final class HSData {
                 COLUMN_NAME_BATCH + TEXT_TYPE +
                 " )";
 
+        public static final String SQL_CREATE_ID_INDEX =
+                STMT_CREATE_INDEX + STMT_IF_NOT_EXISTS + IDX_ID + STMT_ON + TABLE_NAME +
+                        PARENS_OPEN + COLUMN_NAME_ID + PARENS_CLOSE;
+
         public static final String SQL_DELETE =
                 STMT_DROP_TABLE + TABLE_NAME;
 
         public static final String SQL_UPSERT_ALL =
-                STMT_INSERT_OR_REPLACE + TABLE_NAME + "(" +
+                STMT_REPLACE + TABLE_NAME + "(" +
                 COLUMN_NAME_ID + COMMA_SEP +
                 COLUMN_NAME_FULL_NAME + COMMA_SEP +
                 COLUMN_NAME_IMAGE_URL + COMMA_SEP +

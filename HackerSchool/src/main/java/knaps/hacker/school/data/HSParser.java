@@ -36,12 +36,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import knaps.hacker.school.models.Student;
+
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
 public class HSParser {
 
-    public static ArrayList<knaps.hacker.school.models.Student> parseBatches(final InputStream xml, ArrayList<String> existingBatches)
+    public static ArrayList<Student> parseBatches(final InputStream xml, ArrayList<String> existingBatches)
             throws IOException, SAXException, TransformerConfigurationException, XPathExpressionException {
         long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();
@@ -49,10 +51,9 @@ public class HSParser {
         final MutableNamespaceContext nc = new MutableNamespaceContext();
         nc.setNamespace("html", "http://www.w3.org/1999/xhtml");
         path.setNamespaceContext(nc);
-        final ArrayList<knaps.hacker.school.models.Student> studentList = new ArrayList<knaps.hacker.school.models.Student>();
+        final ArrayList<Student> studentList = new ArrayList<Student>();
 
         final Node cleanedDom = getHtmlUrlNode(xml);
-//            Log.d("XML - - cleaned dom..", dumpNode(cleanedDom, true));
         final NodeList batches = (NodeList) path.evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
         Log.d("XML - - batch count..", batches.getLength()+"");
 
@@ -62,13 +63,10 @@ public class HSParser {
             final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
             Log.d("XML - - parsing batch ..", batchName + ":" + batchId);
 
-            // only add the students if this batch has not already been parsed
-            if (!existingBatches.contains(batchId)) {
-                final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
-                for (int j = 0; j < students.getLength(); j++) {
-                    final Element student = (Element) students.item(j);
-                    studentList.add(new knaps.hacker.school.models.Student(batchName, batchId, student, path));
-                }
+            final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
+            for (int j = 0; j < students.getLength(); j++) {
+                final Element student = (Element) students.item(j);
+                studentList.add(new Student(batchName, batchId, student, path));
             }
         }
 
@@ -110,7 +108,7 @@ public class HSParser {
     public static void writeStudentsToDatabase(final List<knaps.hacker.school.models.Student> students, final Context context) {
         long startTime = System.currentTimeMillis();
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
-        final SQLiteDatabase db =   mDbHelper.getWritableDatabase();
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.beginTransaction();
         final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 

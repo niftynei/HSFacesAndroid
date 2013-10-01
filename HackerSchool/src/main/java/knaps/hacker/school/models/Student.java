@@ -28,6 +28,7 @@ public class Student implements Serializable {
     public int mId = 0;
     public String mName = "";
     public String mImageUrl = "";
+    public String mImageFilename = "";
     public String mJob = "";
     public String mJobUrl = "";
     public String mSkills = "";
@@ -41,6 +42,7 @@ public class Student implements Serializable {
         mId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
         mName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FULL_NAME));
         mImageUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
+        mImageFilename = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME));
         mJob = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB));
         mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
         mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));

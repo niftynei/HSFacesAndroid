@@ -25,6 +25,7 @@ import android.widget.SearchView;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
+import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
@@ -162,7 +163,7 @@ public class HSListActivity extends BaseFragmentActivity implements
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final Cursor cursor = (Cursor) mAdapter.getItem(position);
-        final knaps.hacker.school.models.Student student = new knaps.hacker.school.models.Student(cursor);
+        final Student student = new Student(cursor);
         final Intent intent = new Intent(this, HSProfileActivity.class);
         intent.putExtra(Constants.STUDENT, student);
         startActivity(intent);

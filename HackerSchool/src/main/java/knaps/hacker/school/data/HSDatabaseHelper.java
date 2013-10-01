@@ -2,20 +2,20 @@ package knaps.hacker.school.data;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+
+import knaps.hacker.school.models.Student;
+import knaps.hacker.school.utils.SharedPrefsUtil;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
 public class HSDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "HackerSchool.db";
 
     public HSDatabaseHelper(Context context) {
@@ -25,13 +25,15 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(HSData.HSer.SQL_CREATE);
+        db.execSQL(HSData.HSer.SQL_CREATE_ID_INDEX);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Since we're just storing data from online, delete old table
-        db.execSQL(HSData.HSer.SQL_DELETE);
-        onCreate(db);
+        if (oldVersion == 1) {
+            db.execSQL(HSData.HSer.SQL_DELETE);
+            onCreate(db);
+        }
     }
 
     @Override
