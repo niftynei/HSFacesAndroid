@@ -1,7 +1,6 @@
 package knaps.hacker.school;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,52 +13,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
+import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-import com.google.analytics.tracking.android.Tracker;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
-import knaps.hacker.school.data.HSParser;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.DownloadTaskFragment;
-import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 
 public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener,
-        DownloadTaskFragment.TaskCallbacks {
+                                                                   DownloadTaskFragment.TaskCallbacks {
 
     View mLoadingView;
     EditText mEmailView;
@@ -95,7 +64,8 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         mEmailView = (EditText) findViewById(R.id.editEmail);
         mPasswordView = (EditText) findViewById(R.id.editPassword);
         mPasswordWarning = findViewById(R.id.textPasswordNotice);
-        final InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        final InputMethodManager imm = (InputMethodManager) getSystemService(
+                Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
 
         FragmentManager fm = getSupportFragmentManager();
@@ -159,8 +129,8 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         mPasswordWarning.setVisibility(View.VISIBLE);
         mLoginButton.setVisibility(View.VISIBLE);
 
-//        goToGameButton.setVisibility(View.GONE);
-//        viewAllButton.setVisibility(View.GONE);
+        //        goToGameButton.setVisibility(View.GONE);
+        //        viewAllButton.setVisibility(View.GONE);
         mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
     }
 
@@ -196,11 +166,13 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
+                if (!"".equals(mEmailView.getText().toString()) && !""
+                        .equals(mPasswordView.getText().toString())) {
                     final String email = mEmailView.getText().toString();
                     final String password = mPasswordView.getText().toString();
                     mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
-                    getSupportFragmentManager().beginTransaction().add(mDownloadFragment, "download_task").commit();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(mDownloadFragment, "download_task").commit();
                     SharedPrefsUtil.saveUserEmail(this, email);
                 }
                 break;
@@ -259,7 +231,8 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
             mDownloadFragment = null;
-        } else {
+        }
+        else {
             Toast.makeText(LoginActivity.this, "Login error. " + result, Toast.LENGTH_LONG).show();
         }
     }
@@ -269,45 +242,49 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
 
     }
 
-   class LoadUserData extends AsyncTask<Void, Void, Student> implements ImageDownloads.ImageDownloadCallback{
+    class LoadUserData extends AsyncTask<Void, Void, Student>
+            implements ImageDownloads.ImageDownloadCallback {
 
-       @Override
-       protected Student doInBackground(Void... params) {
-           // get student data
-           Student student = new HSDatabaseHelper(LoginActivity.this).getLoggedInStudent(LoginActivity.this);
-           // load the image
-           new ImageDownloads.HSGetImageTask(student.mImageUrl, LoginActivity.this, this).execute();
-           return student;
-       }
+        @Override
+        protected Student doInBackground(Void... params) {
+            // get student data
+            Student student = new HSDatabaseHelper(LoginActivity.this)
+                    .getLoggedInStudent(LoginActivity.this);
+            // load the image
+            new ImageDownloads.HSGetImageTask(student.mImageUrl, LoginActivity.this, this)
+                    .execute();
+            return student;
+        }
 
-       @Override
-       protected void onPostExecute(Student student) {
-           if (student != null) {
-               TextView user = (TextView) findViewById(R.id.textName);
-               user.setText(getString(R.string.hi) + " " + student.mName.split(" ")[0]);
-           }
-       }
+        @Override
+        protected void onPostExecute(Student student) {
+            if (student != null) {
+                TextView user = (TextView) findViewById(R.id.textName);
+                user.setText(getString(R.string.hi) + " " + student.mName.split(" ")[0]);
+            }
+        }
 
-       @Override
-       public void onPreImageDownload() {
-           // Nothing
-       }
+        @Override
+        public void onPreImageDownload() {
+            // Nothing
+        }
 
-       @Override
-       public void onImageDownloaded(Bitmap bitmap) {
-           final TextView user = (TextView) findViewById(R.id.textName);
-           final DisplayMetrics dm = new DisplayMetrics();
-           getWindowManager().getDefaultDisplay().getMetrics(dm);
-           int dimens = Math.round(dm.density * 15);
-           final Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, dimens, dimens, true));
-           user.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+        @Override
+        public void onImageDownloaded(Bitmap bitmap) {
+            final TextView user = (TextView) findViewById(R.id.textName);
+            final DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int dimens = Math.round(dm.density * 15);
+            final Drawable drawable = new BitmapDrawable(getResources(),
+                    Bitmap.createScaledBitmap(bitmap, dimens, dimens, true));
+            user.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 
-           user.setOnClickListener(LoginActivity.this);
-       }
+            user.setOnClickListener(LoginActivity.this);
+        }
 
-       @Override
-       public void onImageFailed() {
+        @Override
+        public void onImageFailed() {
             // don't do anything, yo
-       }
-   }
+        }
+    }
 }

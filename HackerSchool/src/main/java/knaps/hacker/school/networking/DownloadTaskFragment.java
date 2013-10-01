@@ -1,6 +1,5 @@
 package knaps.hacker.school.networking;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,14 +22,12 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import knaps.hacker.school.BuildConfig;
-import knaps.hacker.school.LoginActivity;
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.data.HSParser;
 import knaps.hacker.school.models.Student;
@@ -41,15 +38,17 @@ import knaps.hacker.school.utils.Constants;
  */
 public class DownloadTaskFragment extends Fragment {
 
+    private final boolean mHasData;
     private TaskCallbacks mCallbacks;
     private LoginAsyncTask mTask;
     private String mEmail;
     private String mPassword;
-    private final boolean mHasData;
 
     public static interface TaskCallbacks {
         void onPreExecute();
+
         void onPostExecute(String message);
+
         void onCancelled();
     }
 
@@ -87,7 +86,6 @@ public class DownloadTaskFragment extends Fragment {
         }
     }
 
-
     class LoginAsyncTask extends AsyncTask<Void, Void, String> {
 
         final String mPassword;
@@ -110,7 +108,8 @@ public class DownloadTaskFragment extends Fragment {
             if (ImageDownloads.isOnline(getActivity())) {
                 try {
                     final DefaultHttpClient httpClient = new DefaultHttpClient();
-                    final HttpPost httpPost = new HttpPost(Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
+                    final HttpPost httpPost = new HttpPost(
+                            Constants.HACKER_SCHOOL_URL + Constants.LOGIN_PAGE);
                     final List<NameValuePair> formData = new ArrayList<NameValuePair>(2);
                     formData.add(new BasicNameValuePair("email", mEmail));
                     formData.add(new BasicNameValuePair("password", mPassword));
@@ -127,10 +126,12 @@ public class DownloadTaskFragment extends Fragment {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 
-                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
+                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity())
+                            .getExistingBatches();
 
                     long startTimingBatches = System.currentTimeMillis();
-                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    final ArrayList<Student> students = HSParser
+                            .parseBatches(entity.getContent(), existingBatches);
                     long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
                     logTiming(endTimingBatches, "parse_batches");
 
@@ -148,22 +149,28 @@ public class DownloadTaskFragment extends Fragment {
                         return "No results returned. Check username and password.";
                     }
 
-                } catch (UnsupportedEncodingException e) {
+                }
+                catch (UnsupportedEncodingException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with network request: 100";
-                } catch (ClientProtocolException e) {
+                }
+                catch (ClientProtocolException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with network request: 200";
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with network request: 300";
-                } catch (SAXException e) {
+                }
+                catch (SAXException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with parsing: 400";
-                } catch (XPathExpressionException e) {
+                }
+                catch (XPathExpressionException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with parsing: 500";
-                } catch (TransformerConfigurationException e) {
+                }
+                catch (TransformerConfigurationException e) {
                     Log.e("Error", "error!!", e);
                     return "Error with parsing: 600";
                 }

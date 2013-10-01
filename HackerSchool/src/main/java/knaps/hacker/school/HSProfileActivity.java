@@ -1,14 +1,14 @@
 package knaps.hacker.school;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,11 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import knaps.hacker.school.models.Student;
-import knaps.hacker.school.utils.AppUtil;
-import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
+import knaps.hacker.school.utils.Constants;
 
-public class HSProfileActivity extends BaseFragmentActivity implements View.OnClickListener, ImageDownloads.ImageDownloadCallback {
+public class HSProfileActivity extends BaseFragmentActivity
+        implements View.OnClickListener, ImageDownloads.ImageDownloadCallback {
 
     private ImageView mImageView;
     private TextView mNameView;
@@ -65,7 +65,8 @@ public class HSProfileActivity extends BaseFragmentActivity implements View.OnCl
 
         if (!TextUtils.isEmpty(student.mSkills)) {
             mSkillsView.setText(student.mSkills);
-        } else {
+        }
+        else {
             mSkillsLabel.setVisibility(View.GONE);
             mSkillsView.setVisibility(View.GONE);
         }
@@ -73,9 +74,10 @@ public class HSProfileActivity extends BaseFragmentActivity implements View.OnCl
         if (!TextUtils.isEmpty(student.mJob)) {
             mJobView.setText(student.mJob);
             if (!TextUtils.isEmpty(student.mJobUrl)) {
-               mJobView.setOnClickListener(this);
+                mJobView.setOnClickListener(this);
             }
-        } else {
+        }
+        else {
             mJobView.setVisibility(View.GONE);
             mJobLabel.setVisibility(View.GONE);
         }
@@ -100,17 +102,17 @@ public class HSProfileActivity extends BaseFragmentActivity implements View.OnCl
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.hsprofile, menu);
-//        return true;
-//    }
-    
+    //    @Override
+    //    public boolean onCreateOptionsMenu(Menu menu) {
+    //        // Inflate the menu; this adds items to the action bar if it is present.
+    //        getMenuInflater().inflate(R.menu.hsprofile, menu);
+    //        return true;
+    //    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

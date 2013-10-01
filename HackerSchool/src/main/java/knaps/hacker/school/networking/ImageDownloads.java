@@ -12,15 +12,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import knaps.hacker.school.R;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
@@ -34,7 +31,9 @@ public class ImageDownloads {
 
     public interface ImageDownloadCallback {
         public void onPreImageDownload();
+
         public void onImageDownloaded(Bitmap bitmap);
+
         public void onImageFailed();
     }
 
@@ -51,10 +50,12 @@ public class ImageDownloads {
     public static Bitmap loadBitmap(String url) {
         Bitmap bitmap = null;
         try {
-            bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
-        } catch (MalformedURLException e) {
+            bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
+        }
+        catch (MalformedURLException e) {
             Log.e("Error!", "Unable to write to file", e);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Log.e("Error!", "Unable to write to file", e);
         }
         return bitmap;
@@ -86,6 +87,7 @@ public class ImageDownloads {
         private LruCache<String, Bitmap> cache;
         private Bitmap bitmap;
         private String key;
+
         public SaveToCacheTask(LruCache<String, Bitmap> cache, Bitmap bitmap, String key) {
             this.cache = cache;
             this.bitmap = bitmap;
@@ -178,7 +180,8 @@ public class ImageDownloads {
                     new SaveToDisk(mContext, mUrl, bitmap).execute();
                 }
 
-                if (bitmap != null) new SaveToCacheTask(getBitmapMemoryCache(), bitmap, mUrl).execute();
+                if (bitmap != null)
+                    new SaveToCacheTask(getBitmapMemoryCache(), bitmap, mUrl).execute();
             }
             return bitmap;
         }

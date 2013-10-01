@@ -16,7 +16,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
 import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.utils.StringUtil;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.
@@ -42,7 +41,8 @@ public class Student implements Serializable {
         mId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
         mName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FULL_NAME));
         mImageUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
-        mImageFilename = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME));
+        mImageFilename = cursor
+                .getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME));
         mJob = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB));
         mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
         mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));
@@ -53,25 +53,30 @@ public class Student implements Serializable {
         mBatchId = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
     }
 
-    public Student(String batch, String batchId, Node student, XPath path) throws XPathExpressionException {
+    public Student(String batch, String batchId, Node student, XPath path) throws
+            XPathExpressionException {
 
         // TODO: why is this so slow??
         mBatch = batch;
         mBatchId = batchId;
 
-        final Element imageNode = (Element) path.evaluate("html:a/html:img[@class='profile-image']", student, XPathConstants.NODE);
+        final Element imageNode = (Element) path
+                .evaluate("html:a/html:img[@class='profile-image']", student, XPathConstants.NODE);
         mImageUrl = imageNode.getAttribute("src");
-        final Element nameElem = (Element) path.evaluate("html:div[@class='name']/html:a", student, XPathConstants.NODE);
+        final Element nameElem = (Element) path
+                .evaluate("html:div[@class='name']/html:a", student, XPathConstants.NODE);
         mName = nameElem.getTextContent();
         mId = getPersonId(nameElem.getAttribute("href"));
-        final Element jobElem = (Element) path.evaluate("html:div[@class='job']/html:a", student, XPathConstants.NODE);
+        final Element jobElem = (Element) path
+                .evaluate("html:div[@class='job']/html:a", student, XPathConstants.NODE);
         if (jobElem != null) {
             mJob = jobElem.getTextContent();
             mJobUrl = jobElem.getAttribute("href");
         }
         mSkills = path.evaluate("html:span[@class='skills']/text()", student);
 
-        final NodeList contacts = (NodeList) path.evaluate("html:div[@class='icon-links']/html:a", student, XPathConstants.NODESET);
+        final NodeList contacts = (NodeList) path
+                .evaluate("html:div[@class='icon-links']/html:a", student, XPathConstants.NODESET);
         if (contacts.getLength() > 0) {
             for (int i = 0; i < contacts.getLength(); i++) {
                 Element node = (Element) contacts.item(i);
@@ -100,7 +105,8 @@ public class Student implements Serializable {
         r.find();
         try {
             id = Integer.parseInt(r.group(), 10);
-        } catch (NumberFormatException ex) {
+        }
+        catch (NumberFormatException ex) {
             // exception. leave it as -1
         }
 

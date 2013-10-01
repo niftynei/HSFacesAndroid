@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Created by lisaneigut on 15 Sep 2013.
  */
-public class HSRandomCursorWrapper  extends CursorWrapper{
+public class HSRandomCursorWrapper extends CursorWrapper {
 
     /**
      * An array list, of randomized positions to call
@@ -49,7 +49,8 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
     public boolean move(int offset) {
         mCurrentIndex = mCurrentIndex + offset;
         if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
-            throw new IndexOutOfBoundsException("Offset was " + offset + " size is " + randomizedOrder.size());
+            throw new IndexOutOfBoundsException(
+                    "Offset was " + offset + " size is " + randomizedOrder.size());
         }
         return mWrappedCursor.moveToPosition(randomizedOrder.get(mCurrentIndex));
     }
@@ -70,7 +71,8 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
     public boolean moveToNext() {
         mCurrentIndex++;
         if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
-            throw new IndexOutOfBoundsException("Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
+            throw new IndexOutOfBoundsException(
+                    "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }
         return mWrappedCursor.moveToPosition(randomizedOrder.get(mCurrentIndex));
     }
@@ -79,7 +81,8 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
     public boolean moveToPrevious() {
         mCurrentIndex--;
         if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
-            throw new IndexOutOfBoundsException("Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
+            throw new IndexOutOfBoundsException(
+                    "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }
         return mWrappedCursor.moveToPosition(randomizedOrder.get(mCurrentIndex));
     }
@@ -88,7 +91,8 @@ public class HSRandomCursorWrapper  extends CursorWrapper{
     public boolean moveToPosition(int position) {
         mCurrentIndex = position;
         if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
-            throw new IndexOutOfBoundsException("Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
+            throw new IndexOutOfBoundsException(
+                    "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }
         return mWrappedCursor.moveToPosition(randomizedOrder.get(mCurrentIndex));
     }

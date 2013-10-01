@@ -9,13 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
@@ -34,7 +28,7 @@ public class ImageSaver {
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         return (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) ||
-            Environment.MEDIA_MOUNTED.equals(state));
+                Environment.MEDIA_MOUNTED.equals(state));
     }
 
     // get a file handle for writing to cache stuff
@@ -62,11 +56,11 @@ public class ImageSaver {
     public boolean writeBitmapToFile(final Context context, final Bitmap bitmap, final String filename) {
         if (context == null || bitmap == null || filename == null) return false;
         // let's just use internal storage. Makes life easier.
-//        if (isExternalStorageWritable()) {
-//           file = getPrivatePicturesExternalStorage(context, filename);
-//        } else {
+        //        if (isExternalStorageWritable()) {
+        //           file = getPrivatePicturesExternalStorage(context, filename);
+        //        } else {
         final File file = getPicturesInternalStorage(context, filename);
-//        }
+        //        }
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
@@ -83,23 +77,27 @@ public class ImageSaver {
         try {
             int bytesRead;
             output = new FileOutputStream(file);
-            while((bytesRead = is.read(buffer)) != -1) {
+            while ((bytesRead = is.read(buffer)) != -1) {
                 output.write(buffer, 0, bytesRead);
             }
             success = true;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Log.e("Error!", "Unable to write to file", e);
-        } finally {
+        }
+        finally {
             try {
                 if (output != null) {
                     output.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 Log.e("Error!", "Unable to write to file", e);
             }
             try {
                 is.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 Log.e("Error!", "Unable to write to file", e);
             }
         }
@@ -129,7 +127,7 @@ public class ImageSaver {
         int rowsAffected = db.update(HSData.HSer.TABLE_NAME, // table name
                 values, // values to update
                 HSData.HSer.COLUMN_NAME_IMAGE_URL + " = ?", // where
-                new String[]{url}
+                new String[] {url}
         );
 
         db.close();
@@ -139,7 +137,7 @@ public class ImageSaver {
     public static String databaseHasImage(Context context, String url) {
         final SQLiteDatabase db = new HSDatabaseHelper(context).getWritableDatabase();
         final String response = DatabaseUtils.stringForQuery(db, HSData.HSer.SQL_GET_FILENAME,
-                new String[]{url});
+                new String[] {url});
         db.close();
         return response;
     }

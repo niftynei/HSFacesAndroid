@@ -1,10 +1,6 @@
 package knaps.hacker.school.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.namespace.NamespaceContext;
 
@@ -13,6 +9,7 @@ import javax.xml.namespace.NamespaceContext;
  * from implementations of NamespaceContext. We have to create our
  * own implementation to work around it. Documented here:
  * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5101859
+ *
  * @author Oliver Roup <oroup@oroup.com>
  */
 class MutableNamespaceContext implements NamespaceContext {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -46,13 +45,15 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         final ArrayList<String> batches = new ArrayList<String>();
         // sql statement for distinct batch names
         final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.query(true, HSData.HSer.TABLE_NAME, new String[]{HSData.HSer.COLUMN_NAME_BATCH_ID}, null,
+        final Cursor cursor = db.query(true, HSData.HSer.TABLE_NAME,
+                new String[] {HSData.HSer.COLUMN_NAME_BATCH_ID}, null,
                 null, HSData.HSer.COLUMN_NAME_BATCH_ID, null, null, null);
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 batches.add(cursor.getString(
-                        cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID)).trim().toLowerCase());
+                        cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID)).trim()
+                                  .toLowerCase());
             }
         }
         cursor.close();
@@ -64,8 +65,10 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         final ArrayList<String> batches = new ArrayList<String>();
         // sql statement for distinct batch names
         final SQLiteDatabase db = getReadableDatabase();
-        final Cursor cursor = db.query(true, HSData.HSer.TABLE_NAME, new String[]{HSData.HSer.COLUMN_NAME_BATCH}, null,
-                null, HSData.HSer.COLUMN_NAME_BATCH, null, HSData.HSer.SORT_BATCH, null);
+        final Cursor cursor = db
+                .query(true, HSData.HSer.TABLE_NAME, new String[] {HSData.HSer.COLUMN_NAME_BATCH},
+                        null,
+                        null, HSData.HSer.COLUMN_NAME_BATCH, null, HSData.HSer.SORT_BATCH, null);
 
         if (cursor != null) {
             while (cursor.moveToNext()) {

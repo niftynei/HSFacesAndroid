@@ -14,8 +14,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.utils.Constants;
@@ -45,15 +43,16 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ArrayList<String> batchNames = new HSDatabaseHelper(getActivity()).getExistingBatchesByName();
+        final ArrayList<String> batchNames = new HSDatabaseHelper(getActivity())
+                .getExistingBatchesByName();
         batches = new KeyMap[batchNames.size() + 1];
         batches[0] = KeyMap.make(-1, Constants.BATCH_STRING);
         for (int i = 0; i < batchNames.size(); i++) {
-           batches[i + 1] = KeyMap.make(i + 1, batchNames.get(i));
+            batches[i + 1] = KeyMap.make(i + 1, batchNames.get(i));
         }
 
         limitCounts = new KeyMap[] {
-                KeyMap.make(Constants.INVALID_MIN,  Constants.RUNTIME_STRING),
+                KeyMap.make(Constants.INVALID_MIN, Constants.RUNTIME_STRING),
                 KeyMap.make(5, "O(1)"),
                 KeyMap.make(10, "O(n)"),
                 KeyMap.make(20, "O(n^2)"),
@@ -74,11 +73,15 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
         final View view = inflater.inflate(R.layout.fragment_choose, container, false);
 
         mBatchSpinner = (Spinner) view.findViewById(R.id.spinnerBatch);
-        mBatchSpinner.setAdapter(new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, batches));
+        mBatchSpinner.setAdapter(
+                new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+                        batches));
         mBatchSpinner.setPrompt("Batch");
         mCountSpinner = (Spinner) view.findViewById(R.id.spinnerLimit);
         Pair<Integer, String>[] paris = null;
-        mCountSpinner.setAdapter(new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, limitCounts));
+        mCountSpinner.setAdapter(
+                new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+                        limitCounts));
         mCountSpinner.setPrompt("Run Number");
 
         view.findViewById(R.id.buttonPlay).setOnClickListener(this);
@@ -132,8 +135,10 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
             }
 
             if (convertView == null || convertView.findViewById(android.R.id.text1) == null) {
-                LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+                LayoutInflater inflator = (LayoutInflater) getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflator
+                        .inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
             }
             KeyMap item = getItem(position);
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(item.sValue);
@@ -143,8 +148,10 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+                LayoutInflater inflator = (LayoutInflater) getContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflator
+                        .inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
             }
             KeyMap item = getItem(position);
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(item.sValue);

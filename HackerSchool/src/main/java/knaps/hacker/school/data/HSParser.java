@@ -16,16 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -44,7 +37,8 @@ import knaps.hacker.school.models.Student;
 public class HSParser {
 
     public static ArrayList<Student> parseBatches(final InputStream xml, ArrayList<String> existingBatches)
-            throws IOException, SAXException, TransformerConfigurationException, XPathExpressionException {
+            throws IOException, SAXException, TransformerConfigurationException,
+            XPathExpressionException {
         long startTime = System.currentTimeMillis();
         final XPathFactory factory = XPathFactory.newInstance();
         final XPath path = factory.newXPath();
@@ -54,27 +48,32 @@ public class HSParser {
         final ArrayList<Student> studentList = new ArrayList<Student>();
 
         final Node cleanedDom = getHtmlUrlNode(xml);
-        final NodeList batches = (NodeList) path.evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
-        Log.d("XML - - batch count..", batches.getLength()+"");
+        final NodeList batches = (NodeList) path
+                .evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
+        Log.d("XML - - batch count..", batches.getLength() + "");
 
         for (int i = 0; i < batches.getLength(); i++) {
             final Element batch = (Element) batches.item(i);
             final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
-            final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
+            final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE))
+                    .getAttribute("id").trim().toLowerCase();
             Log.d("XML - - parsing batch .. ", batchName + ":" + batchId);
 
-            final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
+            final NodeList students = (NodeList) path
+                    .evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
             for (int j = 0; j < students.getLength(); j++) {
                 final Element student = (Element) students.item(j);
                 studentList.add(new Student(batchName, batchId, student, path));
             }
         }
 
-        Log.d("XML _ timing", "Total time for parsing: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("XML _ timing",
+                "Total time for parsing: " + (System.currentTimeMillis() - startTime) + "ms");
         return studentList;
     }
 
-    private static Node getHtmlUrlNode(InputStream xml) throws TransformerConfigurationException, IOException, SAXException {
+    private static Node getHtmlUrlNode(InputStream xml) throws TransformerConfigurationException,
+            IOException, SAXException {
 
         SAXTransformerFactory stf = (SAXTransformerFactory) TransformerFactory.newInstance();
         TransformerHandler th = stf.newTransformerHandler();
@@ -104,15 +103,14 @@ public class HSParser {
         return sw.toString();
     }
 
-
-    public static void writeStudentsToDatabase(final List<knaps.hacker.school.models.Student> students, final Context context) {
+    public static void writeStudentsToDatabase(final List<Student> students, final Context context) {
         long startTime = System.currentTimeMillis();
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.beginTransaction();
         final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 
-        for (knaps.hacker.school.models.Student student : students) {
+        for (Student student : students) {
             stmt.bindLong(1, student.mId);
             stmt.bindString(2, student.mName);
             stmt.bindString(3, student.mImageUrl);
@@ -131,6 +129,7 @@ public class HSParser {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-        Log.d("XML _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("XML _ timing",
+                "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }

@@ -52,37 +52,36 @@ public final class HSData {
 
         public static final String _ALL =
                 _ID + COMMA_SEP +
-                COLUMN_NAME_ID + COMMA_SEP +
-                COLUMN_NAME_FULL_NAME + COMMA_SEP +
-                COLUMN_NAME_IMAGE_URL + COMMA_SEP +
-                COLUMN_NAME_IMAGE_FILENAME + COMMA_SEP +
-                COLUMN_NAME_JOB + COMMA_SEP +
-                COLUMN_NAME_JOB_URL + COMMA_SEP +
-                COLUMN_NAME_SKILLS + COMMA_SEP +
-                COLUMN_NAME_EMAIL + COMMA_SEP +
-                COLUMN_NAME_GITHUB + COMMA_SEP +
-                COLUMN_NAME_TWITTER + COMMA_SEP +
-                COLUMN_NAME_BATCH_ID + COMMA_SEP +
-                COLUMN_NAME_BATCH
-                ;
+                        COLUMN_NAME_ID + COMMA_SEP +
+                        COLUMN_NAME_FULL_NAME + COMMA_SEP +
+                        COLUMN_NAME_IMAGE_URL + COMMA_SEP +
+                        COLUMN_NAME_IMAGE_FILENAME + COMMA_SEP +
+                        COLUMN_NAME_JOB + COMMA_SEP +
+                        COLUMN_NAME_JOB_URL + COMMA_SEP +
+                        COLUMN_NAME_SKILLS + COMMA_SEP +
+                        COLUMN_NAME_EMAIL + COMMA_SEP +
+                        COLUMN_NAME_GITHUB + COMMA_SEP +
+                        COLUMN_NAME_TWITTER + COMMA_SEP +
+                        COLUMN_NAME_BATCH_ID + COMMA_SEP +
+                        COLUMN_NAME_BATCH;
 
 
         public static final String SQL_CREATE =
                 STMT_CREATE_TABLE + TABLE_NAME + " (" +
-                _ID + PRIMARY_KEY_TYPE + COMMA_SEP +
-                COLUMN_NAME_ID + INT_TYPE + COMMA_SEP +
-                COLUMN_NAME_FULL_NAME + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_IMAGE_FILENAME + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_JOB + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_JOB_URL + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_SKILLS + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_EMAIL + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_GITHUB + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_TWITTER + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_BATCH_ID + TEXT_TYPE + COMMA_SEP +
-                COLUMN_NAME_BATCH + TEXT_TYPE +
-                " )";
+                        _ID + PRIMARY_KEY_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ID + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_FULL_NAME + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_IMAGE_FILENAME + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_JOB + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_JOB_URL + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SKILLS + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_EMAIL + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_GITHUB + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TWITTER + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_BATCH_ID + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_BATCH + TEXT_TYPE +
+                        " )";
 
         public static final String SQL_CREATE_ID_INDEX =
                 STMT_CREATE_INDEX + STMT_IF_NOT_EXISTS + IDX_ID + STMT_ON + TABLE_NAME +
@@ -93,37 +92,37 @@ public final class HSData {
 
         public static final String SQL_UPSERT_ALL =
                 STMT_REPLACE + TABLE_NAME + "(" +
-                COLUMN_NAME_ID + COMMA_SEP +
-                COLUMN_NAME_FULL_NAME + COMMA_SEP +
-                COLUMN_NAME_IMAGE_URL + COMMA_SEP +
-                COLUMN_NAME_JOB + COMMA_SEP +
-                COLUMN_NAME_JOB_URL + COMMA_SEP +
-                COLUMN_NAME_SKILLS + COMMA_SEP +
-                COLUMN_NAME_EMAIL + COMMA_SEP +
-                COLUMN_NAME_GITHUB + COMMA_SEP +
-                COLUMN_NAME_TWITTER + COMMA_SEP +
-                COLUMN_NAME_BATCH_ID + COMMA_SEP +
-                COLUMN_NAME_BATCH + ")  VALUES (" +
-                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        COLUMN_NAME_ID + COMMA_SEP +
+                        COLUMN_NAME_FULL_NAME + COMMA_SEP +
+                        COLUMN_NAME_IMAGE_URL + COMMA_SEP +
+                        COLUMN_NAME_JOB + COMMA_SEP +
+                        COLUMN_NAME_JOB_URL + COMMA_SEP +
+                        COLUMN_NAME_SKILLS + COMMA_SEP +
+                        COLUMN_NAME_EMAIL + COMMA_SEP +
+                        COLUMN_NAME_GITHUB + COMMA_SEP +
+                        COLUMN_NAME_TWITTER + COMMA_SEP +
+                        COLUMN_NAME_BATCH_ID + COMMA_SEP +
+                        COLUMN_NAME_BATCH + ")  VALUES (" +
+                        "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         public static final String GET_ALL_FILTERED =
                 STMT_SELECT + _ALL +
-                STMT_FROM + TABLE_NAME +
-                STMT_WHERE + COLUMN_NAME_FULL_NAME + STMT_LIKE_Q +
-                STMT_OR + COLUMN_NAME_SKILLS + STMT_LIKE_Q;
+                        STMT_FROM + TABLE_NAME +
+                        STMT_WHERE + COLUMN_NAME_FULL_NAME + STMT_LIKE_Q +
+                        STMT_OR + COLUMN_NAME_SKILLS + STMT_LIKE_Q;
 
 
         public static final String GET_ALL = STMT_SELECT + _ALL + STMT_FROM + TABLE_NAME;
 
         public static final String SQL_GET_FILENAME =
                 STMT_SELECT + COLUMN_NAME_IMAGE_FILENAME +
-                STMT_FROM + TABLE_NAME +
-                STMT_WHERE + COLUMN_NAME_IMAGE_URL + " = ? ";
+                        STMT_FROM + TABLE_NAME +
+                        STMT_WHERE + COLUMN_NAME_IMAGE_URL + " = ? ";
 
         public static final String SQL_GET_ALL_SAVED_TO_DISK =
                 STMT_SELECT + _ALL +
-                STMT_FROM + TABLE_NAME +
-                STMT_WHERE + COLUMN_NAME_IMAGE_FILENAME + STMT_IS_NOT_NULL;
+                        STMT_FROM + TABLE_NAME +
+                        STMT_WHERE + COLUMN_NAME_IMAGE_FILENAME + STMT_IS_NOT_NULL;
 
         public static final String SQL_GET_ALL_DISK_BY_BATCH =
                 SQL_GET_ALL_SAVED_TO_DISK +
@@ -135,21 +134,21 @@ public final class HSData {
 
         public static final String SQL_GET_ALL_SAVED_TO_DISK_WITH_LIMIT =
                 SQL_GET_ALL_SAVED_TO_DISK +
-                STMT_LIMIT + " ?";
+                        STMT_LIMIT + " ?";
 
         public static final String SQL_GET_ALL_BATCH =
                 STMT_SELECT + _ALL +
-                STMT_FROM + TABLE_NAME +
-                STMT_WHERE + COLUMN_NAME_BATCH + " = ? ";
+                        STMT_FROM + TABLE_NAME +
+                        STMT_WHERE + COLUMN_NAME_BATCH + " = ? ";
 
         public static final String SQL_GET_ALL_LIMIT =
                 STMT_SELECT + _ALL +
-                STMT_FROM + TABLE_NAME +
-                STMT_LIMIT + " ?";
+                        STMT_FROM + TABLE_NAME +
+                        STMT_LIMIT + " ?";
 
         public static final String SQL_GET_ALL_BATCH_LIMIT =
                 SQL_GET_ALL_BATCH +
-                STMT_LIMIT + " ?";
+                        STMT_LIMIT + " ?";
 
         public static final String[] PROJECTION_ALL = {
                 _ID,
@@ -169,7 +168,7 @@ public final class HSData {
 
         public static final String SORT_DEFAULT =
                 COLUMN_NAME_BATCH_ID + " DESC" + COMMA_SEP +
-                COLUMN_NAME_FULL_NAME + " ASC";
+                        COLUMN_NAME_FULL_NAME + " ASC";
 
         public static final String SORT_BATCH =
                 COLUMN_NAME_BATCH_ID + " ASC";

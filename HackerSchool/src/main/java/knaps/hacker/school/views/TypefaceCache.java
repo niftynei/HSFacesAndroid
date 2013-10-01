@@ -29,7 +29,8 @@ public class TypefaceCache {
                     Typeface t = Typeface.createFromAsset(context.getAssets(),
                             file);
                     mCache.put(file, t);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     Log.e("Error", "Could not get typeface '" + file
                             + "' because " + e.getMessage());
                     return null;

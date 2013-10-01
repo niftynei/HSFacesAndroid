@@ -99,13 +99,40 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
             mTable = table;
         }
 
-        public SQLiteCursorBuilder columns(String[] cols) { mColumns = cols; return this; }
-        public SQLiteCursorBuilder selection(String selection) { mSelection = selection; return this; }
-        public SQLiteCursorBuilder selectionArgs(String[] selectionArgs) { mSelectionArgs = selectionArgs; return this; }
-        public SQLiteCursorBuilder groupBy(String groupBy) { mGroupBy = groupBy; return this; }
-        public SQLiteCursorBuilder having(String having) { mHaving = having; return this; }
-        public SQLiteCursorBuilder orderBy(String orderBy) { mOrderBy = orderBy; return this; }
-        public SQLiteCursorBuilder limit(String limit) { mLimit = limit; return this; }
+        public SQLiteCursorBuilder columns(String[] cols) {
+            mColumns = cols;
+            return this;
+        }
+
+        public SQLiteCursorBuilder selection(String selection) {
+            mSelection = selection;
+            return this;
+        }
+
+        public SQLiteCursorBuilder selectionArgs(String[] selectionArgs) {
+            mSelectionArgs = selectionArgs;
+            return this;
+        }
+
+        public SQLiteCursorBuilder groupBy(String groupBy) {
+            mGroupBy = groupBy;
+            return this;
+        }
+
+        public SQLiteCursorBuilder having(String having) {
+            mHaving = having;
+            return this;
+        }
+
+        public SQLiteCursorBuilder orderBy(String orderBy) {
+            mOrderBy = orderBy;
+            return this;
+        }
+
+        public SQLiteCursorBuilder limit(String limit) {
+            mLimit = limit;
+            return this;
+        }
 
         public SQLiteCursorLoader build() {
             return new SQLiteCursorLoader(mContext, mTable, mColumns, mSelection, mSelectionArgs,
@@ -119,7 +146,7 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
         final SQLiteDatabase db = new HSDatabaseHelper(getContext()).getReadableDatabase();
         final Cursor cursor;
         if (mRawQuery != null) {
-           cursor = db.rawQuery(mRawQuery, mSelectionArgs);
+            cursor = db.rawQuery(mRawQuery, mSelectionArgs);
         }
         else {
             cursor = db.query(
@@ -264,6 +291,7 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
 
         private Loader<?> mLoader = null;
         private int mCommand;
+
         public DBAsyncTask(Loader<?> loader, int command) {
             mLoader = loader;
             mCommand = command;
@@ -281,7 +309,8 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
                     db.replace(dbStuffs.table, dbStuffs.nullColumnHack, dbStuffs.values);
                     break;
                 case UPDATE:
-                    db.update(dbStuffs.table, dbStuffs.values, dbStuffs.whereClause, dbStuffs.whereArgs);
+                    db.update(dbStuffs.table, dbStuffs.values, dbStuffs.whereClause,
+                            dbStuffs.whereArgs);
                     break;
                 case DELETE:
                     db.delete(dbStuffs.table, dbStuffs.whereClause, dbStuffs.whereArgs);
@@ -295,7 +324,7 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
         }
 
         @Override
-        protected void onPostExecute(Void result){
+        protected void onPostExecute(Void result) {
             mLoader.onContentChanged();
         }
     }

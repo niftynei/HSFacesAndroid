@@ -2,7 +2,6 @@ package knaps.hacker.school;
 
 import android.annotation.TargetApi;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -12,16 +11,11 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
@@ -30,7 +24,8 @@ import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
 public class HSListActivity extends BaseFragmentActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+                                                         LoaderManager.LoaderCallbacks<Cursor>,
+                                                         AdapterView.OnItemClickListener {
 
     SimpleCursorAdapter mAdapter;
     ListView mListView;
@@ -45,8 +40,9 @@ public class HSListActivity extends BaseFragmentActivity implements
         mListView = (ListView) findViewById(R.id.list);
 
         final ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
-                AbsListView.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        progressBar
+                .setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
+                        AbsListView.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         progressBar.setIndeterminate(true);
         mListView.setEmptyView(progressBar);
 
@@ -56,7 +52,8 @@ public class HSListActivity extends BaseFragmentActivity implements
         String[] fromColumns = {HSData.HSer.COLUMN_NAME_FULL_NAME};
         int[] toViews = {android.R.id.text1};
 
-        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null, fromColumns, toViews, 0);
+        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null,
+                fromColumns, toViews, 0);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(this);
@@ -98,11 +95,11 @@ public class HSListActivity extends BaseFragmentActivity implements
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
 
-        if(AppUtil.isHoneycomb()){
-//            final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//            searchView.setIconifiedByDefault(false);
+        if (AppUtil.isHoneycomb()) {
+            //            final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            //            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+            //            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            //            searchView.setIconifiedByDefault(false);
         }
 
         return true;
@@ -122,9 +119,9 @@ public class HSListActivity extends BaseFragmentActivity implements
                 //
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-//            case R.id.search:
-//                onSearchRequested();
-//                return true;
+            //            case R.id.search:
+            //                onSearchRequested();
+            //                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -142,7 +139,7 @@ public class HSListActivity extends BaseFragmentActivity implements
         if (!TextUtils.isEmpty(mCurrentFilter)) {
             return new SQLiteCursorLoader(this,
                     HSData.HSer.GET_ALL_FILTERED,
-                    new String[] { "%" + mCurrentFilter + "%",  "%" + mCurrentFilter + "%"});
+                    new String[] {"%" + mCurrentFilter + "%", "%" + mCurrentFilter + "%"});
         }
 
         return new SQLiteCursorLoader(this,

@@ -59,6 +59,7 @@ public class SharedPrefsUtil {
     }
 
     public static int getTries(Context context) {
-        return context.getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE).getInt(USER_TOTAL_TRIES, 1);
+        return context.getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE)
+                      .getInt(USER_TOTAL_TRIES, 1);
     }
 }
