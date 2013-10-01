@@ -174,9 +174,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if (false) {
-            menu.findItem(R.id.action_refresh_data).setVisible(true);
-        }
+        menu.findItem(R.id.action_refresh_data).setVisible(mHasData);
 
         return super.onPrepareOptionsMenu(menu);
     }

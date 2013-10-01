@@ -13,5 +13,6 @@
     <string name="title_activity_hsprofile">Profile</string>
     <string name="welcome">Welcome</string>
     <string name="hi">hi</string>
+    <string name="action_refresh_data">Refresh Data</string>
 
 </resources>
