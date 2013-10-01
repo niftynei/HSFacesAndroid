@@ -18,11 +18,12 @@
             android:text="Login"
             android:id="@+id/button"
             style="@style/HSButton"
-            android:layout_above="@+id/buttonGame"
+            android:layout_below="@+id/textPasswordNotice"
+            android:layout_marginTop="10dp"
             />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
@@ -33,7 +34,7 @@
             android:layout_alignRight="@+id/button" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:ems="10"
@@ -63,7 +64,9 @@
             android:id="@+id/buttonGame"
             style="@style/HSButton"
             android:layout_above="@+id/buttonBrowse"
-            android:layout_alignLeft="@+id/button" />
+            android:layout_alignLeft="@+id/button"
+            android:visibility="gone"
+            />
 
         <Button
             android:layout_width="match_parent"
@@ -72,7 +75,9 @@
             android:id="@+id/buttonBrowse"
             style="@style/HSButton"
             android:layout_alignParentBottom="true"
-            android:layout_alignLeft="@+id/buttonGame" />
+            android:layout_alignLeft="@+id/buttonGame"
+            android:visibility="gone"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

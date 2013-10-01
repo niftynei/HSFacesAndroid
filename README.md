@@ -13,7 +13,7 @@ go through the set up process again.  When a new batch is added, there is an opt
 Initial load is quite lengthy (due to XPath processing. This could use some optimization). Most of it is in app processing, 
 not data downloaded from the network.
 
-Images are stored locally in internal storage.  This could probably use some more error checking.  Offline play uses only the images that are already stored locally.
+Images are stored locally in internal storage.  This could probably use some more error checking (esp if there's not enough disk space).  Offline play uses only the images that are already stored locally.
 
 ## Game Play
 
@@ -30,14 +30,14 @@ Hacker Schooler.
 ## Proposed future work
 
 - [x] Use disk based cache for images / allow for 'offline' play
-- [ ] Faster XML parsing
+- [x] add some more custom styling to fonts
 - [x] Give users option to play by batch
+- [x] Store user login data (if requested) and high score
+- [x] Display current user's image after they've logged in
+- [ ] User & skill search
 - [ ] Style toasts to for Correct and Wrong
 - [ ] animations for win
-- [x] add some more custom styling to fonts
-- [ ] User & skill search
-- [x] Store user login data (if requested) and high score
-- [ ] Display current user's image after they've logged in
+- [ ] Faster XML parsing
 - [ ] Better tablet design for list and drill down
 - [ ] Keep list of common nicknames
 
