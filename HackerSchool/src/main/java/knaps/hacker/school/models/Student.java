@@ -90,7 +90,7 @@ public class Student implements Serializable {
         }
         else if (url.contains("mailto:")) {
             mEmail = url.replace("mailto:", "");
-            Log.d("XML -- parsing", "emails !" + mEmail);
+            Log.d("XML -- parsing", "emails -- " + mEmail);
         }
     }
 

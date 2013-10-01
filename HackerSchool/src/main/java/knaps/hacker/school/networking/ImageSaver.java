@@ -132,12 +132,15 @@ public class ImageSaver {
                 new String[]{url}
         );
 
+        db.close();
         return rowsAffected != 0;
     }
 
     public static String databaseHasImage(Context context, String url) {
         final SQLiteDatabase db = new HSDatabaseHelper(context).getWritableDatabase();
-        return DatabaseUtils.stringForQuery(db, HSData.HSer.SQL_GET_FILENAME,
+        final String response = DatabaseUtils.stringForQuery(db, HSData.HSer.SQL_GET_FILENAME,
                 new String[]{url});
+        db.close();
+        return response;
     }
 }

@@ -73,6 +73,16 @@
             style="@style/HSButton"
             android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/buttonGame" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome"
+            android:id="@+id/textName"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:drawablePadding="4dp"
+            android:drawableRight="@drawable/ic_launcher"
+            />
     </RelativeLayout>
     <FrameLayout
         android:layout_height="match_parent"
@@ -88,6 +98,7 @@
            android:layout_gravity="center"
             />
     </FrameLayout>
+
 </FrameLayout>
 
 

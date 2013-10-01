@@ -18,7 +18,7 @@ public class SharedPrefsUtil {
 
     public static void saveUserEmail(Context context, String email) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_USER, Context.MODE_PRIVATE);
-        prefs.edit().putString(USER_EMAIL, email).apply();
+        prefs.edit().putString(USER_EMAIL, email.toLowerCase().trim()).apply();
     }
 
     public static int getHighScore(Context context) {

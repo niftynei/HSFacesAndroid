@@ -107,6 +107,16 @@
                 android:layout_below="@+id/editPassword"
                 android:layout_alignLeft="@+id/editPassword" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                android:id="@+id/textName"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:drawablePadding="4dp"
+                android:drawableRight="@drawable/ic_launcher"
+                />
         </RelativeLayout>
     </LinearLayout>
     <FrameLayout

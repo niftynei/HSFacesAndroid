@@ -4,15 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -41,6 +46,7 @@ import javax.xml.xpath.XPathExpressionException;
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.data.HSParser;
+import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.DownloadTaskFragment;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.networking.ImageDownloads;
@@ -83,7 +89,13 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
 
         final HSDatabaseHelper dbHelper = new HSDatabaseHelper(this);
         final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        final long numHackerSchoolers = DatabaseUtils.queryNumEntries(db, HSData.HSer.TABLE_NAME);
+        long numHackerSchoolers = 0;
+        try {
+            numHackerSchoolers = DatabaseUtils.queryNumEntries(db, HSData.HSer.TABLE_NAME);
+        }
+        finally {
+            db.close();
+        }
         if (mDownloadFragment != null && mDownloadFragment.isTaskRunning()) {
             freezeViews();
         }
@@ -99,8 +111,9 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             mEmailView.setVisibility(View.GONE);
             mPasswordView.setVisibility(View.GONE);
             mPasswordWarning.setVisibility(View.GONE);
-        }
+            new LoadUserData().execute();
 
+        }
     }
 
     private void freezeViews() {
@@ -179,4 +192,44 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     public void onCancelled() {
 
     }
+
+   class LoadUserData extends AsyncTask<Void, Void, Student> implements ImageDownloads.ImageDownloadCallback{
+
+       @Override
+       protected Student doInBackground(Void... params) {
+           // get student data
+           Student student = new HSDatabaseHelper(LoginActivity.this).getLoggedInStudent(LoginActivity.this);
+           // load the image
+           new ImageDownloads.HSGetImageTask(student.mImageUrl, LoginActivity.this, this).execute();
+           return student;
+       }
+
+       @Override
+       protected void onPostExecute(Student student) {
+           if (student != null) {
+               TextView user = (TextView) findViewById(R.id.textName);
+               user.setText(getString(R.string.hi) + " " + student.mName.split(" ")[0]);
+           }
+       }
+
+       @Override
+       public void onPreImageDownload() {
+           // Nothing
+       }
+
+       @Override
+       public void onImageDownloaded(Bitmap bitmap) {
+           final TextView user = (TextView) findViewById(R.id.textName);
+           final DisplayMetrics dm = new DisplayMetrics();
+           getWindowManager().getDefaultDisplay().getMetrics(dm);
+           int dimens = Math.round(dm.density * 15);
+           final Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, dimens, dimens, true));
+           user.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+       }
+
+       @Override
+       public void onImageFailed() {
+            // don't do anything, yo
+       }
+   }
 }

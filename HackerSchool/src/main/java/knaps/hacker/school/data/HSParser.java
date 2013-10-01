@@ -61,7 +61,7 @@ public class HSParser {
             final Element batch = (Element) batches.item(i);
             final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
             final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE)).getAttribute("id").trim().toLowerCase();
-            Log.d("XML - - parsing batch ..", batchName + ":" + batchId);
+            Log.d("XML - - parsing batch .. ", batchName + ":" + batchId);
 
             final NodeList students = (NodeList) path.evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
             for (int j = 0; j < students.getLength(); j++) {

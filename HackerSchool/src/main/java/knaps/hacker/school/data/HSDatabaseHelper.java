@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -75,5 +76,28 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return batches;
+    }
+
+    public Student getLoggedInStudent(Context context) {
+        final String userEmail = SharedPrefsUtil.getUserEmail(context);
+        final SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = null;
+        Student student = null;
+        try {
+            cursor = db.query(HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL,
+                    HSData.HSer.COLUMN_NAME_EMAIL + HSData.STMT_LIKE_Q, new String[] {userEmail},
+                    null, null, null, null);
+            cursor.moveToFirst();
+            student = new Student(cursor);
+        }
+        finally {
+            try {
+                if (cursor != null) cursor.close();
+            }
+            finally {
+                db.close();
+            }
+        }
+        return student;
     }
 }
