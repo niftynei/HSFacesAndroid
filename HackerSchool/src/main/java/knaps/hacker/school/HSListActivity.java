@@ -11,11 +11,12 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
-import android.view.*;
-import android.widget.AbsListView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.SearchView;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
@@ -23,14 +24,15 @@ import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class HSListActivity extends BaseFragmentActivity implements
                                                          LoaderManager.LoaderCallbacks<Cursor>,
                                                          AdapterView.OnItemClickListener {
 
     SimpleCursorAdapter mAdapter;
     ListView mListView;
-
     private String mCurrentFilter = "";
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +40,6 @@ public class HSListActivity extends BaseFragmentActivity implements
         setContentView(R.layout.activity_list);
 
         mListView = (ListView) findViewById(R.id.list);
-
-        final ProgressBar progressBar = new ProgressBar(this);
-        progressBar
-                .setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT,
-                        AbsListView.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        progressBar.setIndeterminate(true);
-        mListView.setEmptyView(progressBar);
-
-        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-        root.addView(progressBar);
 
         String[] fromColumns = {HSData.HSer.COLUMN_NAME_FULL_NAME};
         int[] toViews = {android.R.id.text1};
@@ -60,15 +52,6 @@ public class HSListActivity extends BaseFragmentActivity implements
 
         handleIntent(getIntent());
         setupActionBar();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim();
-        }
-
-        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     private void handleIntent(Intent intent) {
@@ -84,9 +67,18 @@ public class HSListActivity extends BaseFragmentActivity implements
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (AppUtil.isHoneycomb()) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim();
+        }
+
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -96,15 +88,47 @@ public class HSListActivity extends BaseFragmentActivity implements
         getMenuInflater().inflate(R.menu.list, menu);
 
         if (AppUtil.isHoneycomb()) {
-            //            final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            //            SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-            //            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            //            searchView.setIconifiedByDefault(false);
+            final MenuItem searchItem = menu.findItem(R.id.search);
+            mSearchView = (SearchView) searchItem.getActionView();
+            mSearchView.setIconifiedByDefault(false);
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(final String query) {
+                    mCurrentFilter = query;
+                    getSupportLoaderManager().restartLoader(0, null, HSListActivity.this);
+
+                    if (AppUtil.isHoneycomb()) invalidateOptionsMenu();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(final String newText) {
+                    mCurrentFilter = newText;
+                    getSupportLoaderManager().restartLoader(0, null, HSListActivity.this);
+                    return true;
+                }
+            });
+            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    searchItem.collapseActionView();
+                    return true;
+                }
+            });
+        }
+        else {
+
         }
 
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        if (AppUtil.isIcs()) menu.findItem(R.id.search).collapseActionView();
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,19 +143,11 @@ public class HSListActivity extends BaseFragmentActivity implements
                 //
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
-            //            case R.id.search:
-            //                onSearchRequested();
-            //                return true;
+            case R.id.search:
+                if (!AppUtil.isHoneycomb()) onSearchRequested();
+                return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (true) {
-
-        }
-        super.onBackPressed();
     }
 
     @Override
