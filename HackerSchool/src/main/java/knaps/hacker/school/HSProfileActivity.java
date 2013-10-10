@@ -10,10 +10,14 @@ import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Random;
 
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
@@ -153,15 +157,25 @@ public class HSProfileActivity extends BaseFragmentActivity
     @Override
     public void onPreImageDownload() {
         mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        int drawable = Constants.sLoadingIcons[Math.abs(new Random().nextInt() % Constants.sLoadingIcons.length)];
+        mImageView.setImageDrawable(getResources().getDrawable(drawable));
+        final Animation animation = new RotateAnimation(0.0f, -359.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(500);
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setRepeatMode(Animation.REVERSE);
+        mImageView.startAnimation(animation);
     }
 
     @Override
     public void onImageDownloaded(Bitmap bitmap) {
+        mImageView.clearAnimation();
         mImageView.setImageBitmap(bitmap);
     }
 
     @Override
     public void onImageFailed() {
+        mImageView.clearAnimation();
         mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
         mImageView.setAlpha(100);
         if (ImageDownloads.isOnline(this)) {

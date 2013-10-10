@@ -62,7 +62,6 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private int mSuccessMessageCount = 0;
     private static String[] sSuccessMessages = {"Yup.", "Correct.", "Yes."};
     private static String[] sHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
-    private static int[] sLoadingIcons = new int[] {R.drawable.ic_castle, R.drawable.ic_chalice, R.drawable.ic_identicon};
 
 
     private LruCache<String, Bitmap> mMemoryCache;
@@ -440,7 +439,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     @Override
     public void onPreImageDownload() {
         mHsPicture.setImageBitmap(null);
-        int drawable = sLoadingIcons[Math.abs(new Random().nextInt() % sLoadingIcons.length)];
+        int drawable = Constants.sLoadingIcons[Math.abs(new Random().nextInt() % Constants.sLoadingIcons.length)];
         mHsPicture.setImageDrawable(getResources().getDrawable(drawable));
         final Animation animation = new RotateAnimation(0.0f, -359.0f, Animation.RELATIVE_TO_SELF,
                 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
