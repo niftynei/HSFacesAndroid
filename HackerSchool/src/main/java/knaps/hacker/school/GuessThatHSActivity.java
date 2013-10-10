@@ -21,6 +21,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
+import java.util.Arrays;
+
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
@@ -365,23 +367,29 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String limit = null;
-        String selection = null;
-        String[] selectionArgs = null;
+        StringBuilder selection = new StringBuilder();
+        String[] selectionArgs = new String[0];
         if (!ImageDownloads.isOnline(this)) {
-            selection = HSData.HSer.COLUMN_NAME_IMAGE_FILENAME + HSData.STMT_IS_NOT_NULL;
+            if (selection.length() > 0) selection.append(HSData.STMT_AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(HSData.STMT_IS_NOT_NULL);
         }
         if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
-            if (selection != null)
-                selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_EQUALS_Q;
-            else selection = HSData.HSer.COLUMN_NAME_BATCH + HSData.STMT_LIKE_Q;
+            if (selection.length() > 0) selection.append(HSData.STMT_AND);
+            selection.append(HSData.HSer.COLUMN_NAME_BATCH).append(HSData.STMT_EQUALS_Q);
 
-            selection += HSData.STMT_AND + HSData.HSer.COLUMN_NAME_IMAGE_URL + HSData.STMT_NOT_LIKE_Q;
+            if (selection.length() > 0) selection.append(HSData.STMT_AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(HSData.STMT_NOT_LIKE_Q);
             selectionArgs = new String[] {mBatchName, "%no_photo%"};
-            Log.d("XML --- debugging", selection);
+        }
+        if (!TextUtils.isEmpty(SharedPrefsUtil.getUserEmail(this))) {
+            if (selection.length() > 0) selection.append(HSData.STMT_AND);
+            selection.append(HSData.HSer.SQL_NOT_LIKE_YOU);
+            selectionArgs = Arrays.copyOf(selectionArgs, selectionArgs.length + 1);
+            selectionArgs[selectionArgs.length - 1] = "%" + SharedPrefsUtil.getUserEmail(this) + "%";
         }
         return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
                 .columns(HSData.HSer.PROJECTION_ALL)
-                .selection(selection)
+                .selection(selection.toString())
                 .selectionArgs(selectionArgs)
                 .limit(limit).build();
     }

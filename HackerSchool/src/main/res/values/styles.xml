@@ -15,6 +15,7 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 
     <style name="CodeStyleFont">
@@ -27,6 +28,10 @@
 
     <style name="CodeStyleFont.White" parent="CodeStyleFont">
         <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="CodeStyleFont.Green" parent="CodeStyleFont">
+        <item name="android:textColor">#65A437</item>
     </style>
 
     <style name="HSButton">

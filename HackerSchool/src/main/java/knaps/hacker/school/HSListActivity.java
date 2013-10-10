@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import knaps.hacker.school.adapters.StudentAdapter;
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
@@ -29,8 +30,8 @@ public class HSListActivity extends BaseFragmentActivity implements
                                                          LoaderManager.LoaderCallbacks<Cursor>,
                                                          AdapterView.OnItemClickListener {
 
-    SimpleCursorAdapter mAdapter;
-    ListView mListView;
+    private StudentAdapter mAdapter;
+    private ListView mListView;
     private String mCurrentFilter = "";
     private SearchView mSearchView;
 
@@ -44,11 +45,14 @@ public class HSListActivity extends BaseFragmentActivity implements
         String[] fromColumns = {HSData.HSer.COLUMN_NAME_FULL_NAME};
         int[] toViews = {android.R.id.text1};
 
-        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, null,
-                fromColumns, toViews, 0);
+        mAdapter = new StudentAdapter(this, null);
         mListView.setAdapter(mAdapter);
 
         mListView.setOnItemClickListener(this);
+        mListView.setItemsCanFocus(false);
+        mListView.setFocusableInTouchMode(false);
+        mListView.setClipToPadding(false);
+        mListView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 
         handleIntent(getIntent());
         setupActionBar();
@@ -117,7 +121,7 @@ public class HSListActivity extends BaseFragmentActivity implements
             });
         }
         else {
-
+            // fuck you gingerbread
         }
 
         return true;

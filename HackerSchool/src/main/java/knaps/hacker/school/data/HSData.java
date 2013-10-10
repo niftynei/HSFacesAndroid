@@ -150,6 +150,9 @@ public final class HSData {
                 SQL_GET_ALL_BATCH +
                         STMT_LIMIT + " ?";
 
+        public static final String SQL_NOT_LIKE_YOU =
+                COLUMN_NAME_EMAIL + STMT_NOT_LIKE_Q;
+
         public static final String[] PROJECTION_ALL = {
                 _ID,
                 COLUMN_NAME_ID,
@@ -165,6 +168,19 @@ public final class HSData {
                 COLUMN_NAME_BATCH_ID,
                 COLUMN_NAME_BATCH
         };
+
+        public static final int ID = 1;
+        public static final int NAME = 2;
+        public static final int IMAGE_URL = 3;
+        public static final int IMAGE_FILENAME = 4;
+        public static final int JOB = 5;
+        public static final int JOB_URL = 6;
+        public static final int SKILLS = 7;
+        public static final int EMAIL = 8;
+        public static final int GITHUB = 9;
+        public static final int TWITTER = 10;
+        public static final int BATCH_ID = 11;
+        public static final int BATCH = 12;
 
         public static final String SORT_DEFAULT =
                 COLUMN_NAME_BATCH_ID + " DESC" + COMMA_SEP +

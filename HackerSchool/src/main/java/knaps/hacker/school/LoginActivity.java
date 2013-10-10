@@ -274,7 +274,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             final TextView user = (TextView) findViewById(R.id.textName);
             final DisplayMetrics dm = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(dm);
-            int dimens = Math.round(dm.density * 15);
+            int dimens = Math.round(dm.density * 30);
             final Drawable drawable = new BitmapDrawable(getResources(),
                     Bitmap.createScaledBitmap(bitmap, dimens, dimens, true));
             user.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);

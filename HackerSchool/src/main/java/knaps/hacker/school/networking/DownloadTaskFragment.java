@@ -52,7 +52,6 @@ public class DownloadTaskFragment extends Fragment {
         void onCancelled();
     }
 
-
     public DownloadTaskFragment(final String email, final String password, final boolean hasData) {
         mEmail = email;
         mPassword = password;

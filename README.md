@@ -34,7 +34,7 @@ Hacker Schooler.
 - [x] Give users option to play by batch
 - [x] Store user login data (if requested) and high score
 - [x] Display current user's image after they've logged in
-- [ ] User & skill search
+- [x] User & skill search
 - [ ] Style toasts to for Correct and Wrong
 - [ ] animations for win
 - [ ] Faster XML parsing
