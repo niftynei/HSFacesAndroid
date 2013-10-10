@@ -35,6 +35,8 @@ Hacker Schooler.
 - [x] Store user login data (if requested) and high score
 - [x] Display current user's image after they've logged in
 - [x] User & skill search
+- [x] Add spinner for loading icons
+- [x] Add batch headers to the list view
 - [ ] Style toasts to for Correct and Wrong
 - [ ] animations for win
 - [ ] Faster XML parsing
