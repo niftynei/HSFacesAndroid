@@ -13,15 +13,17 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSRandomCursorWrapper;
@@ -58,8 +60,9 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private int mHintCount = 0;
     private int mGameMax = Integer.MAX_VALUE;
     private int mSuccessMessageCount = 0;
-    private String[] mSuccessMessages = {"Yup.", "Correct.", "Yes."};
-    private String[] mHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
+    private static String[] sSuccessMessages = {"Yup.", "Correct.", "Yes."};
+    private static String[] sHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
+    private static int[] sLoadingIcons = new int[] {R.drawable.ic_castle, R.drawable.ic_chalice, R.drawable.ic_identicon};
 
 
     private LruCache<String, Bitmap> mMemoryCache;
@@ -180,7 +183,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                 mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
-                    Toast.makeText(this, String.format(mHintMessages[mHintCount],
+                    Toast.makeText(this, String.format(sHintMessages[mHintCount],
                             mCurrentStudent.mName.charAt(0)), Toast.LENGTH_SHORT).show();
                     incrementHint();
                     mGuess.setClickable(true);
@@ -203,7 +206,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void incrementHint() {
-        mHintCount = Math.min(mHintCount + 1, mHintMessages.length - 1);
+        mHintCount = Math.min(mHintCount + 1, sHintMessages.length - 1);
     }
 
     private void displayScore() {
@@ -328,7 +331,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         }
         else {
             Toast.makeText(this,
-                    mSuccessMessages[mSuccessMessageCount] + " You know " + mCurrentStudent.mName,
+                    sSuccessMessages[mSuccessMessageCount] + " You know " + mCurrentStudent.mName,
                     Toast.LENGTH_SHORT).show();
         }
         incrementSuccess();
@@ -437,16 +440,25 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     @Override
     public void onPreImageDownload() {
         mHsPicture.setImageBitmap(null);
-        mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        int drawable = sLoadingIcons[Math.abs(new Random().nextInt() % sLoadingIcons.length)];
+        mHsPicture.setImageDrawable(getResources().getDrawable(drawable));
+        final Animation animation = new RotateAnimation(0.0f, -359.0f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        animation.setDuration(500);
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setRepeatMode(Animation.REVERSE);
+        mHsPicture.startAnimation(animation);
     }
 
     @Override
     public void onImageDownloaded(Bitmap bitmap) {
+        mHsPicture.clearAnimation();
         mHsPicture.setImageBitmap(bitmap);
     }
 
     @Override
     public void onImageFailed() {
+        mHsPicture.clearAnimation();
         mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
         Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
         showNextStudent(false);
