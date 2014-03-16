@@ -147,6 +147,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(getString(R.string.title_activity_guess_that_hs));
         }
     }
 

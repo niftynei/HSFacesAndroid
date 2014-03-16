@@ -28,7 +28,7 @@ public class NewRelicTextView extends TextView {
     public void setTypeface(Typeface tf, int style) {
         if (!isInEditMode()) {
             super.setTypeface(
-                    TypefaceCache.getInstance().getTypeface(getContext(), "new-relic.ttf"));
+                    TypefaceCache.getInstance().getTypeface(getContext(), TypefaceCache.NEW_RELIC));
         }
     }
 }

@@ -107,6 +107,7 @@ public class HSProfileActivity extends BaseFragmentActivity
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(getString(R.string.title_activity_hsprofile));
         }
     }
 

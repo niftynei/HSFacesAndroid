@@ -1,5 +1,6 @@
 package knaps.hacker.school;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
@@ -26,6 +28,7 @@ import knaps.hacker.school.game.GuessThatHSActivity;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.DownloadTaskFragment;
 import knaps.hacker.school.networking.ImageDownloads;
+import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 
 public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener,
@@ -45,6 +48,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setupActionBar();
 
         mLoginButton = (Button) findViewById(R.id.button);
         mLoginButton.setOnClickListener(this);
@@ -133,6 +137,16 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         //        goToGameButton.setVisibility(View.GONE);
         //        viewAllButton.setVisibility(View.GONE);
         mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
+    }
+
+    /**
+     * Set up the {@link android.app.ActionBar}, if the API is available.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void setupActionBar() {
+        if (AppUtil.isHoneycomb()) {
+            setActionBarTitle(getString(R.string.app_name));
+        }
     }
 
     @Override

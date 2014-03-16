@@ -6,6 +6,18 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
         <!-- API 11 theme customizations can go here. -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:actionBarStyle">@style/HSActionBar</item>
+    </style>
+
+    <style name="HSActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/actionbar_gradient</item>
+        <item name="android:titleTextStyle">@style/HSActionBar.TitleText</item>
+    </style>
+
+    <style name="HSActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,6 +72,7 @@ public class HSListActivity extends BaseFragmentActivity implements
     private void setupActionBar() {
         if (AppUtil.isHoneycomb()) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(getString(R.string.title_activity_list));
         }
     }
 
