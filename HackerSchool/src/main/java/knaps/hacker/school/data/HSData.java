@@ -117,7 +117,7 @@ public final class HSData {
         public static final String SQL_GET_FILENAME =
                 STMT_SELECT + COLUMN_NAME_IMAGE_FILENAME +
                         STMT_FROM + TABLE_NAME +
-                        STMT_WHERE + COLUMN_NAME_IMAGE_URL + " = ? ";
+                        STMT_WHERE + COLUMN_NAME_IMAGE_URL + " LIKE ? ";
 
         public static final String SQL_GET_ALL_SAVED_TO_DISK =
                 STMT_SELECT + _ALL +

@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
+import knaps.hacker.school.game.GuessThatHSActivity;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.DownloadTaskFragment;
 import knaps.hacker.school.networking.ImageDownloads;
@@ -283,7 +284,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         }
 
         @Override
-        public void onImageFailed() {
+        public void onImageFailed(boolean bool) {
             // don't do anything, yo
         }
     }

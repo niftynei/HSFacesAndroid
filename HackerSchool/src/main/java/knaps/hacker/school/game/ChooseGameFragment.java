@@ -1,4 +1,4 @@
-package knaps.hacker.school;
+package knaps.hacker.school.game;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import knaps.hacker.school.R;
 import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.utils.Constants;
 
@@ -110,7 +111,6 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.buttonPlay) {
-            final Intent intent = new Intent(getActivity(), GuessThatHSActivity.class);
             final KeyMap countItem = (KeyMap) mCountSpinner.getSelectedItem();
             final KeyMap batchItem = (KeyMap) mBatchSpinner.getSelectedItem();
 

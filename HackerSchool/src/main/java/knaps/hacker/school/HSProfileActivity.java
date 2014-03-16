@@ -174,7 +174,7 @@ public class HSProfileActivity extends BaseFragmentActivity
     }
 
     @Override
-    public void onImageFailed() {
+    public void onImageFailed(boolean hadNetwork) {
         mImageView.clearAnimation();
         mImageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
         mImageView.setAlpha(100);

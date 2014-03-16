@@ -165,7 +165,7 @@ public class SQLiteCursorLoader extends AsyncTaskLoader<Cursor> {
             cursor.getCount();
         }
 
-        return cursor;
+        return new HSRandomCursorWrapper(cursor);
     }
 
     @Override

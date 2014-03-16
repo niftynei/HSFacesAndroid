@@ -33,8 +33,7 @@ public class ImageSaver {
 
     // get a file handle for writing to cache stuff
     public File getPrivatePicturesExternalStorage(final Context context, final String filename) {
-        final File file = new File(context.getExternalFilesDir(
-                Environment.DIRECTORY_PICTURES), filename);
+        final File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
         if (!file.mkdirs()) {
             Log.e("Error", "Directory not created!");
         }
@@ -63,7 +62,7 @@ public class ImageSaver {
         //        }
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);
         final byte[] bitmapdata = bos.toByteArray();
 
         final InputStream is = new ByteArrayInputStream(bitmapdata);
@@ -109,7 +108,7 @@ public class ImageSaver {
         return BitmapFactory.decodeFile(fullFilename);
     }
 
-    public String getFilenameFromImageUrl(String imageUrl) {
+    public static String getFilenameFromImageUrl(String imageUrl) {
         final String search = "150-";
         if (imageUrl.lastIndexOf(".jpg") == -1) {
             imageUrl = imageUrl + ".jpg";
@@ -137,7 +136,7 @@ public class ImageSaver {
     public static String databaseHasImage(Context context, String url) {
         final SQLiteDatabase db = new HSDatabaseHelper(context).getWritableDatabase();
         final String response = DatabaseUtils.stringForQuery(db, HSData.HSer.SQL_GET_FILENAME,
-                new String[] {url});
+                new String[] { "%" + url + "%"});
         db.close();
         return response;
     }

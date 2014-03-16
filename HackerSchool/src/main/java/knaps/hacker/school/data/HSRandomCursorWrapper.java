@@ -29,7 +29,6 @@ public class HSRandomCursorWrapper extends CursorWrapper {
         super(cursor);
 
         mWrappedCursor = cursor;
-
         randomizedOrder = new ArrayList<Integer>(cursor.getCount());
 
         for (int i = 0; i < cursor.getCount(); i++) {

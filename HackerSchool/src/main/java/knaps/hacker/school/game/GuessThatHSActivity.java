@@ -1,4 +1,4 @@
-package knaps.hacker.school;
+package knaps.hacker.school.game;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -20,17 +20,23 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.Random;
 
+import knaps.hacker.school.BaseFragmentActivity;
+import knaps.hacker.school.R;
 import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.KeyboardUtil;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 import knaps.hacker.school.utils.StringUtil;
 
@@ -63,9 +69,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private static String[] sSuccessMessages = {"Yup.", "Correct.", "Yes."};
     private static String[] sHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
 
-
     private LruCache<String, Bitmap> mMemoryCache;
-    private ImageDownloads.RetainFragment mRetainedFragment;
 
     private boolean mIsRestart = false;
     private boolean mGameOver = false;
@@ -86,12 +90,11 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mGuessCounter = (TextView) findViewById(R.id.textGuessCount);
         mBatchText = (TextView) findViewById(R.id.textBatchName);
 
-        mRetainedFragment = ImageDownloads.RetainFragment
-                                          .findOrCreateRetainFragment(getSupportFragmentManager());
-        mMemoryCache = mRetainedFragment.mRetainedCache;
+        ImageDownloads.RetainFragment retainFragment = ImageDownloads.RetainFragment.findOrCreateRetainFragment(getSupportFragmentManager());
+        mMemoryCache = retainFragment.mRetainedCache;
         if (mMemoryCache == null) {
             mMemoryCache = ImageDownloads.getBitmapMemoryCache();
-            mRetainedFragment.mRetainedCache = mMemoryCache;
+            retainFragment.mRetainedCache = mMemoryCache;
         }
 
         if (getIntent() != null) {
@@ -114,12 +117,13 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             mBatchText.setText(mBatchName);
         }
 
-        getSupportLoaderManager().initLoader(0, null, this);
         setupActionBar();
 
         if (!mIsRestart) {
             showGameSettingsDialog();
         }
+
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     private void showGameSettingsDialog() {
@@ -145,14 +149,6 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
-
-    //    @Override
-    //    public boolean onCreateOptionsMenu(Menu menu) {
-    //        // Inflate the menu; this adds items to the action bar if it is present.
-    //        getMenuInflater().inflate(R.menu.guess_that_h, menu);
-    //        return true;
-    //    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -219,28 +215,26 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         }
     }
 
-    private void showNextStudent(boolean isFirst) {
+    private void showNextStudent() {
         if (mStudentCursor.isLast() || mGameMax - 1 <= mStudentCursor.getPosition()) {
             showEndGame();
         }
         else if (mStudentCursor.getCount() > 0) {
-            if (isFirst) {
-                mStudentCursor.moveToFirst();
-            }
-            else {
-                mStudentCursor.moveToNext();
-            }
+            mStudentCursor.moveToNext();
             showStudent();
             displayScore();
             mGuess.setClickable(true);
             mEditGuess.setEnabled(true);
-
         }
         else {
-            Toast.makeText(this, "No valid students found. Try connecting to the internet.",
-                    Toast.LENGTH_SHORT).show();
-            this.finish();
+            showNoStudentsAndExit();
         }
+    }
+
+    private void showNoStudentsAndExit() {
+        Toast.makeText(this, "No valid students found. Try connecting to the internet.",
+                Toast.LENGTH_SHORT).show();
+        this.finish();
     }
 
     private void showStudent() {
@@ -249,10 +243,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mHintCount = 0;
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            final InputMethodManager imm = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInputFromWindow(mEditGuess.getWindowToken(),
-                    InputMethodManager.SHOW_FORCED, 0);
+            KeyboardUtil.showKeyboard(this, mEditGuess);
         }
 
         new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, this, this).execute();
@@ -305,7 +296,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mGuessCounter.postDelayed(new Runnable() {
             @Override
             public void run() {
-                showNextStudent(false);
+                showNextStudent();
             }
         }, 1700);
     }
@@ -337,7 +328,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mGuessCounter.postDelayed(new Runnable() {
             @Override
             public void run() {
-                showNextStudent(false);
+                showNextStudent();
             }
         }, 1700);
     }
@@ -358,12 +349,28 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             mCurrentScore++;
             returnValue = true;
         }
-        else if (guess.equals(names[names.length - 1])) {
-            mCurrentScore++;
-            returnValue = true;
-        }
         mCurrentGuesses++;
         return returnValue;
+    }
+
+    private void initGame() {
+        if (mGameMax == Constants.INVALID_MIN) {
+            mGameMax = mStudentCursor.getCount();
+        }
+
+        if (mGameOver) {
+            showEndGame();
+        }
+        else {
+            if (!mIsRestart) {
+                showNextStudent();
+            }
+            else {
+                showStudent();
+            }
+            mGuess.setEnabled(true);
+            displayScore();
+        }
     }
 
     @Override
@@ -398,24 +405,8 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        if (mGameMax == Constants.INVALID_MIN) {
-            mGameMax = o.getCount();
-        }
-
-        if (mGameOver) {
-            showEndGame();
-        }
-        else {
-            mStudentCursor = new HSRandomCursorWrapper(o);
-            if (!mIsRestart) {
-                showNextStudent(true);
-            }
-            else {
-                showStudent();
-            }
-            mGuess.setEnabled(true);
-            displayScore();
-        }
+        mStudentCursor = o;
+        initGame();
     }
 
     @Override
@@ -456,10 +447,13 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     @Override
-    public void onImageFailed() {
+    public void onImageFailed(boolean wasNetworkError) {
         mHsPicture.clearAnimation();
         mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
-        Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
-        showNextStudent(false);
+
+        if (!wasNetworkError) {
+            Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
+        }
+        showNextStudent();
     }
 }

@@ -44,7 +44,7 @@
                 android:value="knaps.hacker.school.LoginActivity" />
         </activity>
         <activity
-            android:name="knaps.hacker.school.GuessThatHSActivity"
+            android:name=".game.GuessThatHSActivity"
             android:label="@string/title_activity_guess_that_hs"
             android:parentActivityName="knaps.hacker.school.LoginActivity" >
             <meta-data

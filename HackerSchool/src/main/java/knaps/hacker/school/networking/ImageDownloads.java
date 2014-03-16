@@ -34,7 +34,7 @@ public class ImageDownloads {
 
         public void onImageDownloaded(Bitmap bitmap);
 
-        public void onImageFailed();
+        public void onImageFailed(boolean networkError);
     }
 
     public static boolean isOnline(Context context) {
@@ -130,6 +130,7 @@ public class ImageDownloads {
         private static final String TAG = "RetainFragment";
         public LruCache<String, Bitmap> mRetainedCache;
 
+
         public RetainFragment() {}
 
         public static RetainFragment findOrCreateRetainFragment(FragmentManager fm) {
@@ -152,11 +153,13 @@ public class ImageDownloads {
         final private String mUrl;
         final private Activity mContext;
         final private ImageDownloadCallback mCallbacks;
+        private final String mImageKey;
 
         public HSGetImageTask(String url, Activity context, ImageDownloadCallback callback) {
             mUrl = url;
             mContext = context;
             mCallbacks = callback;
+            mImageKey = ImageSaver.getFilenameFromImageUrl(mUrl);
         }
 
         @Override
@@ -167,21 +170,22 @@ public class ImageDownloads {
         @Override
         protected Bitmap doInBackground(Void... params) {
             Bitmap bitmap;
-            bitmap = getBitmapMemoryCache().get(mUrl);
+            bitmap = getBitmapMemoryCache().get(mImageKey);
 
             if (bitmap == null) {
-                final String filename = ImageSaver.databaseHasImage(mContext, mUrl);
+                final String filename = ImageSaver.databaseHasImage(mContext, mImageKey);
                 if (filename != null) {
                     final ImageSaver saver = new ImageSaver();
                     bitmap = saver.getBitmapFromFile(mContext, filename);
                 }
                 if (isOnline(mContext) && bitmap == null) {
-                    bitmap = ImageDownloads.loadBitmap(Constants.HACKER_SCHOOL_URL + mUrl);
+                    bitmap = ImageDownloads.loadBitmap(mUrl);
                     new SaveToDisk(mContext, mUrl, bitmap).execute();
                 }
 
-                if (bitmap != null)
-                    new SaveToCacheTask(getBitmapMemoryCache(), bitmap, mUrl).execute();
+                if (bitmap != null) {
+                    new SaveToCacheTask(getBitmapMemoryCache(), bitmap, mImageKey).execute();
+                }
             }
             return bitmap;
         }
@@ -194,7 +198,7 @@ public class ImageDownloads {
                 mCallbacks.onImageDownloaded(bitmap);
             }
             else {
-                mCallbacks.onImageFailed();
+                mCallbacks.onImageFailed(!isOnline(mContext));
             }
 
         }
