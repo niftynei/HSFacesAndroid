@@ -34,11 +34,10 @@ local.properties
 
 # Android Gradle build folders
 build/
-.gradle/1.6/taskArtifacts/*
-.gradle/1.7/taskArtifacts/*
+.gradle/*/taskArtifacts/*
 
 #IntelliJ IDEA
-#.idea
+.idea/*
 .idea/libraries
 workspace.xml
 tasks.xml

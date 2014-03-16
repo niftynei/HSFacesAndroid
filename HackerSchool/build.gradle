@@ -3,9 +3,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
+
 apply plugin: 'android'
 
 repositories {
@@ -16,7 +17,7 @@ def password = (project.hasProperty("password")) ? project['password'] : ""
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    buildToolsVersion "19.0.1"
 
     signingConfigs {
         release {
@@ -40,8 +41,8 @@ android {
 }
 
 dependencies {
-	compile 'com.android.support:support-v4:18.0.0'
-	compile 'com.android.support:appcompat-v7:18.0.0'
+	compile 'com.android.support:support-v4:19.0.0'
+	compile 'com.android.support:appcompat-v7:19.0.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
     compile files('libs/libGoogleAnalyticsServices.jar')
 }
