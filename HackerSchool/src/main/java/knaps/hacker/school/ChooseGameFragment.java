@@ -53,11 +53,11 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
 
         limitCounts = new KeyMap[] {
                 KeyMap.make(Constants.INVALID_MIN, Constants.RUNTIME_STRING),
-                KeyMap.make(5, "O(1)"),
-                KeyMap.make(10, "O(n)"),
-                KeyMap.make(20, "O(n^2)"),
-                KeyMap.make(50, "O(n^n)"),
-                KeyMap.make(Constants.INVALID_MIN, "O(n!)"),
+                KeyMap.make(5, getActivity().getString(R.string.o_one)),
+                KeyMap.make(10, getActivity().getString(R.string.o_n)),
+                KeyMap.make(20, getActivity().getString(R.string.o_squared)),
+                KeyMap.make(50, getActivity().getString(R.string.o_to_n)),
+                KeyMap.make(Constants.INVALID_MIN, getActivity().getString(R.string.o_n_factorial)),
 
         };
     }

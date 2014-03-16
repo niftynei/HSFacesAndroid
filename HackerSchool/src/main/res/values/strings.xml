@@ -14,5 +14,10 @@
     <string name="welcome">Welcome</string>
     <string name="hi">hi</string>
     <string name="action_refresh_data">Refresh Data</string>
+    <string name="o_squared">O(n^2)</string>
+    <string name="o_n">O(n)</string>
+    <string name="o_one">O(1)</string>
+    <string name="o_to_n">O(n^n)</string>
+    <string name="o_n_factorial">O(n!)</string>
 
 </resources>
