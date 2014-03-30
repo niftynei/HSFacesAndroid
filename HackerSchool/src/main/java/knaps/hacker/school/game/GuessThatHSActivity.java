@@ -16,13 +16,10 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +36,8 @@ import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.KeyboardUtil;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 import knaps.hacker.school.utils.StringUtil;
+import knaps.hacker.school.views.GameTileCallback;
+import knaps.hacker.school.views.GameTileLayout;
 
 public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,
                                                                          LoaderManager.LoaderCallbacks<Cursor>,
@@ -51,7 +50,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private static final String HINT_MESSAGE_COUNT = "hint_count";
     private static final String GAME_OVER = "game_over";
 
-    private ImageView mHsPicture;
+    private GameTileLayout mGameTileLayout;
     private EditText mEditGuess;
     private Button mGuess;
     private Button mRestartButton;
@@ -66,7 +65,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private int mHintCount = 0;
     private int mGameMax = Integer.MAX_VALUE;
     private int mSuccessMessageCount = 0;
-    private static String[] sSuccessMessages = {"Yup.", "Correct.", "Yes."};
+    private static int[] sSuccessMessages = {R.string.success_generic_one, R.string.success_generic_two, R.string.success_generic_three };
     private static String[] sHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
 
     private LruCache<String, Bitmap> mMemoryCache;
@@ -79,7 +78,8 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess);
 
-        mHsPicture = (ImageView) findViewById(R.id.imageStudent);
+        mGameTileLayout = (GameTileLayout) findViewById(R.id.gameTile);
+
         mEditGuess = (EditText) findViewById(R.id.editGuess);
         mEditGuess.setOnEditorActionListener(this);
         mGuess = (Button) findViewById(R.id.buttonGuess);
@@ -147,7 +147,6 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(getString(R.string.title_activity_guess_that_hs));
         }
     }
 
@@ -179,8 +178,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                 mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
-                    Toast.makeText(this, String.format(sHintMessages[mHintCount],
-                            mCurrentStudent.mName.charAt(0)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, String.format(sHintMessages[mHintCount], mCurrentStudent.mName.charAt(0)), Toast.LENGTH_SHORT).show();
                     incrementHint();
                     mGuess.setClickable(true);
                 }
@@ -217,6 +215,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void showNextStudent() {
+        mGameTileLayout.showImage();
         if (mStudentCursor.isLast() || mGameMax - 1 <= mStudentCursor.getPosition()) {
             showEndGame();
         }
@@ -269,7 +268,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mEditGuess.setVisibility(View.GONE);
         mGuess.setVisibility(View.GONE);
         mRestartButton.setVisibility(View.VISIBLE);
-        mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        mGameTileLayout.setHSPicture(R.drawable.ic_launcher);
         double finalScore = mCurrentScore / (mCurrentGuesses * 1.0) * 100;
         mGuessCounter.setText(String.format("Final Score: %.0f%%", finalScore));
 
@@ -293,16 +292,27 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void showFail() {
-        Toast.makeText(this, "This is " + mCurrentStudent.mName, Toast.LENGTH_SHORT).show();
-        mGuessCounter.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showNextStudent();
-            }
-        }, 1700);
+        mGameTileLayout.showFail(getString(R.string.fail_message, mCurrentStudent.mName), mGameTileCallback);
     }
 
     private void showSuccess() {
+        mGameTileLayout.showSuccess(getSuccessMessage(), mGameTileCallback);
+        incrementSuccess();
+    }
+
+    private GameTileCallback mGameTileCallback = new GameTileCallback() {
+        @Override
+        public void onAnimationEnd() {
+            mGuessCounter.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showNextStudent();
+                }
+            }, 1700);
+        }
+    };
+
+    private String getSuccessMessage() {
         if (!"".equals(
                 mCurrentStudent.mSkills) && mCurrentStudent.mSkills != null && mSuccessMessageCount % 3 == 2) {
             String[] skills = mCurrentStudent.mSkills.split(",");
@@ -310,28 +320,15 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             if (skills.length > 0) {
                 skill = skills[0];
             }
-            Toast.makeText(this,
-                    "You got it. " + mCurrentStudent.mName + " is a " + skill + " ninja.",
-                    Toast.LENGTH_SHORT).show();
+            return getString(R.string.success_skill, mCurrentStudent.mName, skill);
         }
         else if (!""
                 .equals(mCurrentStudent.mJob) && mCurrentStudent.mJob != null && mSuccessMessageCount % 3 == 1) {
-            Toast.makeText(this,
-                    "Right. " + mCurrentStudent.mName + " works at " + mCurrentStudent.mJob,
-                    Toast.LENGTH_SHORT).show();
+            return getString(R.string.success_skill, mCurrentStudent.mName, mCurrentStudent.mJob);
         }
         else {
-            Toast.makeText(this,
-                    sSuccessMessages[mSuccessMessageCount] + " You know " + mCurrentStudent.mName,
-                    Toast.LENGTH_SHORT).show();
+            return getString(sSuccessMessages[mSuccessMessageCount], mCurrentStudent.mName);
         }
-        incrementSuccess();
-        mGuessCounter.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showNextStudent();
-            }
-        }, 1700);
     }
 
     private void incrementSuccess() {
@@ -430,27 +427,19 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 
     @Override
     public void onPreImageDownload() {
-        mHsPicture.setImageBitmap(null);
+        mGameTileLayout.clearHSPicture();
         int drawable = Constants.sLoadingIcons[Math.abs(new Random().nextInt() % Constants.sLoadingIcons.length)];
-        mHsPicture.setImageDrawable(getResources().getDrawable(drawable));
-        final Animation animation = new RotateAnimation(0.0f, -359.0f, Animation.RELATIVE_TO_SELF,
-                0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        animation.setDuration(500);
-        animation.setRepeatCount(Animation.INFINITE);
-        animation.setRepeatMode(Animation.REVERSE);
-        mHsPicture.startAnimation(animation);
+        mGameTileLayout.setHSPicture(getResources().getDrawable(drawable));
     }
 
     @Override
     public void onImageDownloaded(Bitmap bitmap) {
-        mHsPicture.clearAnimation();
-        mHsPicture.setImageBitmap(bitmap);
+        mGameTileLayout.setHSPicture(bitmap);
     }
 
     @Override
     public void onImageFailed(boolean wasNetworkError) {
-        mHsPicture.clearAnimation();
-        mHsPicture.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher));
+        mGameTileLayout.setHSPicture(R.drawable.ic_launcher);
 
         if (!wasNetworkError) {
             Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();

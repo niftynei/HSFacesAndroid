@@ -62,8 +62,8 @@ public class Student implements Serializable {
         final Element imageNode = (Element) path
                 .evaluate("html:a/html:img[@class='profile-image']", student, XPathConstants.NODE);
         mImageUrl = imageNode.getAttribute("src");
-        final Element nameElem = (Element) path
-                .evaluate("html:div[@class='name']/html:a", student, XPathConstants.NODE);
+        Log.i("ImageUrl", mImageUrl);
+        final Element nameElem = (Element) path.evaluate("html:div[@class='name']/html:a", student, XPathConstants.NODE);
         mName = nameElem.getTextContent();
         mId = getPersonId(nameElem.getAttribute("href"));
         final Element jobElem = (Element) path

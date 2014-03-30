@@ -10,13 +10,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,8 +31,10 @@ import knaps.hacker.school.data.HSDatabaseHelper;
 import knaps.hacker.school.game.GuessThatHSActivity;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.DownloadTaskFragment;
+import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.networking.ImageDownloads;
 import knaps.hacker.school.utils.AppUtil;
+import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 
 public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener,
@@ -43,12 +49,16 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     private DownloadTaskFragment mDownloadFragment;
     private Button goToGameButton;
     private Button viewAllButton;
+    private WebView mWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setupActionBar();
+
+        mWebView = (WebView) findViewById(R.id.webView);
+        setupWebView();
 
         mLoginButton = (Button) findViewById(R.id.button);
         mLoginButton.setOnClickListener(this);
@@ -105,6 +115,36 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
 
     }
 
+    private void setupWebView() {
+        mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
+                Log.d("URI", url);
+                if (url.startsWith(Constants.REDIRECT_URI)) {
+                    Uri uri = Uri.parse(url);
+                    if (uri.getQueryParameter("code") != null) {
+                        String code = uri.getQueryParameter("code");
+                        HSOAuthService.getService().getAccessToken(code);
+                        return true;
+                    }
+                    else if (uri.getQueryParameter("error") != null) {
+                        String message = uri.getQueryParameter("error_message");
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                        mWebView.setVisibility(View.GONE);
+                    }
+                }
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+
+            @Override
+            public void onPageStarted(final WebView view, final String url, final Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
+        });
+        mWebView.loadUrl(HSOAuthService.getService().getAuthUrl());
+    }
+
     private void freezeViews() {
         mEmailView.setEnabled(false);
         mPasswordView.setEnabled(false);
@@ -145,7 +185,6 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
         if (AppUtil.isHoneycomb()) {
-            setActionBarTitle(getString(R.string.app_name));
         }
     }
 
@@ -181,15 +220,15 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                if (!"".equals(mEmailView.getText().toString()) && !""
-                        .equals(mPasswordView.getText().toString())) {
-                    final String email = mEmailView.getText().toString();
-                    final String password = mPasswordView.getText().toString();
-                    mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
-                    getSupportFragmentManager().beginTransaction()
-                            .add(mDownloadFragment, "download_task").commit();
-                    SharedPrefsUtil.saveUserEmail(this, email);
-                }
+                //if (!"".equals(mEmailView.getText().toString()) && !""
+                //        .equals(mPasswordView.getText().toString())) {
+                //    final String email = mEmailView.getText().toString();
+                //    final String password = mPasswordView.getText().toString();
+                //    mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
+                //    getSupportFragmentManager().beginTransaction()
+                //            .add(mDownloadFragment, "download_task").commit();
+                //    SharedPrefsUtil.saveUserEmail(this, email);
+                //}
                 break;
             case R.id.buttonGame:
                 Intent playGame = new Intent(LoginActivity.this, GuessThatHSActivity.class);

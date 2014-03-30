@@ -2,4 +2,6 @@
 <resources>
     <color name="hacker_school_green">#65A437</color>
     <color name="hacker_school_green_highlight">#73D52E</color>
+    <color name="success_color">#AA73D52E</color>
+    <color name="fail_color">#AAd21524</color>
 </resources>

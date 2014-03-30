@@ -72,7 +72,6 @@ public class HSListActivity extends BaseFragmentActivity implements
     private void setupActionBar() {
         if (AppUtil.isHoneycomb()) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(getString(R.string.title_activity_list));
         }
     }
 
@@ -113,6 +112,8 @@ public class HSListActivity extends BaseFragmentActivity implements
                 }
             });
             mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+                @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                 @Override
                 public boolean onClose() {
                     searchItem.collapseActionView();

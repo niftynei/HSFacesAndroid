@@ -179,7 +179,7 @@ public class ImageDownloads {
                     bitmap = saver.getBitmapFromFile(mContext, filename);
                 }
                 if (isOnline(mContext) && bitmap == null) {
-                    bitmap = ImageDownloads.loadBitmap(mUrl);
+                    bitmap = ImageDownloads.loadBitmap(checkUrl(mUrl));
                     new SaveToDisk(mContext, mUrl, bitmap).execute();
                 }
 
@@ -201,6 +201,11 @@ public class ImageDownloads {
                 mCallbacks.onImageFailed(!isOnline(mContext));
             }
 
+        }
+
+        private String checkUrl(String url) {
+            if (url.contains("http")) return url;
+            else return Constants.HACKER_SCHOOL_URL + url;
         }
     }
 }

@@ -32,10 +32,4 @@ public class BaseFragmentActivity extends FragmentActivity {
         if (!BuildConfig.DEBUG) EasyTracker.getInstance(this).activityStop(this);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void setActionBarTitle(String title) {
-        if (AppUtil.isHoneycomb()) {
-            getActionBar().setTitle(TypefaceCache.getInstance().getTitleBarText(this, title));
-        }
-    }
 }

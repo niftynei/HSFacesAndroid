@@ -29,14 +29,12 @@
         android:layout_centerHorizontal="true" />
 
 
-    <ImageView
+    <knaps.hacker.school.views.GameTileLayout
         android:layout_height="@dimen/hs_image_height"
         android:layout_width="@dimen/hs_image_width"
         android:layout_gravity="center"
         android:gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher"
-        android:id="@+id/imageStudent"
+        android:id="@+id/gameTile"
         android:layout_below="@+id/textBatchName"
         android:layout_centerHorizontal="true" />
 
@@ -50,8 +48,8 @@
         android:id="@+id/editGuess"
         android:imeOptions="actionDone"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/imageStudent"
-        android:layout_alignLeft="@+id/imageStudent" />
+        android:layout_below="@+id/gameTile"
+        android:layout_alignLeft="@+id/gameTile" />
 
     <Button
         android:layout_width="wrap_content"
@@ -70,7 +68,7 @@
         android:id="@+id/buttonRestart"
         style="@style/HSButton"
         android:visibility="gone"
-        android:layout_below="@id/imageStudent"
+        android:layout_below="@id/gameTile"
         android:layout_centerHorizontal="true" />
 
 

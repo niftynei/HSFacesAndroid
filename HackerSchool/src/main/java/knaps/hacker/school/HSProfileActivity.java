@@ -107,17 +107,8 @@ public class HSProfileActivity extends BaseFragmentActivity
     private void setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(getString(R.string.title_activity_hsprofile));
         }
     }
-
-    //    @Override
-    //    public boolean onCreateOptionsMenu(Menu menu) {
-    //        // Inflate the menu; this adds items to the action bar if it is present.
-    //        getMenuInflater().inflate(R.menu.hsprofile, menu);
-    //        return true;
-    //    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

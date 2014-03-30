@@ -1,5 +1,6 @@
 package knaps.hacker.school.utils;
 
+import knaps.hacker.school.BuildConfig;
 import knaps.hacker.school.R;
 
 /**
@@ -10,6 +11,21 @@ public final class Constants {
     private Constants() {}
 
     public final static String HACKER_SCHOOL_URL = "https://www.hackerschool.com";
+
+    public static final String OAUTH = "/oauth";
+    public final static String OAUTH_AUTHORIZE = HACKER_SCHOOL_URL + OAUTH + "/authorize";
+    public static final String OAUTH_TOKEN = HACKER_SCHOOL_URL + OAUTH + "/token";
+    public static final String OAUTH_AUTHORIZE_PARAMS = "?response_type=code&client_id=%s";
+    public static final String OAUTH_TOKEN_PARAMS = "?grant_type=authorization_code&code=%s";
+    public static final String REDIRECT_URI = "hsfaces://oauth";
+    public static final String CLIENT_SECRET = BuildConfig.API_SECRET;
+    public static final String CLIENT_ID = "576c1008783cdc3bbb8e0b875c9df9f1e7d2fb0b28f0e59b777476f831605340";
+
+    public static final String API_ENDPOINT = "/api/v1";
+    public static final String PEOPLE = "/people";
+    public static final String ME = "/me";
+    public static final String ME_ENDPOINT = HACKER_SCHOOL_URL + API_ENDPOINT + PEOPLE + ME;
+
     public final static String LOGIN_PAGE = "/sessions";
     public static final String STUDENT = "student";
     public static final String GAME_MAX = "game_count";

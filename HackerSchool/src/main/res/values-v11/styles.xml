@@ -18,6 +18,7 @@
 
     <style name="HSActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:typeface">monospace</item>
     </style>
 
 </resources>
