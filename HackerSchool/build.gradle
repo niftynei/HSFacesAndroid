@@ -14,6 +14,7 @@ repositories {
 }
 
 def password = (project.hasProperty("password")) ? project['password'] : ""
+def apiKey = (project.hasProperty("api_secret")) ? project.('api_secret') : ""
 
 android {
     compileSdkVersion 18
@@ -30,6 +31,8 @@ android {
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 18
+
+        buildConfigField "String", "API_SECRET", "\"$apiKey\""
     }
     buildTypes {
         release {
@@ -38,11 +41,24 @@ android {
             proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
-	compile 'com.android.support:support-v4:19.0.0'
-	compile 'com.android.support:appcompat-v7:19.0.0'
+    repositories {
+        mavenCentral()
+    }
+
+    compile 'com.squareup.retrofit:retrofit:1.5.0'
+    compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0'
+    compile 'com.android.support:support-v4:19.0.0'
+    compile 'com.android.support:appcompat-v7:19.0.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
+    compile 'com.nineoldandroids:parent:2.2.0'
     compile files('libs/libGoogleAnalyticsServices.jar')
 }
