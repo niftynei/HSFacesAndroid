@@ -24,48 +24,50 @@ public class Student implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    public int mId = 0;
-    public String mName = "";
-    public String mImageUrl = "";
-    public String mImageFilename = "";
+    public long id = 0;
+    public String firstName = "";
+    public String lastName = "";
+    public String image = "";
+    public String email = "";
+    public String github = "";
+    public String twitter = "";
+    public String batchId = "";
+
+    // Things not returned by the API
     public String mJob = "";
     public String mJobUrl = "";
     public String mSkills = "";
-    public String mEmail = "";
-    public String mGithubUrl = "";
-    public String mTwitterUrl = "";
+    public String mImageFilename = "";
     public String mBatch = "";
-    public String mBatchId = "";
 
     public Student(Cursor cursor) {
-        mId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
-        mName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FULL_NAME));
-        mImageUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
+        id = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
+        firstName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FULL_NAME));
+        image = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
         mImageFilename = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME));
         mJob = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB));
         mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
         mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));
-        mEmail = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_EMAIL));
-        mGithubUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_GITHUB));
-        mTwitterUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_TWITTER));
+        email = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_EMAIL));
+        github = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_GITHUB));
+        twitter = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_TWITTER));
         mBatch = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH));
-        mBatchId = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
+        batchId = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
     }
 
     public Student(String batch, String batchId, Node student, XPath path) throws
             XPathExpressionException {
 
-        // TODO: why is this so slow??
         mBatch = batch;
-        mBatchId = batchId;
+        this.batchId = batchId;
 
         final Element imageNode = (Element) path
                 .evaluate("html:a/html:img[@class='profile-image']", student, XPathConstants.NODE);
-        mImageUrl = imageNode.getAttribute("src");
-        Log.i("ImageUrl", mImageUrl);
+        image = imageNode.getAttribute("src");
+        Log.i("ImageUrl", image);
         final Element nameElem = (Element) path.evaluate("html:div[@class='name']/html:a", student, XPathConstants.NODE);
-        mName = nameElem.getTextContent();
-        mId = getPersonId(nameElem.getAttribute("href"));
+        firstName = nameElem.getTextContent();
+        id = getPersonId(nameElem.getAttribute("href"));
         final Element jobElem = (Element) path
                 .evaluate("html:div[@class='job']/html:a", student, XPathConstants.NODE);
         if (jobElem != null) {
@@ -87,14 +89,14 @@ public class Student implements Serializable {
 
     private void figureOutContactUrl(String url) {
         if (url.contains("github")) {
-            mGithubUrl = url;
+            github = url;
         }
         else if (url.contains("twitter")) {
-            mTwitterUrl = url;
+            twitter = url;
         }
         else if (url.contains("mailto:")) {
-            mEmail = url.replace("mailto:", "");
-            Log.d("XML -- parsing", "emails -- " + mEmail);
+            email = url.replace("mailto:", "");
+            Log.d("XML -- parsing", "emails -- " + email);
         }
     }
 

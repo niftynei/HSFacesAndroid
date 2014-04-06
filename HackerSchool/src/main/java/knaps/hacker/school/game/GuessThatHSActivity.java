@@ -178,7 +178,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                 mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
-                    Toast.makeText(this, String.format(sHintMessages[mHintCount], mCurrentStudent.mName.charAt(0)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, String.format(sHintMessages[mHintCount], mCurrentStudent.firstName.charAt(0)), Toast.LENGTH_SHORT).show();
                     incrementHint();
                     mGuess.setClickable(true);
                 }
@@ -246,7 +246,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             KeyboardUtil.showKeyboard(this, mEditGuess);
         }
 
-        new ImageDownloads.HSGetImageTask(mCurrentStudent.mImageUrl, this, this).execute();
+        new ImageDownloads.HSGetImageTask(mCurrentStudent.image, this, this).execute();
     }
 
     private void restartGame() {
@@ -292,7 +292,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void showFail() {
-        mGameTileLayout.showFail(getString(R.string.fail_message, mCurrentStudent.mName), mGameTileCallback);
+        mGameTileLayout.showFail(getString(R.string.fail_message, mCurrentStudent.firstName), mGameTileCallback);
     }
 
     private void showSuccess() {
@@ -320,14 +320,14 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             if (skills.length > 0) {
                 skill = skills[0];
             }
-            return getString(R.string.success_skill, mCurrentStudent.mName, skill);
+            return getString(R.string.success_skill, mCurrentStudent.firstName, skill);
         }
         else if (!""
                 .equals(mCurrentStudent.mJob) && mCurrentStudent.mJob != null && mSuccessMessageCount % 3 == 1) {
-            return getString(R.string.success_skill, mCurrentStudent.mName, mCurrentStudent.mJob);
+            return getString(R.string.success_skill, mCurrentStudent.firstName, mCurrentStudent.mJob);
         }
         else {
-            return getString(sSuccessMessages[mSuccessMessageCount], mCurrentStudent.mName);
+            return getString(sSuccessMessages[mSuccessMessageCount], mCurrentStudent.firstName);
         }
     }
 
@@ -339,7 +339,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private boolean runGuess(String guess) {
         boolean returnValue = false;
         guess = StringUtil.removeAccents(guess).toLowerCase();
-        final String name = StringUtil.removeAccents(mCurrentStudent.mName).toLowerCase();
+        final String name = StringUtil.removeAccents(mCurrentStudent.firstName).toLowerCase();
         final String[] names = name.split(" ");
         if (guess.equals(name)
                 || guess.equals(names[0])

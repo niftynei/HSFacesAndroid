@@ -111,16 +111,16 @@ public class HSParser {
         final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 
         for (Student student : students) {
-            stmt.bindLong(1, student.mId);
-            stmt.bindString(2, student.mName);
-            stmt.bindString(3, student.mImageUrl);
+            stmt.bindLong(1, student.id);
+            stmt.bindString(2, student.firstName);
+            stmt.bindString(3, student.image);
             stmt.bindString(4, student.mJob);
             stmt.bindString(5, student.mJobUrl);
             stmt.bindString(6, student.mSkills);
-            stmt.bindString(7, student.mEmail);
-            stmt.bindString(8, student.mGithubUrl);
-            stmt.bindString(9, student.mTwitterUrl);
-            stmt.bindString(10, student.mBatchId);
+            stmt.bindString(7, student.email);
+            stmt.bindString(8, student.github);
+            stmt.bindString(9, student.twitter);
+            stmt.bindString(10, student.batchId);
             stmt.bindString(11, student.mBatch);
             stmt.execute();
             stmt.clearBindings();

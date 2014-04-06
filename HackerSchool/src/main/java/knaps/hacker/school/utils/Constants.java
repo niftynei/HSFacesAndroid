@@ -15,8 +15,6 @@ public final class Constants {
     public static final String OAUTH = "/oauth";
     public final static String OAUTH_AUTHORIZE = HACKER_SCHOOL_URL + OAUTH + "/authorize";
     public static final String OAUTH_TOKEN = HACKER_SCHOOL_URL + OAUTH + "/token";
-    public static final String OAUTH_AUTHORIZE_PARAMS = "?response_type=code&client_id=%s";
-    public static final String OAUTH_TOKEN_PARAMS = "?grant_type=authorization_code&code=%s";
     public static final String REDIRECT_URI = "hsfaces://oauth";
     public static final String CLIENT_SECRET = BuildConfig.API_SECRET;
     public static final String CLIENT_ID = "576c1008783cdc3bbb8e0b875c9df9f1e7d2fb0b28f0e59b777476f831605340";

@@ -62,9 +62,9 @@ public class HSProfileActivity extends BaseFragmentActivity
     }
 
     private void populateViews(Student student) {
-        new ImageDownloads.HSGetImageTask(student.mImageUrl, this, this).execute();
+        new ImageDownloads.HSGetImageTask(student.image, this, this).execute();
 
-        mNameView.setText(student.mName);
+        mNameView.setText(student.firstName);
         mBatchView.setText(student.mBatch);
 
         if (!TextUtils.isEmpty(student.mSkills)) {
@@ -89,13 +89,13 @@ public class HSProfileActivity extends BaseFragmentActivity
         mGithubButton.setOnClickListener(this);
         mTwitterButton.setOnClickListener(this);
         mEmailButton.setOnClickListener(this);
-        if (TextUtils.isEmpty(student.mGithubUrl)) {
+        if (TextUtils.isEmpty(student.github)) {
             mGithubButton.setVisibility(View.INVISIBLE);
         }
-        if (TextUtils.isEmpty(student.mTwitterUrl)) {
+        if (TextUtils.isEmpty(student.twitter)) {
             mTwitterButton.setVisibility(View.INVISIBLE);
         }
-        if (TextUtils.isEmpty(student.mEmail)) {
+        if (TextUtils.isEmpty(student.email)) {
             mEmailButton.setVisibility(View.INVISIBLE);
         }
     }
@@ -124,17 +124,17 @@ public class HSProfileActivity extends BaseFragmentActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonTwitter:
-                Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.mTwitterUrl));
+                Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.twitter));
                 startActivity(twitter);
                 break;
             case R.id.buttonGithub:
-                Intent github = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.mGithubUrl));
+                Intent github = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.github));
                 startActivity(github);
                 break;
             case R.id.buttonEmail:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", mStudent.mEmail, null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hey " + mStudent.mName);
+                        "mailto", mStudent.email, null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hey " + mStudent.firstName);
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 break;
             case R.id.textJob:

@@ -14,6 +14,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
+import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
 
 /**
@@ -29,6 +30,16 @@ public class HSOAuthService {
     private HSOAuthService() {}
 
     public static HSOAuthService getService() { return mService; }
+
+    public String getAccessToken() {
+
+        if (mAccessToken != null) {
+            return mAccessToken;
+        }
+
+        // pull it out of the shared prefs!?
+        throw new Error("no access token is available yet");
+    }
 
     public String getAuthUrl() {
 
@@ -67,14 +78,15 @@ public class HSOAuthService {
     }
 
     public void makeARequest() throws OAuthSystemException, OAuthProblemException {
-        OAuthClientRequest bearerRequest = new OAuthBearerClientRequest(Constants.ME_ENDPOINT)
-                .setAccessToken(mAccessToken)
-                .buildQueryMessage();
+        //OAuthClientRequest bearerRequest = new OAuthBearerClientRequest(Constants.ME_ENDPOINT)
+        //        .setAccessToken(mAccessToken)
+        //        .buildQueryMessage();
+        //
+        //OAuthResourceResponse response = mClient.resource(bearerRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
 
-        OAuthResourceResponse response = mClient.resource(bearerRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+        Student me = RequestManager.getService().getMe();
+        Log.d("PARSED?", me.email);
 
-        response.getBody();
-        response.getResponseCode();
     }
 
     private class GetToken extends AsyncTask<Void, Void, Void> {
@@ -91,9 +103,8 @@ public class HSOAuthService {
 
             try {
                 OAuthJSONAccessTokenResponse response = mClient.accessToken(mRequest);
-                // todo: save to shared prefs
+                // todo: save to shared prefs!!
                 mAccessToken = response.getAccessToken();
-                long expiresIn = response.getExpiresIn();
                 makeARequest();
             }
             catch (OAuthSystemException e) {

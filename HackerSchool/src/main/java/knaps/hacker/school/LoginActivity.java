@@ -305,7 +305,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             Student student = new HSDatabaseHelper(LoginActivity.this)
                     .getLoggedInStudent(LoginActivity.this);
             // load the image
-            new ImageDownloads.HSGetImageTask(student.mImageUrl, LoginActivity.this, this)
+            new ImageDownloads.HSGetImageTask(student.image, LoginActivity.this, this)
                     .execute();
             return student;
         }
@@ -314,7 +314,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         protected void onPostExecute(Student student) {
             if (student != null) {
                 TextView user = (TextView) findViewById(R.id.textName);
-                user.setText(getString(R.string.hi) + " " + student.mName.split(" ")[0]);
+                user.setText(getString(R.string.hi) + " " + student.firstName.split(" ")[0]);
             }
         }
 
