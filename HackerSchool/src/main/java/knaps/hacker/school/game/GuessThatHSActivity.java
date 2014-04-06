@@ -54,7 +54,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private EditText mEditGuess;
     private Button mGuess;
     private Button mRestartButton;
-    private String mBatchName;
+    private long mBatchId;
     private TextView mGuessCounter;
     private TextView mBatchText;
 
@@ -99,7 +99,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 
         if (getIntent() != null) {
             mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Constants.INVALID_MIN);
-            mBatchName = getIntent().getStringExtra(Constants.BATCH_NAME);
+            mBatchId = getIntent().getLongExtra(Constants.BATCH_ID, 0L);
 
         }
         if (savedInstanceState != null) {
@@ -110,12 +110,13 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             mHintCount = savedInstanceState.getInt(HINT_MESSAGE_COUNT);
             mGameMax = savedInstanceState.getInt(Constants.GAME_MAX);
             mGameOver = savedInstanceState.getBoolean(GAME_OVER);
-            mBatchName = savedInstanceState.getString(Constants.BATCH_NAME);
+            mBatchId = savedInstanceState.getLong(Constants.BATCH_ID);
         }
 
-        if (mBatchName != null && !Constants.BATCH_NAME.equals(mBatchName)) {
-            mBatchText.setText(mBatchName);
-        }
+        // TODO: figure out a way to get batch by name from ID! ;)
+        //if (mBatchId != null && !Constants.BATCH_ID.equals(mBatchId)) {
+        //    mBatchText.setText(mBatchId);
+        //}
 
         setupActionBar();
 
@@ -131,9 +132,9 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         ChooseGameFragment fragment = new ChooseGameFragment();
         fragment.setOnChooseGameListener(new ChooseGameFragment.OnChooseGameListener() {
             @Override
-            public void onChooseGame(String batch, int gameMax) {
-                mBatchName = batch;
-                mGameMax = gameMax;
+            public void onChooseGame(long batchId, String batchName, long gameMax) {
+                mBatchId = batchId;
+                mGameMax = (int) gameMax;
                 restartGame();
             }
         });
@@ -168,7 +169,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         icicle.putInt(HINT_MESSAGE_COUNT, mHintCount);
         icicle.putInt(Constants.GAME_MAX, mGameMax);
         icicle.putBoolean(GAME_OVER, mGameOver);
-        icicle.putString(Constants.BATCH_NAME, mBatchName);
+        icicle.putLong(Constants.BATCH_ID, mBatchId);
     }
 
     @Override
@@ -377,25 +378,25 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         StringBuilder selection = new StringBuilder();
         String[] selectionArgs = new String[0];
         if (!ImageDownloads.isOnline(this)) {
-            if (selection.length() > 0) selection.append(HSData.STMT_AND);
-            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(HSData.STMT_IS_NOT_NULL);
+            if (selection.length() > 0) selection.append(HSData.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(HSData.IS_NOT_NULL);
         }
-        if (!TextUtils.isEmpty(mBatchName) && !Constants.BATCH_STRING.equals(mBatchName)) {
-            if (selection.length() > 0) selection.append(HSData.STMT_AND);
-            selection.append(HSData.HSer.COLUMN_NAME_BATCH).append(HSData.STMT_EQUALS_Q);
+        if (!TextUtils.isEmpty(mBatchId) && !Constants.BATCH_STRING.equals(mBatchId)) {
+            if (selection.length() > 0) selection.append(HSData.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_BATCH).append(HSData.EQUALS_Q);
 
-            if (selection.length() > 0) selection.append(HSData.STMT_AND);
-            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(HSData.STMT_NOT_LIKE_Q);
-            selectionArgs = new String[] {mBatchName, "%no_photo%"};
+            if (selection.length() > 0) selection.append(HSData.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(HSData.NOT_LIKE_Q);
+            selectionArgs = new String[] {mBatchId, "%no_photo%"};
         }
         if (!TextUtils.isEmpty(SharedPrefsUtil.getUserEmail(this))) {
-            if (selection.length() > 0) selection.append(HSData.STMT_AND);
+            if (selection.length() > 0) selection.append(HSData.AND);
             selection.append(HSData.HSer.SQL_NOT_LIKE_YOU);
             selectionArgs = Arrays.copyOf(selectionArgs, selectionArgs.length + 1);
             selectionArgs[selectionArgs.length - 1] = "%" + SharedPrefsUtil.getUserEmail(this) + "%";
         }
         return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
-                .columns(HSData.HSer.PROJECTION_ALL)
+                .columns(HSData.HSer.PROJECTION_ALL_BATCH)
                 .selection(selection.toString())
                 .selectionArgs(selectionArgs)
                 .limit(limit).build();

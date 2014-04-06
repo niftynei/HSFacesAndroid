@@ -37,18 +37,10 @@ import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 
-public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener,
-                                                                   DownloadTaskFragment.TaskCallbacks {
+public class LoginActivity extends BaseFragmentActivity implements View.OnClickListener {
 
-    View mLoadingView;
-    EditText mEmailView;
-    EditText mPasswordView;
     boolean mHasData;
-    private View mPasswordWarning;
-    private Button mLoginButton;
     private DownloadTaskFragment mDownloadFragment;
-    private Button goToGameButton;
-    private Button viewAllButton;
     private WebView mWebView;
 
     @Override
@@ -58,34 +50,17 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         setupActionBar();
 
         mWebView = (WebView) findViewById(R.id.webView);
-        setupWebView();
 
-        mLoginButton = (Button) findViewById(R.id.button);
-        mLoginButton.setOnClickListener(this);
-
-        goToGameButton = (Button) findViewById(R.id.buttonGame);
-        goToGameButton.setOnClickListener(this);
-
-        viewAllButton = (Button) findViewById(R.id.buttonBrowse);
-        viewAllButton.setOnClickListener(this);
-
-        mLoadingView = findViewById(R.id.loading_view);
-        mLoadingView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        mEmailView = (EditText) findViewById(R.id.editEmail);
-        mPasswordView = (EditText) findViewById(R.id.editPassword);
-        mPasswordWarning = findViewById(R.id.textPasswordNotice);
-        final InputMethodManager imm = (InputMethodManager) getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(mEmailView, InputMethodManager.SHOW_IMPLICIT);
-
-        FragmentManager fm = getSupportFragmentManager();
-        mDownloadFragment = (DownloadTaskFragment) fm.findFragmentByTag("download_task");
-
+        if (!HSOAuthService.getService().isAuthorized()) {
+            // TODO: what happens after the 2 hour lease has expired??
+            setupWebView();
+        }
+        else {
+            // go to the HSListActivity
+            Intent listIntent = new Intent(this, HSListActivity.class);
+            startActivity(listIntent);
+            finish();
+        }
     }
 
     @Override
@@ -102,15 +77,9 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             db.close();
         }
 
-        if (mDownloadFragment != null && mDownloadFragment.isTaskRunning()) {
-            freezeViews();
-        }
-
         if (numHackerSchoolers > 0) {
             mHasData = true;
-            hideLogin();
             new LoadUserData().execute();
-
         }
 
     }
@@ -132,6 +101,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
                         String message = uri.getQueryParameter("error_message");
                         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                         mWebView.setVisibility(View.GONE);
+                        // TODO: error messaging for URL stuffs
                     }
                 }
                 return super.shouldOverrideUrlLoading(view, url);
@@ -143,40 +113,6 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
             }
         });
         mWebView.loadUrl(HSOAuthService.getService().getAuthUrl());
-    }
-
-    private void freezeViews() {
-        mEmailView.setEnabled(false);
-        mPasswordView.setEnabled(false);
-        mLoginButton.setEnabled(false);
-        mLoadingView.setVisibility(View.VISIBLE);
-    }
-
-    private void unFreezeViews() {
-        mLoadingView.setVisibility(View.GONE);
-        mLoginButton.setEnabled(true);
-        mEmailView.setEnabled(true);
-        mPasswordView.setEnabled(true);
-    }
-
-    private void hideLogin() {
-        goToGameButton.setVisibility(View.VISIBLE);
-        viewAllButton.setVisibility(View.VISIBLE);
-        mLoginButton.setVisibility(View.GONE);
-        mEmailView.setVisibility(View.GONE);
-        mPasswordView.setVisibility(View.GONE);
-        mPasswordWarning.setVisibility(View.GONE);
-    }
-
-    private void showLogin() {
-        mPasswordView.setVisibility(View.VISIBLE);
-        mEmailView.setVisibility(View.VISIBLE);
-        mPasswordWarning.setVisibility(View.VISIBLE);
-        mLoginButton.setVisibility(View.VISIBLE);
-
-        //        goToGameButton.setVisibility(View.GONE);
-        //        viewAllButton.setVisibility(View.GONE);
-        mEmailView.setText(SharedPrefsUtil.getUserEmail(this));
     }
 
     /**
@@ -207,7 +143,6 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh_data:
-                showLogin();
                 break;
             default:
                 return super.onMenuItemSelected(featureId, item);
@@ -220,13 +155,11 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button:
-                //if (!"".equals(mEmailView.getText().toString()) && !""
-                //        .equals(mPasswordView.getText().toString())) {
+                //if (!"".equals(mEmailView.getText().toString()) && !"".equals(mPasswordView.getText().toString())) {
                 //    final String email = mEmailView.getText().toString();
                 //    final String password = mPasswordView.getText().toString();
                 //    mDownloadFragment = new DownloadTaskFragment(email, password, mHasData);
-                //    getSupportFragmentManager().beginTransaction()
-                //            .add(mDownloadFragment, "download_task").commit();
+                //    getSupportFragmentManager().beginTransaction().add(mDownloadFragment, "download_task").commit();
                 //    SharedPrefsUtil.saveUserEmail(this, email);
                 //}
                 break;
@@ -271,14 +204,7 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         return sb;
     }
 
-    @Override
-    public void onPreExecute() {
-        freezeViews();
-    }
-
-    @Override
     public void onPostExecute(String result) {
-        unFreezeViews();
         if (result == null) {
             // navigate to the game page
             Intent intent = new Intent(LoginActivity.this, GuessThatHSActivity.class);
@@ -291,22 +217,15 @@ public class LoginActivity extends BaseFragmentActivity implements View.OnClickL
         }
     }
 
-    @Override
-    public void onCancelled() {
-
-    }
-
     class LoadUserData extends AsyncTask<Void, Void, Student>
             implements ImageDownloads.ImageDownloadCallback {
 
         @Override
         protected Student doInBackground(Void... params) {
             // get student data
-            Student student = new HSDatabaseHelper(LoginActivity.this)
-                    .getLoggedInStudent(LoginActivity.this);
+            Student student = new HSDatabaseHelper(LoginActivity.this).getLoggedInStudent(LoginActivity.this);
             // load the image
-            new ImageDownloads.HSGetImageTask(student.image, LoginActivity.this, this)
-                    .execute();
+            new ImageDownloads.HSGetImageTask(student.image, LoginActivity.this, this).execute();
             return student;
         }
 

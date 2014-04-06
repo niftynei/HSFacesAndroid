@@ -41,9 +41,6 @@ public class HSListActivity extends BaseFragmentActivity implements
 
         mListView = (ListView) findViewById(R.id.list);
 
-        String[] fromColumns = {HSData.HSer.COLUMN_NAME_FULL_NAME};
-        int[] toViews = {android.R.id.text1};
-
         mAdapter = new StudentAdapter(this, null);
         mListView.setAdapter(mAdapter);
 
@@ -164,13 +161,23 @@ public class HSListActivity extends BaseFragmentActivity implements
         }
 
         return new SQLiteCursorLoader(this,
-                HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL,
+                HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL_BATCH,
                 HSData.HSer.SORT_DEFAULT);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        mAdapter.swapCursor(o);
+        // TODO: use a background service to download all the things!
+        if (o.getCount() > 0) {
+            mAdapter.swapCursor(o);
+        }
+        else {
+            showLoading();
+        }
+    }
+
+    private void showLoading() {
+        // TODO: Loading!
     }
 
     @Override

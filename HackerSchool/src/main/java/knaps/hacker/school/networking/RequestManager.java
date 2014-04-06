@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.StringUtil;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
@@ -79,9 +80,8 @@ public class RequestManager {
         @Override
         public Date deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
             String dateString = json.getAsJsonPrimitive().getAsString();
-            SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             try {
-                return dateParser.parse(dateString);
+                return StringUtil.getSimpleDateFormatter().parse(dateString);
             }
             catch (ParseException e) {
                 Log.d("JSON", "Error parsing date string");

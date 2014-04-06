@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import knaps.hacker.school.R;
 import knaps.hacker.school.data.HSDatabaseHelper;
+import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.utils.Constants;
 
 /**
@@ -31,7 +32,7 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     private OnChooseGameListener mListener;
 
     interface OnChooseGameListener {
-        public void onChooseGame(String batch, int gameMax);
+        public void onChooseGame(long batchId, String batchName, long gameMax);
     }
 
     public ChooseGameFragment() {}
@@ -44,12 +45,12 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final ArrayList<String> batchNames = new HSDatabaseHelper(getActivity())
-                .getExistingBatchesByName();
+        final ArrayList<Batch> batchNames = new HSDatabaseHelper(getActivity()).getExistingBatches();
         batches = new KeyMap[batchNames.size() + 1];
         batches[0] = KeyMap.make(-1, Constants.BATCH_STRING);
         for (int i = 0; i < batchNames.size(); i++) {
-            batches[i + 1] = KeyMap.make(i + 1, batchNames.get(i));
+            Batch batch = batchNames.get(i);
+            batches[i + 1] = KeyMap.make(batch.id, batch.name);
         }
 
         limitCounts = new KeyMap[] {
@@ -90,15 +91,15 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
     }
 
     private static class KeyMap {
-        int sKey;
+        long sKey;
         String sValue;
 
-        public KeyMap(int key, String value) {
+        public KeyMap(long key, String value) {
             sKey = key;
             sValue = value;
         }
 
-        public static KeyMap make(int key, String value) {
+        public static KeyMap make(long key, String value) {
             return new KeyMap(key, value);
         }
     }
@@ -115,7 +116,7 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
             final KeyMap batchItem = (KeyMap) mBatchSpinner.getSelectedItem();
 
             if (mListener != null) {
-                mListener.onChooseGame(batchItem.sValue, countItem.sKey);
+                mListener.onChooseGame(batchItem.sKey, batchItem.sValue, countItem.sKey);
             }
             this.dismissAllowingStateLoss();
         }
@@ -135,10 +136,8 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
             }
 
             if (convertView == null || convertView.findViewById(android.R.id.text1) == null) {
-                LayoutInflater inflator = (LayoutInflater) getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflator
-                        .inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+                LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
             }
             KeyMap item = getItem(position);
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(item.sValue);

@@ -21,7 +21,7 @@ import knaps.hacker.school.data.HSData;
  */
 public class StudentAdapter extends CursorAdapter {
 
-
+    // TODO: Figure out a way to group by batch when moved to a grid view!!
     private static final int STATE_UNKNOWN = 0;
     private static final int STATE_SECTIONED_CELL = 1;
     private static final int STATE_REGULAR_CELL = 2;
@@ -84,7 +84,7 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         if (needsSeparator) {
-            cursor.copyStringToBuffer(HSData.HSer.BATCH, holder.batchNameBuffer);
+            cursor.copyStringToBuffer(HSData.HSer.BATCH_NAME, holder.batchNameBuffer);
             holder.separatorBatchName.setText(holder.batchNameBuffer.data, 0, holder.batchNameBuffer.sizeCopied);
             holder.separatorBatchName.setVisibility(View.VISIBLE);
         }

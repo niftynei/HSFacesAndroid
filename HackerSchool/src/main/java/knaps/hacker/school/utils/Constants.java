@@ -24,10 +24,13 @@ public final class Constants {
     public static final String ME = "/me";
     public static final String ME_ENDPOINT = HACKER_SCHOOL_URL + API_ENDPOINT + PEOPLE + ME;
 
+    public static final String GITHUB_URL = "http://www.github.com";
+    public static final String TWITTER_URL = "http://www.twitter.com";
+
     public final static String LOGIN_PAGE = "/sessions";
     public static final String STUDENT = "student";
     public static final String GAME_MAX = "game_count";
-    public static final String BATCH_NAME = "batch_name";
+    public static final String BATCH_ID = "batch_id";
     public static final String RUNTIME_STRING = "Run Time";
     public static final String BATCH_STRING = "Batch";
     public static final int INVALID_MIN = -1;

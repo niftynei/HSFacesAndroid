@@ -125,12 +125,10 @@ public class DownloadTaskFragment extends Fragment {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 
-                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity())
-                            .getExistingBatches();
+                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
 
                     long startTimingBatches = System.currentTimeMillis();
-                    final ArrayList<Student> students = HSParser
-                            .parseBatches(entity.getContent(), existingBatches);
+                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
                     long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
                     logTiming(endTimingBatches, "parse_batches");
 

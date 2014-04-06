@@ -2,6 +2,7 @@ package knaps.hacker.school;
 
 import android.app.Application;
 
+import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.networking.RequestManager;
 
 /**
@@ -14,5 +15,6 @@ public class HSFacesApplication extends Application {
         super.onCreate();
 
         RequestManager.init();
+        HSOAuthService.init(this);
     }
 }

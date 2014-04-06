@@ -14,10 +14,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="knaps.hacker.school.HSFacesApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name=".HSFacesApplication"
         android:theme="@style/AppTheme" >
         <activity
             android:name="knaps.hacker.school.LoginActivity"
@@ -36,16 +36,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"
-                />
+                android:resource="@xml/searchable" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="knaps.hacker.school.LoginActivity" />
         </activity>
         <activity
-            android:name=".game.GuessThatHSActivity"
+            android:name="knaps.hacker.school.game.GuessThatHSActivity"
             android:label="@string/title_activity_guess_that_hs"
             android:parentActivityName="knaps.hacker.school.LoginActivity" >
             <meta-data
@@ -60,6 +60,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="knaps.hacker.school.HSListActivity" />
         </activity>
+
+        <provider
+            android:name="knaps.hacker.school.data.HackerSchoolContentProvider"
+            android:authorities="content://knaps.hacker.school.content"
+            android:enabled="true"
+            android:exported="false" >
+        </provider>
     </application>
 
 </manifest>

@@ -5,102 +5,43 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import org.ccil.cowan.tagsoup.Parser;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.utils.StringUtil;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
 public class HSParser {
 
-    public static ArrayList<Student> parseBatches(final InputStream xml, ArrayList<String> existingBatches)
-            throws IOException, SAXException, TransformerConfigurationException,
-            XPathExpressionException {
+    public static void writeBatchesToDatabase(final List<Batch> batches, final Context context) {
         long startTime = System.currentTimeMillis();
-        final XPathFactory factory = XPathFactory.newInstance();
-        final XPath path = factory.newXPath();
-        final MutableNamespaceContext nc = new MutableNamespaceContext();
-        nc.setNamespace("html", "http://www.w3.org/1999/xhtml");
-        path.setNamespaceContext(nc);
-        final ArrayList<Student> studentList = new ArrayList<Student>();
+        final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.beginTransaction();
 
-        final Node cleanedDom = getHtmlUrlNode(xml);
-        final NodeList batches = (NodeList) path
-                .evaluate("//html:ul[@id='batches']/html:li", cleanedDom, XPathConstants.NODESET);
-        Log.d("XML - - batch count..", batches.getLength() + "");
+        final SQLiteStatement stmt = db.compileStatement(HSData.Batch.SQL_UPSERT_ALL);
+        final SimpleDateFormat formatter = StringUtil.getSimpleDateFormatter();
 
-        for (int i = 0; i < batches.getLength(); i++) {
-            final Element batch = (Element) batches.item(i);
-            final String batchName = path.evaluate("html:h2/text()", batch).replace("\n", "");
-            final String batchId = ((Element) path.evaluate("html:ul", batch, XPathConstants.NODE))
-                    .getAttribute("id").trim().toLowerCase();
-            Log.d("XML - - parsing batch .. ", batchName + ":" + batchId);
-
-            final NodeList students = (NodeList) path
-                    .evaluate("html:ul/html:li[@class='person']", batch, XPathConstants.NODESET);
-            for (int j = 0; j < students.getLength(); j++) {
-                final Element student = (Element) students.item(j);
-                studentList.add(new Student(batchName, batchId, student, path));
-            }
+        for (Batch batch : batches) {
+            stmt.bindLong(1, batch.id);
+            stmt.bindString(2, batch.name);
+            stmt.bindString(3, formatter.format(batch.startDate));
+            stmt.bindString(4, formatter.format(batch.endDate));
+            stmt.bindLong(5, startTime);
+            stmt.execute();
+            stmt.clearBindings();
         }
 
-        Log.d("XML _ timing",
-                "Total time for parsing: " + (System.currentTimeMillis() - startTime) + "ms");
-        return studentList;
-    }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
 
-    private static Node getHtmlUrlNode(InputStream xml) throws TransformerConfigurationException,
-            IOException, SAXException {
-
-        SAXTransformerFactory stf = (SAXTransformerFactory) TransformerFactory.newInstance();
-        TransformerHandler th = stf.newTransformerHandler();
-
-        DOMResult result = new DOMResult();
-
-        th.setResult(result);
-        // Use a TagSoup parser to tidy this up?!
-        Parser parser = new Parser();
-        parser.setContentHandler(th);
-
-        parser.parse(new InputSource(xml));
-
-        return result.getNode();
-    }
-
-    public static String dumpNode(Node node, boolean omitDeclaration) throws TransformerException {
-        Transformer xformer =
-                TransformerFactory.newInstance().newTransformer();
-        if (omitDeclaration) {
-            xformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        }
-        StringWriter sw = new StringWriter();
-        Result result = new StreamResult(sw);
-        Source source = new DOMSource(node);
-        xformer.transform(source, result);
-        return sw.toString();
+        Log.d("DB _ timing",
+                "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     public static void writeStudentsToDatabase(final List<Student> students, final Context context) {
@@ -113,15 +54,16 @@ public class HSParser {
         for (Student student : students) {
             stmt.bindLong(1, student.id);
             stmt.bindString(2, student.firstName);
-            stmt.bindString(3, student.image);
-            stmt.bindString(4, student.mJob);
-            stmt.bindString(5, student.mJobUrl);
-            stmt.bindString(6, student.mSkills);
-            stmt.bindString(7, student.email);
-            stmt.bindString(8, student.github);
-            stmt.bindString(9, student.twitter);
-            stmt.bindString(10, student.batchId);
-            stmt.bindString(11, student.mBatch);
+            stmt.bindString(3, student.lastName);
+            stmt.bindString(4, student.image);
+            stmt.bindString(5, student.mJob);
+            stmt.bindString(6, student.mJobUrl);
+            stmt.bindString(7, student.mSkills);
+            stmt.bindString(8, student.email);
+            stmt.bindString(9, student.github);
+            stmt.bindString(10, student.twitter);
+            stmt.bindLong(11, student.batch.id);
+            stmt.bindLong(12, startTime);
             stmt.execute();
             stmt.clearBindings();
         }
@@ -129,7 +71,7 @@ public class HSParser {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-        Log.d("XML _ timing",
+        Log.d("DB _ timing",
                 "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 }
