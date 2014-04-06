@@ -65,7 +65,7 @@ public class HSProfileActivity extends BaseFragmentActivity
         new ImageDownloads.HSGetImageTask(student.image, this, this).execute();
 
         mNameView.setText(student.firstName);
-        mBatchView.setText(student.mBatch);
+        mBatchView.setText(student.batch.name);
 
         if (!TextUtils.isEmpty(student.mSkills)) {
             mSkillsView.setText(student.mSkills);
@@ -124,17 +124,16 @@ public class HSProfileActivity extends BaseFragmentActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonTwitter:
-                Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.twitter));
+                Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.getTwitterUrl()));
                 startActivity(twitter);
                 break;
             case R.id.buttonGithub:
-                Intent github = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.github));
+                Intent github = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.getGithubUrl()));
                 startActivity(github);
                 break;
             case R.id.buttonEmail:
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto", mStudent.email, null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hey " + mStudent.firstName);
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", mStudent.email, null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hey there " + mStudent.firstName);
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 break;
             case R.id.textJob:

@@ -38,6 +38,8 @@ public class Student implements Serializable {
     public String mJob = "";
     public String mJobUrl = "";
     public String mSkills = "";
+
+    // local to app
     public String mImageFilename = "";
 
     public Student(Cursor cursor) {
