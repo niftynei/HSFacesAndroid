@@ -17,20 +17,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-
 import knaps.hacker.school.BuildConfig;
-import knaps.hacker.school.data.HSDatabaseHelper;
-import knaps.hacker.school.data.HSParser;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
 
 /**
@@ -125,26 +118,27 @@ public class DownloadTaskFragment extends Fragment {
                         return "Request failed. Error:" + statusCode + " Check username and password.";
                     }
 
-                    final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
+                    //final ArrayList<String> existingBatches = new HSDatabaseHelper(getActivity()).getExistingBatches();
 
-                    long startTimingBatches = System.currentTimeMillis();
-                    final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
-                    long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
-                    logTiming(endTimingBatches, "parse_batches");
+                    //long startTimingBatches = System.currentTimeMillis();
+                    //final ArrayList<Student> students = HSParser.parseBatches(entity.getContent(), existingBatches);
+                    //long endTimingBatches = System.currentTimeMillis() - startTimingBatches;
+                    //logTiming(endTimingBatches, "parse_batches");
 
-                    if (students.size() > 0) {
-                        long startTimingWriteDb = System.currentTimeMillis();
-                        HSParser.writeStudentsToDatabase(students, getActivity());
-                        long endTimingWriteDb = System.currentTimeMillis() - startTimingWriteDb;
-                        logTiming(endTimingWriteDb, "write_db");
-                        return null;
-                    }
-                    else if (existingBatches.size() > 0 && mHasData) {
-                        return null;
-                    }
-                    else {
-                        return "No results returned. Check username and password.";
-                    }
+                    //if (students.size() > 0) {
+                    //    long startTimingWriteDb = System.currentTimeMillis();
+                    //    HSParser.writeStudentsToDatabase(students, getActivity());
+                    //    long endTimingWriteDb = System.currentTimeMillis() - startTimingWriteDb;
+                    //    logTiming(endTimingWriteDb, "write_db");
+                    //    return null;
+                    //}
+                    //else if (existingBatches.size() > 0 && mHasData) {
+                    //    return null;
+                    //}
+                    //else {
+                    //    return "No results returned. Check username and password.";
+                    //}
+                    return "Network unavailable. Make sure you're connected, then try again.";
 
                 }
                 catch (UnsupportedEncodingException e) {
@@ -159,18 +153,18 @@ public class DownloadTaskFragment extends Fragment {
                     Log.e("Error", "error!!", e);
                     return "Error with network request: 300";
                 }
-                catch (SAXException e) {
-                    Log.e("Error", "error!!", e);
-                    return "Error with parsing: 400";
-                }
-                catch (XPathExpressionException e) {
-                    Log.e("Error", "error!!", e);
-                    return "Error with parsing: 500";
-                }
-                catch (TransformerConfigurationException e) {
-                    Log.e("Error", "error!!", e);
-                    return "Error with parsing: 600";
-                }
+                //catch (SAXException e) {
+                //    Log.e("Error", "error!!", e);
+                //    return "Error with parsing: 400";
+                //}
+                //catch (XPathExpressionException e) {
+                //    Log.e("Error", "error!!", e);
+                //    return "Error with parsing: 500";
+                //}
+                //catch (TransformerConfigurationException e) {
+                //    Log.e("Error", "error!!", e);
+                //    return "Error with parsing: 600";
+                //}
             }
             else {
                 return "Network unavailable. Make sure you're connected, then try again.";

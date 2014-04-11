@@ -19,8 +19,11 @@ import android.widget.SearchView;
 
 import knaps.hacker.school.adapters.StudentAdapter;
 import knaps.hacker.school.data.HSData;
+import knaps.hacker.school.data.HSDatabaseUtil;
 import knaps.hacker.school.data.SQLiteCursorLoader;
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.networking.ApiUtil;
+import knaps.hacker.school.networking.HSApiService;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
@@ -154,6 +157,10 @@ public class HSListActivity extends BaseFragmentActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (HSDatabaseUtil.batchesNeedUpdate(this)) {
+            ApiUtil.updateBatches(this.getApplicationContext());
+        }
+
         if (!TextUtils.isEmpty(mCurrentFilter)) {
             return new SQLiteCursorLoader(this,
                     HSData.HSer.GET_ALL_FILTERED,
@@ -173,7 +180,14 @@ public class HSListActivity extends BaseFragmentActivity implements
         }
         else {
             showLoading();
+            loadBatches();
         }
+    }
+
+    private void loadBatches() {
+        // TODO: make the call to get A) batches and then B) students by batch?
+        ApiUtil.updateStudents(this.getApplicationContext());
+
     }
 
     private void showLoading() {

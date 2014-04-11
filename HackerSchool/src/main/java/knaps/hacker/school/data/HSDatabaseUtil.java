@@ -1,6 +1,7 @@
 package knaps.hacker.school.data;
 
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -15,9 +16,21 @@ import knaps.hacker.school.utils.StringUtil;
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
-public class HSParser {
+public class HSDatabaseUtil {
 
-    public static void writeBatchesToDatabase(final List<Batch> batches, final Context context) {
+    private static final long UPDATE_THRESHOLD = 1000 * 60 * 60 * 24 * 7;
+
+    /**
+     * Must be run on background thread
+     */
+    public static boolean batchesNeedUpdate(Context context) {
+        final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
+        final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long lastUpdateDate = DatabaseUtils.longForQuery(db, "query", new String[] {"selectionargs"});
+        return lastUpdateDate + UPDATE_THRESHOLD < System.currentTimeMillis();
+    }
+
+    public static void writeBatchesToDatabase(final Context context, final List<Batch> batches) {
         long startTime = System.currentTimeMillis();
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -44,7 +57,7 @@ public class HSParser {
                 "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
-    public static void writeStudentsToDatabase(final List<Student> students, final Context context) {
+    public static void writeStudentsToDatabase(final Context context, final List<Student> students) {
         long startTime = System.currentTimeMillis();
         final HSDatabaseHelper mDbHelper = new HSDatabaseHelper(context);
         final SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -73,5 +86,10 @@ public class HSParser {
         db.close();
         Log.d("DB _ timing",
                 "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+    }
+
+    public static long[] getBatchIds(final Context context) {
+        // get the stuff things
+        return new long[0];
     }
 }

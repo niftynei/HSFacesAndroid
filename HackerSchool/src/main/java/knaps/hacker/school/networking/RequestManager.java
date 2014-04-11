@@ -15,10 +15,8 @@ import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.StringUtil;
