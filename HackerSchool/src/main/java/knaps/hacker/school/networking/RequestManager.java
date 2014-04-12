@@ -11,12 +11,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.utils.OAuthUtils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.StringUtil;
@@ -61,10 +59,10 @@ public class RequestManager {
         public void intercept(final RequestFacade request) {
             // TODO: look at marrying OLTU with Retrofit more closely?
             final String accessToken = HSOAuthService.getService().getAccessToken();
-            String bearerString = OAuthUtils.encodeAuthorizationBearerHeader(new HashMap<String, Object>() {{
-                put("access_token", accessToken);
-            }});
-            request.addHeader(OAuth.OAUTH_HEADER_NAME, bearerString);
+            String bearerString = OAuth.OAUTH_HEADER_NAME + " " + accessToken;
+            request.addHeader(OAuth.HeaderType.AUTHORIZATION, bearerString);
+
+            Log.d("REtrofit", "Bearer string added" + bearerString);
         }
     }
 

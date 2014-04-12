@@ -174,7 +174,7 @@ public class HSListActivity extends BaseFragmentActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        if (o.getCount() > 0) {
+        if (o != null && o.getCount() > 0) {
             mAdapter.swapCursor(o);
         }
         else {

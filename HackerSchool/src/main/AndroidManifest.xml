@@ -63,7 +63,7 @@
 
         <provider
             android:name="knaps.hacker.school.data.HackerSchoolContentProvider"
-            android:authorities="content://knaps.hacker.school.content"
+            android:authorities="knaps.hacker.school.content"
             android:enabled="true"
             android:exported="false" >
         </provider>

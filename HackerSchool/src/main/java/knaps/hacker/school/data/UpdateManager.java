@@ -3,12 +3,16 @@ package knaps.hacker.school.data;
 import android.content.Context;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDoneException;
+import android.text.format.DateUtils;
+import android.util.Log;
 
 import java.util.List;
 
 import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.RequestManager;
+import retrofit.RetrofitError;
 
 /**
  * Created by lisaneigut on 12 Apr 2014.
@@ -26,10 +30,33 @@ public class UpdateManager {
 
     public void checkAndUpdateDataIfNeeded() {
         // problem == i could have a zillion of these running
-        if (batchesNeedUpdate()) {
-            updateBatches();
-            updateStudents();
-        }
+        Runnable runner = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (batchesEmpty() || batchesNeedUpdate()) {
+                        updateBatches();
+                        updateStudents();
+                    }
+                }
+                catch (RetrofitError error) {
+                    Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
+
+                }
+                catch (Exception e) {
+                    // catch all the exceptions
+                    Log.e("ERRORS", "all the errors", e);
+                }
+            }
+        };
+        runner.run();
+    }
+
+    private boolean batchesEmpty() {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        long count = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_RECORD_COUNT, null);
+        Log.d("COUNT", "database count " + count);
+        return count <= 0;
     }
 
     public boolean batchesNeedUpdate() {
@@ -38,9 +65,17 @@ public class UpdateManager {
 
     public boolean batchNeedsUpdate(long id) {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        long lastUpdateDate = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_LAST_BATCH_UPDATE_TIME,
-                new String[] {id < 0 ? "%" : String.valueOf(id)});
-        return lastUpdateDate + UPDATE_THRESHOLD < System.currentTimeMillis();
+        try {
+            long lastUpdateDate = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_LAST_BATCH_UPDATE_TIME,
+                    new String[] {id < 0 ? "%" : String.valueOf(id)});
+            Log.d("COUNT", "database last updated " + DateUtils.formatDateRange(mContext, lastUpdateDate, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
+            return lastUpdateDate + UPDATE_THRESHOLD < System.currentTimeMillis();
+        }
+        catch (SQLiteDoneException ex) {
+            // no value returned
+            Log.d("COUNT", "no value returned for batch need update query", ex);
+        }
+        return true;
     }
 
     /**

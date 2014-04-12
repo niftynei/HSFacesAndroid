@@ -32,6 +32,7 @@ public class Student implements Serializable {
     public String email = "";
     public String github = "";
     public String twitter = "";
+    public long batchId = 0; // for gson binding to save to db
     public Batch batch;
 
     // Things not returned by the API
@@ -58,6 +59,17 @@ public class Student implements Serializable {
         mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
         mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));
     }
+
+    public String getFirstName() { return firstName == null ? "" : firstName; }
+    public String getLastName() { return lastName == null ? "" : lastName; }
+    public String getImage() { return image == null ? "" : image; }
+    public String getEmail() { return email == null ? "" : email; }
+    public String getGithub() { return github == null ? "" : github; }
+    public String getTwitter() { return twitter == null ? "" : twitter; }
+    public String getJob() { return mJob == null ? "" : mJob; }
+    public String getJobUrl() { return mJobUrl == null ? "" : mJobUrl; }
+    public String getSkills() { return mSkills == null ? "" : mSkills; }
+
 
     public String getTwitterUrl() {
         return Constants.TWITTER_URL + "/" + twitter;

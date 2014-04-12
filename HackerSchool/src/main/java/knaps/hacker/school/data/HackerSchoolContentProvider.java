@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -102,12 +103,13 @@ public class HackerSchoolContentProvider extends ContentProvider {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
+        Cursor cursor;
         switch (sMatcher.match(uri)) {
             case STUDENT:
                 qb.appendWhere(HSData.HSer.WHERE_HAS_ID);
                 // falls through
             case STUDENTS:
-                qb.setTables(HSData.HSer.TABLE_NAME);
+                qb.setTables(HSData.HSer.TABLE_NAME + ", " + HSData.Batch.TABLE_NAME);
                 if (!TextUtils.isEmpty(sortOrder)) {
                     sortOrder = HSData.HSer.SORT_DEFAULT;
                 }
@@ -127,8 +129,8 @@ public class HackerSchoolContentProvider extends ContentProvider {
 
         // check if data is outdated
         mUpdateManager.checkAndUpdateDataIfNeeded();
+        cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, getLimit(uri));
 
-        Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder, getLimit(uri));
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return cursor;

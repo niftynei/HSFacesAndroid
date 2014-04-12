@@ -34,10 +34,8 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        db.close();
 
-        Log.d("DB _ timing",
-                "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     public static void writeBatchToDatabase(final HSDatabaseHelper dbHelper, final Batch batch) {
@@ -52,7 +50,6 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        db.close();
     }
 
     private static void bindBatch(SQLiteStatement stmt, final Batch batch, SimpleDateFormat formatter, final long startTime) {
@@ -78,9 +75,7 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        db.close();
-        Log.d("DB _ timing",
-                "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     protected static void writeStudentToDatabase(final HSDatabaseHelper dbHelper, final Student student) {
@@ -93,24 +88,22 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        db.close();
-        Log.d("DB _ timing",
-                "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
 
     }
 
     private static void bindStudent(final SQLiteStatement stmt, final Student student, final long startTime) {
         stmt.bindLong(1, student.id);
-        stmt.bindString(2, student.firstName);
-        stmt.bindString(3, student.lastName);
-        stmt.bindString(4, student.image);
-        stmt.bindString(5, student.mJob);
-        stmt.bindString(6, student.mJobUrl);
-        stmt.bindString(7, student.mSkills);
-        stmt.bindString(8, student.email);
-        stmt.bindString(9, student.github);
-        stmt.bindString(10, student.twitter);
-        stmt.bindLong(11, student.batch.id);
+        stmt.bindString(2, student.getFirstName());
+        stmt.bindString(3, student.getLastName());
+        stmt.bindString(4, student.getImage());
+        stmt.bindString(5, student.getJob());
+        stmt.bindString(6, student.getJobUrl());
+        stmt.bindString(7, student.getSkills());
+        stmt.bindString(8, student.getEmail());
+        stmt.bindString(9, student.getGithub());
+        stmt.bindString(10, student.getTwitter());
+        stmt.bindLong(11, student.batchId);
         stmt.bindLong(12, startTime);
         stmt.execute();
         stmt.clearBindings();

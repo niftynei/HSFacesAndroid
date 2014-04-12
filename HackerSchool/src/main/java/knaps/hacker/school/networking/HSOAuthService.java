@@ -19,6 +19,7 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.SharedPrefsUtil;
+import retrofit.RetrofitError;
 
 /**
  * Created by lisaneigut on 24 Mar 2014.
@@ -98,15 +99,13 @@ public class HSOAuthService {
     }
 
     public void makeARequest() throws OAuthSystemException, OAuthProblemException {
-        //OAuthClientRequest bearerRequest = new OAuthBearerClientRequest(Constants.ME_ENDPOINT)
-        //        .setAccessToken(mAccessToken)
-        //        .buildQueryMessage();
-        //
-        //OAuthResourceResponse response = mClient.resource(bearerRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-
-        Student me = RequestManager.getService().getMe();
-        Log.d("PARSED?", me.email);
-
+        try {
+            Student me = RequestManager.getService().getMe();
+            Log.d("PARSED?", me.email);
+        }
+        catch (RetrofitError error) {
+            Log.d("ERROR!!  ", error.getResponse().getReason(), error);
+        }
     }
 
     private class GetToken extends AsyncTask<Void, Void, Void> {
