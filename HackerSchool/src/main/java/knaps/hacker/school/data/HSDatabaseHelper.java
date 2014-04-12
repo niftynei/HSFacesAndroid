@@ -69,7 +69,7 @@ public class HSDatabaseHelper extends SQLiteOpenHelper {
         Student student = null;
         try {
             cursor = db.query(HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL_BATCH,
-                    HSData.HSer.COLUMN_NAME_EMAIL + HSData.LIKE_Q, new String[] {userEmail},
+                    HSData.HSer.COLUMN_NAME_EMAIL + DbKeywords.LIKE_Q, new String[] {userEmail},
                     null, null, null, null);
             cursor.moveToFirst();
             student = new Student(cursor);

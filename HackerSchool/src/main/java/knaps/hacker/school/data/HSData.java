@@ -2,6 +2,8 @@ package knaps.hacker.school.data;
 
 import android.provider.BaseColumns;
 
+import static knaps.hacker.school.data.DbKeywords.*;
+
 /**
  * Created by lisaneigut on 14 Sep 2013.
  */
@@ -9,39 +11,6 @@ public final class HSData {
 
 
     public HSData() {}
-
-    public static final String TEXT_TYPE = " TEXT";
-    public static final String INT_TYPE = " INTEGER";
-    public static final String PRIMARY_KEY_TYPE = INT_TYPE + " PRIMARY KEY";
-    public static final String COMMA_SEP = ", ";
-    public static final String NOT = " NOT ";
-    public static final String CREATE_TABLE = "CREATE TABLE ";
-    public static final String CREATE_INDEX = "CREATE UNIQUE INDEX ";
-    public static final String IF_NOT_EXISTS = " IF NOT EXISTS ";
-    public static final String DROP_TABLE = "DROP TABLE IF EXISTS ";
-    public static final String SELECT = "SELECT ";
-    public static final String FROM = " FROM ";
-    public static final String WHERE = " WHERE ";
-    public static final String INSERT = "INSERT INTO ";
-    public static final String REPLACE = "REPLACE INTO ";
-    public static final String IS_NOT_NULL = " IS NOT NULL ";
-    public static final String LIMIT = " LIMIT ";
-    public static final String AND = " AND ";
-    public static final String OR = " OR ";
-    public static final String EQUALS = " = ";
-    public static final String Q = " ? ";
-    public static final String LIKE = " LIKE ";
-    public static final String LIKE_Q = LIKE + Q;
-    public static final String EQUALS_Q = EQUALS + Q;
-    public static final String NOT_LIKE_Q = NOT + LIKE + Q;
-    public static final String PARENS_OPEN = " (";
-    public static final String PARENS_CLOSE = ") ";
-    public static final String ON = " ON ";
-    public static final String DOT = ".";
-    public static final String AS = " AS ";
-    public static final String VALUES = " VALUES ";
-    public static final String DESC = " DESC ";
-    public static final String ASC = " ASC ";
 
     public static abstract class SqlTable implements BaseColumns {
         public static String TABLE_NAME;
@@ -114,6 +83,18 @@ public final class HSData {
 
         public static final String SORT_DEFAULT = COLUMN_NAME_ID + DESC;
 
+        public static final String WHERE_HAS_ID =
+                COLUMN_NAME_ID + EQUALS_Q;
+
+        public static final String SQL_SINGLE_LINE_RESULT =
+                SELECT + "1 AS batches, group_concat(" + COLUMN_NAME_ID + ", ':')" +
+                        FROM + TABLE_NAME + GROUP_BY + "batches";
+
+        public static final String SQL_LAST_BATCH_UPDATE_TIME =
+                SELECT + COLUMN_NAME_LAST_UPDATED + FROM + TABLE_NAME +
+                        WHERE + COLUMN_NAME_ID + LIKE_Q +
+                        ORDER_BY + COLUMN_NAME_LAST_UPDATED + ASC +
+                        LIMIT + "1";
     }
 
     public static abstract class HSer extends SqlTable {
@@ -152,12 +133,16 @@ public final class HSData {
                         COLUMN_NAME_BATCH_ID + COMMA_SEP +
                         COLUMN_NAME_LAST_UPDATED;
 
+        public static final String SELECTION_NAME_SKILLS =
+                COLUMN_NAME_FIRST_NAME + LIKE_Q + AND +
+                COLUMN_NAME_LAST_NAME + LIKE_Q + OR +
+                COLUMN_NAME_SKILLS + LIKE_Q;
+
         private static String _ALL_WITH_BATCH =
                 _ALL + COMMA_SEP +
                         Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_NAME + AS + Batch.COLUMN_NAME_NAME + COMMA_SEP +
                         Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_START_DATE + AS + Batch.COLUMN_NAME_START_DATE + COMMA_SEP +
                         Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE + AS + Batch.COLUMN_NAME_END_DATE;
-
 
         public static final String SQL_CREATE =
                 CREATE_TABLE + TABLE_NAME + PARENS_OPEN +
@@ -219,6 +204,12 @@ public final class HSData {
                         FROM + TABLE_NAME + JOIN_BATCH +
                         WHERE + COLUMN_NAME_FIRST_NAME + LIKE_Q +
                         OR + COLUMN_NAME_SKILLS + LIKE_Q;
+
+        public static final String WHERE_HAS_ID =
+                COLUMN_NAME_ID + EQUALS_Q;
+
+        public static final String WHERE_HAS_SQL_ID =
+                _ID + EQUALS_Q;
 
         public static final String SQL_GET_FILENAME =
                 SELECT + COLUMN_NAME_IMAGE_FILENAME +

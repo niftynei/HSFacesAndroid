@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -19,11 +20,8 @@ import android.widget.SearchView;
 
 import knaps.hacker.school.adapters.StudentAdapter;
 import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.data.HSDatabaseUtil;
-import knaps.hacker.school.data.SQLiteCursorLoader;
+import knaps.hacker.school.data.HackerSchoolContentProvider;
 import knaps.hacker.school.models.Student;
-import knaps.hacker.school.networking.ApiUtil;
-import knaps.hacker.school.networking.HSApiService;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
@@ -128,8 +126,8 @@ public class HSListActivity extends BaseFragmentActivity implements
         return true;
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public boolean onPrepareOptionsMenu(final Menu menu) {
         if (AppUtil.isIcs()) menu.findItem(R.id.search).collapseActionView();
         return super.onPrepareOptionsMenu(menu);
@@ -157,41 +155,35 @@ public class HSListActivity extends BaseFragmentActivity implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (HSDatabaseUtil.batchesNeedUpdate(this)) {
-            ApiUtil.updateBatches(this.getApplicationContext());
-        }
 
+        String selection = null;
+        String[] selectionArgs = null;
         if (!TextUtils.isEmpty(mCurrentFilter)) {
-            return new SQLiteCursorLoader(this,
-                    HSData.HSer.GET_ALL_FILTERED,
-                    new String[] {"%" + mCurrentFilter + "%", "%" + mCurrentFilter + "%"});
+            String filter = "%" + mCurrentFilter + "%";
+            selection = HSData.HSer.SELECTION_NAME_SKILLS;
+            selectionArgs = new String[] {filter, filter, filter};
         }
 
-        return new SQLiteCursorLoader(this,
-                HSData.HSer.TABLE_NAME, HSData.HSer.PROJECTION_ALL_BATCH,
+        return new CursorLoader(this,
+                HackerSchoolContentProvider.Uris.STUDENTS.getUri(),
+                HSData.HSer.PROJECTION_ALL_BATCH,
+                selection,
+                selectionArgs,
                 HSData.HSer.SORT_DEFAULT);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        // TODO: use a background service to download all the things!
         if (o.getCount() > 0) {
             mAdapter.swapCursor(o);
         }
         else {
-            showLoading();
-            loadBatches();
+            showEmpty();
         }
     }
 
-    private void loadBatches() {
-        // TODO: make the call to get A) batches and then B) students by batch?
-        ApiUtil.updateStudents(this.getApplicationContext());
-
-    }
-
-    private void showLoading() {
-        // TODO: Loading!
+    private void showEmpty() {
+        // TODO: Show an empty set
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
@@ -28,8 +29,9 @@ import java.util.Random;
 
 import knaps.hacker.school.BaseFragmentActivity;
 import knaps.hacker.school.R;
+import knaps.hacker.school.data.DbKeywords;
 import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.data.SQLiteCursorLoader;
+import knaps.hacker.school.data.HackerSchoolContentProvider;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
 import knaps.hacker.school.utils.Constants;
@@ -49,6 +51,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private static final String SUCCESS_MESSAGE_COUNT = "success_count";
     private static final String HINT_MESSAGE_COUNT = "hint_count";
     private static final String GAME_OVER = "game_over";
+    private static final long ALL_THE_BATCHES = -1L;
 
     private GameTileLayout mGameTileLayout;
     private EditText mEditGuess;
@@ -99,7 +102,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 
         if (getIntent() != null) {
             mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Constants.INVALID_MIN);
-            mBatchId = getIntent().getLongExtra(Constants.BATCH_ID, 0L);
+            mBatchId = getIntent().getLongExtra(Constants.BATCH_ID, ALL_THE_BATCHES);
 
         }
         if (savedInstanceState != null) {
@@ -205,9 +208,6 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void displayScore() {
-        //        if (mCurrentGuesses != 0) {
-        //            final float score = (float) (mCurrentScore / (mCurrentGuesses * 1.0) * 100);
-        //        }
         if (mStudentCursor != null) {
             int count = Math.min(mGameMax - mCurrentGuesses - 1,
                     mStudentCursor.getCount() - mCurrentGuesses - 1);
@@ -378,28 +378,30 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         StringBuilder selection = new StringBuilder();
         String[] selectionArgs = new String[0];
         if (!ImageDownloads.isOnline(this)) {
-            if (selection.length() > 0) selection.append(HSData.AND);
-            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(HSData.IS_NOT_NULL);
+            if (selection.length() > 0) selection.append(DbKeywords.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(DbKeywords.IS_NOT_NULL);
         }
-        if (!TextUtils.isEmpty(mBatchId) && !Constants.BATCH_STRING.equals(mBatchId)) {
-            if (selection.length() > 0) selection.append(HSData.AND);
-            selection.append(HSData.HSer.COLUMN_NAME_BATCH).append(HSData.EQUALS_Q);
+        if (mBatchId > ALL_THE_BATCHES) {
+            if (selection.length() > 0) selection.append(DbKeywords.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_BATCH_ID).append(DbKeywords.EQUALS_Q);
 
-            if (selection.length() > 0) selection.append(HSData.AND);
-            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(HSData.NOT_LIKE_Q);
-            selectionArgs = new String[] {mBatchId, "%no_photo%"};
+            if (selection.length() > 0) selection.append(DbKeywords.AND);
+            selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(DbKeywords.NOT_LIKE_Q);
+            selectionArgs = new String[] {String.valueOf(mBatchId), "%no_photo%"};
         }
         if (!TextUtils.isEmpty(SharedPrefsUtil.getUserEmail(this))) {
-            if (selection.length() > 0) selection.append(HSData.AND);
+            if (selection.length() > 0) selection.append(DbKeywords.AND);
             selection.append(HSData.HSer.SQL_NOT_LIKE_YOU);
             selectionArgs = Arrays.copyOf(selectionArgs, selectionArgs.length + 1);
             selectionArgs[selectionArgs.length - 1] = "%" + SharedPrefsUtil.getUserEmail(this) + "%";
         }
-        return new SQLiteCursorLoader.SQLiteCursorBuilder(this, HSData.HSer.TABLE_NAME)
-                .columns(HSData.HSer.PROJECTION_ALL_BATCH)
-                .selection(selection.toString())
-                .selectionArgs(selectionArgs)
-                .limit(limit).build();
+        return new CursorLoader(this,
+                HackerSchoolContentProvider.Uris.STUDENTS.getUri()
+                                                         .buildUpon().appendQueryParameter(DbKeywords.LIMIT, limit).build(),
+                HSData.HSer.PROJECTION_ALL_BATCH,
+                selection.toString(),
+                selectionArgs,
+                HSData.HSer.SORT_DEFAULT);
     }
 
     @Override

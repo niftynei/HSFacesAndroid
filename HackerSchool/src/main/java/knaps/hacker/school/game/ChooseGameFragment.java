@@ -75,15 +75,10 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
         final View view = inflater.inflate(R.layout.fragment_choose, container, false);
 
         mBatchSpinner = (Spinner) view.findViewById(R.id.spinnerBatch);
-        mBatchSpinner.setAdapter(
-                new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                        batches));
+        mBatchSpinner.setAdapter( new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, batches));
         mBatchSpinner.setPrompt("Batch");
         mCountSpinner = (Spinner) view.findViewById(R.id.spinnerLimit);
-        Pair<Integer, String>[] paris = null;
-        mCountSpinner.setAdapter(
-                new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                        limitCounts));
+        mCountSpinner.setAdapter( new PairAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item, limitCounts));
         mCountSpinner.setPrompt("Run Number");
 
         view.findViewById(R.id.buttonPlay).setOnClickListener(this);
@@ -147,10 +142,8 @@ public class ChooseGameFragment extends DialogFragment implements View.OnClickLi
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                LayoutInflater inflator = (LayoutInflater) getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflator
-                        .inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
+                LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflator.inflate(android.R.layout.simple_spinner_dropdown_item, parent, false);
             }
             KeyMap item = getItem(position);
             ((TextView) convertView.findViewById(android.R.id.text1)).setText(item.sValue);
