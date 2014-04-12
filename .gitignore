@@ -37,6 +37,9 @@ build/
 .gradle/*/taskArtifacts/*
 .gradle/gradle.properties
 
+# Secret keys belong here
+gradle.properties
+
 #IntelliJ IDEA
 .idea/*
 .idea/libraries
