@@ -3,6 +3,7 @@ package knaps.hacker.school;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -62,9 +63,11 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
                     }
                     else if (uri.getQueryParameter("error") != null) {
                         String message = uri.getQueryParameter("error_message");
-                        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-                        mWebView.setVisibility(View.GONE);
-                        // TODO: error messaging for URL stuffs
+                        webpageLoadError(message);
+                    }
+                    else {
+                        // something else happened. show an error screen
+                        webpageLoadError("Something bad happened, probably just a connection timeout.");
                     }
                 }
                 return super.shouldOverrideUrlLoading(view, url);
@@ -78,6 +81,12 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
         mWebView.loadUrl(HSOAuthService.getService().getAuthUrl());
     }
 
+    private void webpageLoadError(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+        mProgressView.setVisibility(View.GONE);
+        mWebView.setVisibility(View.GONE);
+    }
+
     private void fetchAccessToken(String code) {
         mProgressView.setVisibility(View.VISIBLE);
         HSOAuthService.getService().getAccessToken(code, this);
@@ -89,8 +98,10 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
 
         Activity activity;
         if ((activity = getActivity()) != null) {
+            Fragment fragment = new HSListFragment();
             FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
             transaction.remove(this);
+            transaction.add(android.R.id.content, fragment, "list");
             transaction.commit();
         }
     }

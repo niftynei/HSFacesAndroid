@@ -102,16 +102,6 @@ public class HSOAuthService {
         }
     }
 
-    public void makeARequest() throws OAuthSystemException, OAuthProblemException {
-        try {
-            Student me = RequestManager.getService().getMe();
-            Log.d("PARSED?", me.email);
-        }
-        catch (RetrofitError error) {
-            Log.d("ERROR!!  ", error.getResponse().getReason(), error);
-        }
-    }
-
     private class GetToken extends AsyncTask<Void, Void, Boolean> {
 
         private final RequestCallback mCallback;

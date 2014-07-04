@@ -51,7 +51,7 @@ public class HSActivity extends BaseFragmentActivity {
         }
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(fragment, name);
+        transaction.add(android.R.id.content, fragment, name);
         transaction.addToBackStack(name);
         transaction.commit();
 
@@ -71,7 +71,7 @@ public class HSActivity extends BaseFragmentActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
         if (AppUtil.isHoneycomb()) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
 
@@ -142,7 +142,7 @@ public class HSActivity extends BaseFragmentActivity {
                 //
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
-                NavUtils.navigateUpFromSameTask(this);
+                //NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.search:
                 if (!AppUtil.isHoneycomb()) onSearchRequested();

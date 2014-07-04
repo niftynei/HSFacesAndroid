@@ -10,11 +10,10 @@
         ></WebView>
 
     <FrameLayout
+        android:id="@+id/loading_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/loading_view"
         android:background="@color/black_alpha_AA"
-        android:visibility="gone"
         >
         <ProgressBar
             android:layout_height="@dimen/progress_bar_size"
