@@ -41,7 +41,7 @@ public class HSActivity extends BaseFragmentActivity {
 
         Fragment fragment;
         String name;
-        if (!HSOAuthService.getService().isAuthorized()) {
+        if (needsToShowLogin()) {
             fragment = new LoginFragment();
             name = LOGIN_FRAGMENT;
         }
@@ -64,6 +64,10 @@ public class HSActivity extends BaseFragmentActivity {
             String filter = intent.getStringExtra(SearchManager.QUERY);
             performSearch(filter);
         }
+    }
+
+    private boolean needsToShowLogin() {
+        return !HSOAuthService.getService().isAuthorized();
     }
 
     private void performSearch(String filter) {

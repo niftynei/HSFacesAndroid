@@ -27,6 +27,9 @@
     <string name="success_generic_two">Yup.\n %1$s says \"high fives\".</string>
     <string name="success_generic_three">Yes!\n You totes know %1$s.</string>
     <string name="fail_message">Say hello to\n %1$s</string>
+    <string name="somethings_wrong">Something went wrong. Check your internet connection and try again.</string>
+    <string name="loading_message">Loading...</string>
+    <string name="no_results">No Results</string>
 
 
 </resources>

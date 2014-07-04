@@ -6,12 +6,13 @@ import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.utils.Constants;
@@ -25,6 +26,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
 
     private WebView mWebView;
     private View mProgressView;
+    private View mErrorView;
 
     // TODO: what if rotates!?!
 
@@ -38,6 +40,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
         View view = inflater.inflate(R.layout.activity_login, container, false);
         mWebView = (WebView) view.findViewById(R.id.webView);
         mProgressView = view.findViewById(R.id.loading_view);
+        mErrorView = view.findViewById(R.id.error_screen);
 
         return view;
     }
@@ -58,6 +61,12 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
             }
 
             @Override
+            public void onReceivedError(final WebView view, final int errorCode, final String description, final String failingUrl) {
+                Log.e("LoginFragment", "Error loading the webpage. Error code " + errorCode);
+                webpageLoadError(description);
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
                 if (url.startsWith(Constants.REDIRECT_URI)) {
                     Uri uri = Uri.parse(url);
@@ -72,7 +81,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
                     }
                     else {
                         //something else happened. show an error screen
-                        webpageLoadError("Something bad happened, probably just a connection timeout.");
+                        webpageLoadError(null);
                     }
                 }
                 return super.shouldOverrideUrlLoading(view, url);
@@ -87,9 +96,10 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     }
 
     private void webpageLoadError(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+        ((TextView) mErrorView.findViewById(R.id.error_message)).setText(message);
         mProgressView.setVisibility(View.GONE);
         mWebView.setVisibility(View.GONE);
+        mErrorView.setVisibility(View.VISIBLE);
     }
 
     private void fetchAccessToken(String code) {
@@ -103,10 +113,9 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
 
         Activity activity;
         if ((activity = getActivity()) != null) {
-            Fragment fragment = new HSListFragment();
             FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
             transaction.remove(this);
-            transaction.add(android.R.id.content, fragment, "list");
+            transaction.add(android.R.id.content, new HSListFragment(), "list");
             transaction.commit();
         }
     }
@@ -114,6 +123,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     @Override
     public void onFailure() {
         mProgressView.setVisibility(View.GONE);
-        // TODO: Show a login failure message
+        mErrorView.setVisibility(View.VISIBLE);
+        ((TextView) mErrorView.findViewById(R.id.error_message)).setText(R.string.somethings_wrong);
     }
 }

@@ -10,6 +10,9 @@ public final class Constants {
 
     private Constants() {}
 
+    public static final String ACTION_LOADING_START = "knaps.hacker.school.LOADING_START";
+    public static final String ACTION_LOADING_ENDED = "knaps.hacker.school.LOADING_ENDED";
+
     public final static String HACKER_SCHOOL_URL = "https://www.hackerschool.com";
 
     public static final String OAUTH = "/oauth";

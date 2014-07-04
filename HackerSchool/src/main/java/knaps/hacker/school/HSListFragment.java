@@ -1,12 +1,17 @@
 package knaps.hacker.school;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,18 +37,21 @@ public class HSListFragment extends Fragment implements
 
     private ListView mListView;
     private StudentAdapter mAdapter;
+    private View mEmptyView;
+    private View mLoadingView;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_list, container, false);
         mListView = (ListView) view.findViewById(R.id.list);
+        mEmptyView = view.findViewById(android.R.id.empty);
+        mLoadingView = view.findViewById(R.id.loading_view);
         return view;
     }
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
 
         mAdapter = new StudentAdapter(getActivity(), null, 0);
         mListView.setAdapter(mAdapter);
@@ -56,6 +64,34 @@ public class HSListFragment extends Fragment implements
 
         getActivity().getLoaderManager().initLoader(0, null, this);
 
+    }
+
+    private BroadcastReceiver mLoadingReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent != null) {
+                if (Constants.ACTION_LOADING_START.equals(intent.getAction())) {
+                    if (mEmptyView != null) mEmptyView.setVisibility(View.VISIBLE);
+                }
+                else if (Constants.ACTION_LOADING_ENDED.equals(intent.getAction())) {
+                    if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+        IntentFilter filter = new IntentFilter(Constants.ACTION_LOADING_START);
+        filter.addAction(Constants.ACTION_LOADING_ENDED);
+        LocalBroadcastManager.getInstance(activity).registerReceiver(mLoadingReceiver, filter);
+    }
+
+    @Override
+    public void onDetach() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLoadingReceiver);
+        super.onDetach();
     }
 
     @Override
@@ -79,8 +115,11 @@ public class HSListFragment extends Fragment implements
     @Override
     public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
         mAdapter.swapCursor(data);
-        if (data == null || data.getCount() > 0) {
+        if (data == null || data.getCount() <= 0) {
             showEmpty();
+        }
+        else {
+            showList();
         }
     }
     @Override
@@ -89,7 +128,13 @@ public class HSListFragment extends Fragment implements
     }
 
     private void showEmpty() {
-        // TODO: Show an empty screen
+        mEmptyView.setVisibility(View.VISIBLE);
+        mListView.setVisibility(View.GONE);
+    }
+
+    private void showList() {
+        mEmptyView.setVisibility(View.GONE);
+        mListView.setVisibility(View.VISIBLE);
     }
 
     @Override

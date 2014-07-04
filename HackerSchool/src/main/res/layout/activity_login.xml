@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     xmlns:tools="http://schemas.android.com/tools"
-     android:layout_width="match_parent"
-     android:layout_height="match_parent"
-     >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+    >
+
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:background="@color/black_alpha_AA"
         >
+
         <ProgressBar
             android:layout_height="@dimen/progress_bar_size"
             android:layout_width="@dimen/progress_bar_size"
@@ -22,6 +23,30 @@
             android:layout_gravity="center"
             />
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/error_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher"
+            android:alpha=".25"
+            />
+        <TextView
+            android:id="@+id/error_message"
+            android:text="@string/somethings_wrong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/CodeStyleFont.Bold"
+            />
+
+    </LinearLayout>
 </FrameLayout>
 
 

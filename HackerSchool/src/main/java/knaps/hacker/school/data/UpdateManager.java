@@ -1,9 +1,11 @@
 package knaps.hacker.school.data;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -12,6 +14,7 @@ import java.util.List;
 import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.RequestManager;
+import knaps.hacker.school.utils.Constants;
 import retrofit.RetrofitError;
 
 /**
@@ -35,8 +38,10 @@ public class UpdateManager {
             public void run() {
                 try {
                     if (batchesEmpty() || batchesNeedUpdate() || studentsEmpty()) {
+                        sendBroadcast(Constants.ACTION_LOADING_START);
                         updateBatches();
                         updateStudents();
+                        sendBroadcast(Constants.ACTION_LOADING_ENDED);
                     }
                     else {
                         // return a count of all the student records
@@ -45,16 +50,22 @@ public class UpdateManager {
                     }
                 }
                 catch (RetrofitError error) {
-                    if (error != null) Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
-                    else Log.e("ERRORS RETRO!!", "Dunno what happened. Error came back nullio");
+                    if (error != null && error.getResponse() != null) Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
+                    else Log.e("ERRORS RETRO!!", "No reason given. Is network error?" + error.isNetworkError());
+                    sendBroadcast(Constants.ACTION_LOADING_ENDED);
                 }
                 catch (Exception e) {
                     // catch all the exceptions
                     Log.e("ERRORS", "all the errors", e);
+                    sendBroadcast(Constants.ACTION_LOADING_ENDED);
                 }
             }
         };
         runner.run();
+    }
+
+    private void sendBroadcast(String action) {
+        LocalBroadcastManager.getInstance(mContext).sendBroadcast(new Intent(action));
     }
 
     private boolean batchesEmpty() {

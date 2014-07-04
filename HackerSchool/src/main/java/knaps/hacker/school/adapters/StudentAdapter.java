@@ -125,8 +125,5 @@ public class StudentAdapter extends CursorAdapter {
         public CharArrayBuffer batchIdBuffer = new CharArrayBuffer(128);
         public CharArrayBuffer batchNameBuffer = new CharArrayBuffer(128);
         public TextView studentName;
-        public CharArrayBuffer studentFirstNameBuffer = new CharArrayBuffer(128);
-        public CharArrayBuffer studentLastNameBuffer = new CharArrayBuffer(128);
-
     }
 }
