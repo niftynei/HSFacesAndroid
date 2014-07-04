@@ -4,7 +4,7 @@
     <string name="app_name">Hacker School Faces</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_list">HackerSchool</string>
+    <string name="title_activity_list">Hacker School</string>
     <string name="title_activity_guess_that_hs">Guess That Hacker Schooler</string>
     <string name="current_score">Current Score: %.2f%%</string>
     <string name="submit_guess">Submit Guess</string>
