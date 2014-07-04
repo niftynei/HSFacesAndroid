@@ -19,7 +19,7 @@
         <ProgressBar
             android:layout_height="@dimen/progress_bar_size"
             android:layout_width="@dimen/progress_bar_size"
-            style="@android:style/Widget.Holo.ProgressBar.Inverse"
+            style="@android:style/Widget.ProgressBar.Inverse"
             android:layout_gravity="center"
             />
     </FrameLayout>
