@@ -1,6 +1,8 @@
 package knaps.hacker.school;
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,13 +24,11 @@ import knaps.hacker.school.adapters.StudentAdapter;
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HackerSchoolContentProvider;
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class HSListActivity extends BaseFragmentActivity implements
-                                                         LoaderManager.LoaderCallbacks<Cursor>,
-                                                         AdapterView.OnItemClickListener {
+public class HSActivity extends BaseFragmentActivity {
 
     private StudentAdapter mAdapter;
     private ListView mListView;
@@ -38,18 +38,22 @@ public class HSListActivity extends BaseFragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
 
-        mListView = (ListView) findViewById(R.id.list);
+        Fragment fragment;
+        String name;
+        if (!HSOAuthService.getService().isAuthorized()) {
+            fragment = new LoginFragment();
+            name = "login";
+        }
+        else {
+            fragment = new HSListFragment();
+            name = "list";
+        }
 
-        mAdapter = new StudentAdapter(this, null);
-        mListView.setAdapter(mAdapter);
-
-        mListView.setOnItemClickListener(this);
-        mListView.setItemsCanFocus(false);
-        mListView.setFocusableInTouchMode(false);
-        mListView.setClipToPadding(false);
-        mListView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(fragment, name);
+        transaction.addToBackStack(name);
+        transaction.commit();
 
         handleIntent(getIntent());
         setupActionBar();
@@ -59,8 +63,6 @@ public class HSListActivity extends BaseFragmentActivity implements
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mCurrentFilter = intent.getStringExtra(SearchManager.QUERY);
         }
-
-        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     /**
@@ -75,11 +77,10 @@ public class HSListActivity extends BaseFragmentActivity implements
 
     @Override
     protected void onNewIntent(Intent intent) {
+        // TODO: move this to a new Search Activity
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mCurrentFilter = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim();
         }
-
-        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -96,7 +97,6 @@ public class HSListActivity extends BaseFragmentActivity implements
                 @Override
                 public boolean onQueryTextSubmit(final String query) {
                     mCurrentFilter = query;
-                    getSupportLoaderManager().restartLoader(0, null, HSListActivity.this);
 
                     if (AppUtil.isHoneycomb()) invalidateOptionsMenu();
                     return true;
@@ -105,7 +105,6 @@ public class HSListActivity extends BaseFragmentActivity implements
                 @Override
                 public boolean onQueryTextChange(final String newText) {
                     mCurrentFilter = newText;
-                    getSupportLoaderManager().restartLoader(0, null, HSListActivity.this);
                     return true;
                 }
             });
@@ -127,9 +126,8 @@ public class HSListActivity extends BaseFragmentActivity implements
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        if (AppUtil.isIcs()) menu.findItem(R.id.search).collapseActionView();
+        menu.findItem(R.id.search).collapseActionView();
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -151,52 +149,5 @@ public class HSListActivity extends BaseFragmentActivity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-
-        String selection = null;
-        String[] selectionArgs = null;
-        if (!TextUtils.isEmpty(mCurrentFilter)) {
-            String filter = "%" + mCurrentFilter + "%";
-            selection = HSData.HSer.SELECTION_NAME_SKILLS;
-            selectionArgs = new String[] {filter, filter, filter};
-        }
-
-        return new CursorLoader(this,
-                HackerSchoolContentProvider.Uris.STUDENTS.getUri(),
-                HSData.HSer.PROJECTION_ALL_BATCH,
-                selection,
-                selectionArgs,
-                HSData.HSer.SORT_DEFAULT);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        if (o != null && o.getCount() > 0) {
-            mAdapter.swapCursor(o);
-        }
-        else {
-            showEmpty();
-        }
-    }
-
-    private void showEmpty() {
-        // TODO: Show an empty set
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> objectLoader) {
-        mAdapter.swapCursor(null);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final Cursor cursor = (Cursor) mAdapter.getItem(position);
-        final Student student = new Student(cursor);
-        final Intent intent = new Intent(this, HSProfileActivity.class);
-        intent.putExtra(Constants.STUDENT, student);
-        startActivity(intent);
     }
 }

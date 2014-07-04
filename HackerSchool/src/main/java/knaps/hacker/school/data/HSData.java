@@ -2,6 +2,7 @@ package knaps.hacker.school.data;
 
 import android.provider.BaseColumns;
 
+import static knaps.hacker.school.data.DbKeywords.*;
 import static knaps.hacker.school.data.DbKeywords.AND;
 import static knaps.hacker.school.data.DbKeywords.ASC;
 import static knaps.hacker.school.data.DbKeywords.COMMA_SEP;
@@ -15,6 +16,8 @@ import static knaps.hacker.school.data.DbKeywords.EQUALS_Q;
 import static knaps.hacker.school.data.DbKeywords.FROM;
 import static knaps.hacker.school.data.DbKeywords.GROUP_BY;
 import static knaps.hacker.school.data.DbKeywords.IF_NOT_EXISTS;
+import static knaps.hacker.school.data.DbKeywords.INSERT_OR_REPLACE;
+import static knaps.hacker.school.data.DbKeywords.INT_TYPE;
 import static knaps.hacker.school.data.DbKeywords.IS_NOT_NULL;
 import static knaps.hacker.school.data.DbKeywords.LIKE_Q;
 import static knaps.hacker.school.data.DbKeywords.LIMIT;
@@ -26,7 +29,6 @@ import static knaps.hacker.school.data.DbKeywords.PARENS_CLOSE;
 import static knaps.hacker.school.data.DbKeywords.PARENS_OPEN;
 import static knaps.hacker.school.data.DbKeywords.PRIMARY_KEY_TYPE;
 import static knaps.hacker.school.data.DbKeywords.Q;
-import static knaps.hacker.school.data.DbKeywords.REPLACE;
 import static knaps.hacker.school.data.DbKeywords.SELECT;
 import static knaps.hacker.school.data.DbKeywords.TEXT_TYPE;
 import static knaps.hacker.school.data.DbKeywords.VALUES;
@@ -51,6 +53,7 @@ public final class HSData {
         public static final String IDX_ID = "index_batch_id";
 
         public static final String _ALL =
+                _ID + COMMA_SEP +
                         COLUMN_NAME_ID + COMMA_SEP +
                         COLUMN_NAME_NAME + COMMA_SEP +
                         COLUMN_NAME_START_DATE + COMMA_SEP +
@@ -59,11 +62,13 @@ public final class HSData {
 
         public static final String SQL_CREATE =
                 CREATE_TABLE + TABLE_NAME + PARENS_OPEN +
-                        COLUMN_NAME_ID + PRIMARY_KEY_TYPE + COMMA_SEP +
+                        _ID + PRIMARY_KEY_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_START_DATE + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_END_DATE + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_LAST_UPDATED + TEXT_TYPE +
+                        COLUMN_NAME_LAST_UPDATED + TEXT_TYPE + COMMA_SEP +
+                        UNIQUE + PARENS_OPEN + COLUMN_NAME_ID + PARENS_CLOSE + ON + CONFLICT_REPLACE +
                         PARENS_CLOSE;
 
         public static final String SQL_DELETE =
@@ -74,7 +79,7 @@ public final class HSData {
                         PARENS_OPEN + COLUMN_NAME_ID + PARENS_CLOSE;
 
         public static final String SQL_UPSERT_ALL =
-                REPLACE + TABLE_NAME + PARENS_OPEN +
+                INSERT_OR_REPLACE + TABLE_NAME + PARENS_OPEN +
                         COLUMN_NAME_ID + COMMA_SEP +
                         COLUMN_NAME_NAME + COMMA_SEP +
                         COLUMN_NAME_START_DATE + COMMA_SEP +
@@ -93,6 +98,7 @@ public final class HSData {
                 SELECT + COLUMN_NAME_ID + COMMA_SEP + COLUMN_NAME_LAST_UPDATED + FROM + TABLE_NAME;
 
         public static final String[] PROJECTION_ALL = {
+                _ID,
                 COLUMN_NAME_ID,
                 COLUMN_NAME_NAME,
                 COLUMN_NAME_START_DATE,
@@ -140,34 +146,37 @@ public final class HSData {
         public static final String IDX_ID = "index_hackerschool_id";
 
         private static final String _ALL =
-                TABLE_NAME + DOT +COLUMN_NAME_ID + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_FIRST_NAME + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_LAST_NAME + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_IMAGE_URL + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_IMAGE_FILENAME + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_JOB + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_JOB_URL + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_SKILLS + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_EMAIL + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_GITHUB + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_TWITTER + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_BATCH_ID + COMMA_SEP +
-                        TABLE_NAME + DOT +COLUMN_NAME_LAST_UPDATED;
+                TABLE_NAME + DOT + COLUMN_NAME_ID + COMMA_SEP +
+                        TABLE_NAME + DOT + _ID + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_LAST_NAME + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_IMAGE_URL + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_IMAGE_FILENAME + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_JOB + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_JOB_URL + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_SKILLS + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_EMAIL + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_GITHUB + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_TWITTER + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_LAST_UPDATED;
 
         public static final String SELECTION_NAME_SKILLS =
                 COLUMN_NAME_FIRST_NAME + LIKE_Q + AND +
                         COLUMN_NAME_LAST_NAME + LIKE_Q + OR +
                         COLUMN_NAME_SKILLS + LIKE_Q;
 
+
         private static String _ALL_WITH_BATCH =
                 _ALL + COMMA_SEP +
                         Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_NAME + COMMA_SEP +
                         Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_START_DATE + COMMA_SEP +
-                        Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE + COMMA_SEP;
+                        Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE;
 
         public static final String SQL_CREATE =
                 CREATE_TABLE + TABLE_NAME + PARENS_OPEN +
-                        COLUMN_NAME_ID + PRIMARY_KEY_TYPE + COMMA_SEP +
+                        _ID + PRIMARY_KEY_TYPE + COMMA_SEP +
+                        COLUMN_NAME_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_FIRST_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LAST_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
@@ -179,7 +188,8 @@ public final class HSData {
                         COLUMN_NAME_GITHUB + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TWITTER + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_BATCH_ID + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_LAST_UPDATED + TEXT_TYPE +
+                        COLUMN_NAME_LAST_UPDATED + TEXT_TYPE + COMMA_SEP +
+                        UNIQUE + PARENS_OPEN + COLUMN_NAME_ID + PARENS_CLOSE + ON + CONFLICT_REPLACE +
                         PARENS_CLOSE;
 
         public static final String SQL_CREATE_ID_INDEX =
@@ -190,7 +200,7 @@ public final class HSData {
                 DROP_TABLE + TABLE_NAME;
 
         public static final String SQL_UPSERT_ALL =
-                REPLACE + TABLE_NAME + "(" +
+                INSERT_OR_REPLACE + TABLE_NAME + PARENS_OPEN +
                         COLUMN_NAME_ID + COMMA_SEP +
                         COLUMN_NAME_FIRST_NAME + COMMA_SEP +
                         COLUMN_NAME_LAST_NAME + COMMA_SEP +
@@ -225,6 +235,9 @@ public final class HSData {
                 SELECT + _ALL_WITH_BATCH + FROM
                         + TABLE_NAME + JOIN_BATCH;
 
+        public static final String SQL_RECORD_COUNT =
+                SELECT + "COUNT(1)" + FROM + TABLE_NAME;
+
         public static final String GET_ALL_FILTERED =
                 SELECT + _ALL_WITH_BATCH +
                         FROM + TABLE_NAME + JOIN_BATCH +
@@ -252,6 +265,7 @@ public final class HSData {
                 TABLE_NAME + DOT + COLUMN_NAME_EMAIL + NOT_LIKE_Q;
 
         public static final String[] PROJECTION_ALL = {
+                _ID,
                 COLUMN_NAME_ID,
                 COLUMN_NAME_FIRST_NAME,
                 COLUMN_NAME_IMAGE_URL,
@@ -267,6 +281,7 @@ public final class HSData {
         };
 
         public static final String[] PROJECTION_ALL_BATCH = {
+                TABLE_NAME + DOT + _ID,
                 TABLE_NAME + DOT + COLUMN_NAME_ID,
                 TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME,
                 TABLE_NAME + DOT + COLUMN_NAME_IMAGE_URL,

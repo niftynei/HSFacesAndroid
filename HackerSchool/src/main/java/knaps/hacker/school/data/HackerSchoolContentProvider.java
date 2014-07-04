@@ -30,8 +30,8 @@ public class HackerSchoolContentProvider extends ContentProvider {
 
     static {
         sMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sMatcher.addURI(PROVIDER_NAME, Uris.STUDENTS.path(), STUDENT);
-        sMatcher.addURI(PROVIDER_NAME, Uris.STUDENT.path(), STUDENTS);
+        sMatcher.addURI(PROVIDER_NAME, Uris.STUDENTS.path(), STUDENTS);
+        sMatcher.addURI(PROVIDER_NAME, Uris.STUDENT.path(), STUDENT);
         sMatcher.addURI(PROVIDER_NAME, Uris.BATCHES.path(), BATCH);
         sMatcher.addURI(PROVIDER_NAME, Uris.BATCH.path(), BATCHES);
     }

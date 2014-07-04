@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import knaps.hacker.school.R;
 import knaps.hacker.school.data.HSData;
+import knaps.hacker.school.models.Student;
 
 /**
  * Created by lisaneigut on 9 Oct 2013.
@@ -28,9 +29,15 @@ public class StudentAdapter extends CursorAdapter {
     private int[] mCellStates;
     private CharArrayBuffer mBuffer = new CharArrayBuffer(128);
 
-    public StudentAdapter(final Context context, final Cursor cursor) {
-        super(context, cursor);
-        mCellStates = cursor == null ? null : new int[cursor.getCount()];
+    public StudentAdapter(final Context context, final Cursor c, final int flags) {
+        super(context, c, flags);
+        mCellStates = c == null ? null : new int[c.getCount()];
+    }
+
+    @Override
+    public Student getItem(final int position) {
+        Cursor cursor = (Cursor) super.getItem(position);
+        return new Student(cursor);
     }
 
     @Override
@@ -84,7 +91,8 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         if (needsSeparator) {
-            cursor.copyStringToBuffer(HSData.HSer.BATCH_NAME, holder.batchNameBuffer);
+            //cursor.copyStringToBuffer(HSData.HSer.BATCH_NAME, holder.batchNameBuffer);
+            cursor.copyStringToBuffer(HSData.HSer.BATCH_ID, holder.batchNameBuffer);
             holder.separatorBatchName.setText(holder.batchNameBuffer.data, 0, holder.batchNameBuffer.sizeCopied);
             holder.separatorBatchName.setVisibility(View.VISIBLE);
         }

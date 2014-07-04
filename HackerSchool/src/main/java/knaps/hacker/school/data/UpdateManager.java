@@ -38,6 +38,11 @@ public class UpdateManager {
                         updateBatches();
                         updateStudents();
                     }
+                    else {
+                        // return a count of all the student records
+                        long count = DatabaseUtils.longForQuery(mDbHelper.getReadableDatabase(), HSData.HSer.SQL_RECORD_COUNT, null);
+                        Log.d("TAG", "Count of all student records " + count);
+                    }
                 }
                 catch (RetrofitError error) {
                     Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
@@ -94,8 +99,12 @@ public class UpdateManager {
      */
     public void updateBatches() {
         List<Batch> batches = RequestManager.getService().getBatches();
-        HSDatabaseUtil.writeBatchesToDatabase(mDbHelper, batches);
-        mContext.getContentResolver().notifyChange(HackerSchoolContentProvider.Uris.BATCHES.getUri(), null);
+
+        if (batches.size() > 0) {
+            HSDatabaseUtil.deleteAllBatches(mDbHelper);
+            HSDatabaseUtil.writeBatchesToDatabase(mDbHelper, batches);
+            mContext.getContentResolver().notifyChange(HackerSchoolContentProvider.Uris.BATCHES.getUri(), null);
+        }
     }
 
     /**
@@ -103,6 +112,9 @@ public class UpdateManager {
      */
     public void updateStudents() {
         long[] batchIds = HSDatabaseUtil.getBatchIds(mDbHelper);
+
+        // delete all the students
+        HSDatabaseUtil.deleteAllStudentRecords(mDbHelper);
 
         for (long batchId : batchIds) {
             List<Student> students = RequestManager.getService().getPeopleInBatch(batchId);
@@ -112,7 +124,7 @@ public class UpdateManager {
     }
 
     /**
-     * Download the most recent student data, by batch
+     * Download the most recent student data
      *
      * @param id
      */

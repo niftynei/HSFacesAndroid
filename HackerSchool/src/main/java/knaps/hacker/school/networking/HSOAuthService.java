@@ -35,6 +35,11 @@ public class HSOAuthService {
     private OAuthClient mClient;
     private Context mContext;
 
+    public interface RequestCallback {
+        public void onSuccess();
+        public void onFailure();
+    }
+
     private HSOAuthService() {}
 
     public static void init(Context context) {
@@ -80,7 +85,7 @@ public class HSOAuthService {
         return request.getLocationUri();
     }
 
-    public void getAccessToken(final String accessCode) {
+    public void getAccessToken(final String accessCode, RequestCallback callback) {
 
         try {
             OAuthClientRequest request = OAuthClientRequest
@@ -91,7 +96,7 @@ public class HSOAuthService {
                     .setGrantType(GrantType.AUTHORIZATION_CODE)
                     .setCode(accessCode)
                     .buildBodyMessage();
-            new GetToken(request).execute();
+            new GetToken(request, callback).execute();
         }
         catch (OAuthSystemException e) {
             Log.e(TAG, "exception loading oauth ", e);
@@ -108,24 +113,25 @@ public class HSOAuthService {
         }
     }
 
-    private class GetToken extends AsyncTask<Void, Void, Void> {
+    private class GetToken extends AsyncTask<Void, Void, Boolean> {
 
-        private OAuthClientRequest mRequest;
+        private final RequestCallback mCallback;
+        private final OAuthClientRequest mRequest;
 
-        public GetToken(final OAuthClientRequest request) {
+        public GetToken(final OAuthClientRequest request, final RequestCallback callback) {
             mRequest = request;
+            mCallback = callback;
         }
 
         @Override
-        protected Void doInBackground(final Void... params) {
+        protected Boolean doInBackground(final Void... params) {
             mClient = new OAuthClient(new URLConnectionClient());
 
             try {
                 OAuthJSONAccessTokenResponse response = mClient.accessToken(mRequest);
-                // todo: save to shared prefs!!
                 mAccessToken = response.getAccessToken();
                 saveAccessToken(mAccessToken);
-                makeARequest();
+                return true;
             }
             catch (OAuthSystemException e) {
                 Log.e(TAG, "exception loading oauth ", e);
@@ -134,7 +140,15 @@ public class HSOAuthService {
                 Log.e(TAG, "exception loading oauth ", e);
             }
 
-            return null;
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean wasSuccess) {
+            if (mCallback != null) {
+                if (wasSuccess) mCallback.onSuccess();
+                else mCallback.onFailure();
+            }
         }
     }
 
@@ -144,6 +158,7 @@ public class HSOAuthService {
     }
 
     private String getAccessTokenFromPrefs() {
+
         SharedPreferences prefs = mContext.getSharedPreferences(API_PREFS, Context.MODE_PRIVATE);
         if (prefs.contains(API_TOKEN)) {
             mService.mAccessToken = prefs.getString(API_TOKEN, null);

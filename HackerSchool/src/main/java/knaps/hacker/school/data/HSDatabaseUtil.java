@@ -17,6 +17,11 @@ import knaps.hacker.school.utils.StringUtil;
  */
 public class HSDatabaseUtil {
 
+    public static void deleteAllBatches(HSDatabaseHelper dbHelper) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(HSData.Batch.TABLE_NAME, null, null);
+    }
+
     /**
      * Must be run on background thread
      */
@@ -61,6 +66,11 @@ public class HSDatabaseUtil {
         stmt.execute();
         stmt.clearBindings();
 
+    }
+
+    public static void deleteAllStudentRecords(HSDatabaseHelper dbHelper) {
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(HSData.HSer.TABLE_NAME, null, null);
     }
 
     protected static void writeStudentsToDatabase(final HSDatabaseHelper dbHelper, final List<Student> students) {

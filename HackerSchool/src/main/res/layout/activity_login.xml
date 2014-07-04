@@ -2,113 +2,27 @@
      xmlns:tools="http://schemas.android.com/tools"
      android:layout_width="match_parent"
      android:layout_height="match_parent"
-     tools:context=".LoginActivity">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        >
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Login"
-            android:id="@+id/button"
-            style="@style/HSButton"
-            android:layout_below="@+id/textPasswordNotice"
-            android:layout_marginTop="10dp"
-            />
-
-        <EditText
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:hint="Password"
-            android:id="@+id/editPassword"
-            style="@style/CodeStyleFont"
-            android:layout_centerVertical="true"
-            android:layout_alignRight="@+id/button" />
-
-        <EditText
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:hint="Email"
-            android:id="@+id/editEmail"
-            style="@style/CodeStyleFont"
-            android:layout_above="@+id/editPassword"
-            android:layout_alignLeft="@+id/editPassword">
-            <requestFocus/>
-        </EditText>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/darker_gray"
-            android:text="Your password will not be stored or saved."
-            android:id="@+id/textPasswordNotice"
-            style="@style/CodeStyleFont"
-            android:layout_below="@+id/editPassword"
-            android:layout_alignLeft="@+id/editPassword"/>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/start_playing"
-            android:id="@+id/buttonGame"
-            style="@style/HSButton"
-            android:layout_above="@+id/buttonBrowse"
-            android:layout_alignLeft="@+id/button"
-            android:visibility="gone"
-            />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Browse Hacker Schoolers"
-            android:id="@+id/buttonBrowse"
-            style="@style/HSButton"
-            android:layout_alignParentBottom="true"
-            android:layout_alignLeft="@+id/buttonGame"
-            android:visibility="gone"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome"
-            android:id="@+id/textName"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:drawablePadding="4dp"
-            android:drawableRight="@drawable/ic_launcher"
-            />
-    </RelativeLayout>
-    <FrameLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:id="@+id/loading_view"
-        android:background="#AA333333"
-        android:visibility="gone"
-    >
-        <ProgressBar
-           android:layout_height="100dp"
-           android:layout_width="100dp"
-           style="@android:style/Widget.ProgressBar.Inverse"
-           android:layout_gravity="center"
-            />
-    </FrameLayout>
+     >
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/webView"
         ></WebView>
 
+    <FrameLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:id="@+id/loading_view"
+        android:background="@color/black_alpha_AA"
+        android:visibility="gone"
+        >
+        <ProgressBar
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_width="@dimen/progress_bar_size"
+            style="@android:style/Widget.Holo.ProgressBar.Inverse"
+            android:layout_gravity="center"
+            />
+    </FrameLayout>
 </FrameLayout>
 
 

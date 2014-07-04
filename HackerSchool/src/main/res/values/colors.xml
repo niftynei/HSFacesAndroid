@@ -4,4 +4,7 @@
     <color name="hacker_school_green_highlight">#73D52E</color>
     <color name="success_color">#AA73D52E</color>
     <color name="fail_color">#AAd21524</color>
+
+    <!--Default colors-->
+    <color name="black_alpha_AA">#AA333333</color>
 </resources>

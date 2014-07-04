@@ -16,7 +16,7 @@ import knaps.hacker.school.utils.SharedPrefsUtil;
  */
 public class HSDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 9;
     private static final String DATABASE_NAME = "HackerSchool.db";
 
     public HSDatabaseHelper(Context context) {

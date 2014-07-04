@@ -19,6 +19,9 @@ public class DbKeywords {
     public static final String WHERE = " WHERE ";
     public static final String INSERT = "INSERT INTO ";
     public static final String REPLACE = "REPLACE INTO ";
+    public static final String INSERT_OR_REPLACE = "INSERT OR REPLACE INTO ";
+    public static final String CONFLICT_REPLACE = " CONFLICT REPLACE ";
+    public static final String UNIQUE = " UNIQUE ";
     public static final String IS_NOT_NULL = " IS NOT NULL ";
     public static final String ORDER_BY = " ORDER BY ";
     public static final String LIMIT = " LIMIT ";
