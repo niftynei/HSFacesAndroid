@@ -17,7 +17,7 @@ import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.utils.Constants;
 
 /**
- * This fragment displays a web view where you can log into (aka verify) the app.
+ * This fragment displays a web view where you can log into (aka authenticate) the app.
  * <p/>
  * After login, this fragment disappears.
  */

@@ -56,8 +56,8 @@ dependencies {
 
     compile 'com.squareup.retrofit:retrofit:1.5.0'
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0'
-    compile 'com.android.support:support-v4:19.0.0'
-    compile 'com.android.support:appcompat-v7:19.0.0'
+    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:appcompat-v7:20.0.0'
     compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
     compile 'com.nineoldandroids:parent:2.2.0'
     compile files('libs/libGoogleAnalyticsServices.jar')

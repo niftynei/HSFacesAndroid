@@ -63,8 +63,7 @@ public class HSOAuthService {
             return mAccessToken;
         }
 
-        // pull it out of the shared prefs!?
-        throw new Error("no access token is available yet");
+        throw new IllegalStateException("no access token is available yet");
     }
 
     public String getAuthUrl() {
