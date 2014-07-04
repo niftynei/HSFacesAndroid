@@ -61,7 +61,7 @@ public class StudentAdapter extends CursorAdapter {
         boolean needsSeparator = false;
 
         final int position = cursor.getPosition();
-        cursor.copyStringToBuffer(HSData.HSer.BATCH_ID, holder.batchIdBuffer);
+        cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_ID, holder.batchIdBuffer);
 
         switch (mCellStates[position]) {
             case STATE_SECTIONED_CELL:
@@ -78,7 +78,7 @@ public class StudentAdapter extends CursorAdapter {
                 else {
                     cursor.moveToPosition(position - 1);
 
-                    cursor.copyStringToBuffer(HSData.HSer.BATCH_ID, mBuffer);
+                    cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_ID, mBuffer);
                     if (mBuffer.sizeCopied > 0 && holder.batchIdBuffer.sizeCopied > 0 &&
                             !Arrays.equals(mBuffer.data, holder.batchIdBuffer.data)) {
                         needsSeparator = true;
@@ -92,7 +92,7 @@ public class StudentAdapter extends CursorAdapter {
 
         if (needsSeparator) {
             //cursor.copyStringToBuffer(HSData.HSer.BATCH_NAME, holder.batchNameBuffer);
-            cursor.copyStringToBuffer(HSData.HSer.BATCH_ID, holder.batchNameBuffer);
+            cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_NAME, holder.batchNameBuffer);
             holder.separatorBatchName.setText(holder.batchNameBuffer.data, 0, holder.batchNameBuffer.sizeCopied);
             holder.separatorBatchName.setVisibility(View.VISIBLE);
         }
@@ -101,8 +101,9 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         /*  NAME */
-        cursor.copyStringToBuffer(HSData.HSer.NAME, holder.studentBuffer);
-        holder.studentName.setText(holder.studentBuffer.data, 0, holder.studentBuffer.sizeCopied);
+        String firstName = cursor.getString(HSData.HSer.COL_FIRST_NAME);
+        String lastName = cursor.getString(HSData.HSer.COL_LAST_NAME);
+        holder.studentName.setText(firstName + " " + lastName);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -124,6 +125,8 @@ public class StudentAdapter extends CursorAdapter {
         public CharArrayBuffer batchIdBuffer = new CharArrayBuffer(128);
         public CharArrayBuffer batchNameBuffer = new CharArrayBuffer(128);
         public TextView studentName;
-        public CharArrayBuffer studentBuffer = new CharArrayBuffer(128);
+        public CharArrayBuffer studentFirstNameBuffer = new CharArrayBuffer(128);
+        public CharArrayBuffer studentLastNameBuffer = new CharArrayBuffer(128);
+
     }
 }

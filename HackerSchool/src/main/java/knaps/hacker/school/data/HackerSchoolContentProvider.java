@@ -109,7 +109,7 @@ public class HackerSchoolContentProvider extends ContentProvider {
                 qb.appendWhere(HSData.HSer.WHERE_HAS_ID);
                 // falls through
             case STUDENTS:
-                qb.setTables(HSData.HSer.TABLE_NAME + ", " + HSData.Batch.TABLE_NAME);
+                qb.setTables(HSData.HSer.TABLE_NAME + HSData.HSer.JOIN_BATCH);
                 if (!TextUtils.isEmpty(sortOrder)) {
                     sortOrder = HSData.HSer.SORT_DEFAULT;
                 }

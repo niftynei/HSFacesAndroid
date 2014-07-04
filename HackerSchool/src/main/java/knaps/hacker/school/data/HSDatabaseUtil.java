@@ -60,8 +60,8 @@ public class HSDatabaseUtil {
     private static void bindBatch(SQLiteStatement stmt, final Batch batch, SimpleDateFormat formatter, final long startTime) {
         stmt.bindLong(1, batch.id);
         stmt.bindString(2, batch.name);
-        stmt.bindString(3, formatter.format(batch.startDate));
-        stmt.bindString(4, formatter.format(batch.endDate));
+        stmt.bindString(3, batch.startDate);
+        stmt.bindString(4, batch.endDate);
         stmt.bindLong(5, startTime);
         stmt.execute();
         stmt.clearBindings();

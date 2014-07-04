@@ -284,6 +284,7 @@ public final class HSData {
                 TABLE_NAME + DOT + _ID,
                 TABLE_NAME + DOT + COLUMN_NAME_ID,
                 TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME,
+                TABLE_NAME + DOT + COLUMN_NAME_LAST_NAME,
                 TABLE_NAME + DOT + COLUMN_NAME_IMAGE_URL,
                 TABLE_NAME + DOT + COLUMN_NAME_IMAGE_FILENAME,
                 TABLE_NAME + DOT + COLUMN_NAME_JOB,
@@ -299,21 +300,24 @@ public final class HSData {
                 Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE
         };
 
-        public static final int ID = 1;
-        public static final int NAME = 2;
-        public static final int IMAGE_URL = 3;
-        public static final int IMAGE_FILENAME = 4;
-        public static final int JOB = 5;
-        public static final int JOB_URL = 6;
-        public static final int SKILLS = 7;
-        public static final int EMAIL = 8;
-        public static final int GITHUB = 9;
-        public static final int TWITTER = 10;
-        public static final int BATCH_ID = 11;
-        public static final int LAST_UPDATED = 12;
-        public static final int BATCH_NAME = 13;
-        public static final int BATCH_START = 14;
-        public static final int BATCH_END = 15;
+
+        public static final int COL_ID = 0;
+        public static final int COL_NAME_ID = 1;
+        public static final int COL_FIRST_NAME = 2;
+        public static final int COL_LAST_NAME = 3;
+        public static final int COL_IMAGE_URL = 4;
+        public static final int COL_IMAGE_FILENAME = 5;
+        public static final int COL_JOB = 6;
+        public static final int COL_JOB_URL = 7;
+        public static final int COL_SKILLS = 8;
+        public static final int COL_EMAIL = 9;
+        public static final int COL_GITHUB = 10;
+        public static final int COL_TWITTER = 11;
+        public static final int COL_BATCH_ID = 12;
+        public static final int COL_LAST_UPDATED = 13;
+        public static final int COL_BATCH_NAME = 14;
+        public static final int COL_BATCH_START = 15;
+        public static final int COL_BATCH_END = 16;
 
         public static final String SORT_DEFAULT =
                 TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + DESC + COMMA_SEP +

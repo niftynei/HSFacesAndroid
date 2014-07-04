@@ -3,7 +3,6 @@ package knaps.hacker.school;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,6 +51,12 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     private void setupWebView() {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onPageFinished(final WebView view, final String url) {
+                mProgressView.setVisibility(View.GONE);
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view, final String url) {
                 if (url.startsWith(Constants.REDIRECT_URI)) {
@@ -66,7 +71,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
                         webpageLoadError(message);
                     }
                     else {
-                        // something else happened. show an error screen
+                        //something else happened. show an error screen
                         webpageLoadError("Something bad happened, probably just a connection timeout.");
                     }
                 }

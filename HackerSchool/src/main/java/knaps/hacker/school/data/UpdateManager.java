@@ -19,7 +19,8 @@ import retrofit.RetrofitError;
  */
 public class UpdateManager {
 
-    private static final long UPDATE_THRESHOLD = 1000 * 60 * 60 * 24 * 7;
+    //private static final long UPDATE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // a week
+    private static final long UPDATE_THRESHOLD = 1000 * 30; // 1 second
     private final Context mContext;
     private HSDatabaseHelper mDbHelper;
 
@@ -29,12 +30,12 @@ public class UpdateManager {
     }
 
     public void checkAndUpdateDataIfNeeded() {
-        // problem == i could have a zillion of these running
+        // problem ==> i could have a zillion of these running
         Runnable runner = new Runnable() {
             @Override
             public void run() {
                 try {
-                    if (batchesEmpty() || batchesNeedUpdate()) {
+                    if (batchesEmpty() || batchesNeedUpdate() || studentsEmpty()) {
                         updateBatches();
                         updateStudents();
                     }
@@ -45,8 +46,8 @@ public class UpdateManager {
                     }
                 }
                 catch (RetrofitError error) {
-                    Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
-
+                    if (error != null) Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
+                    else Log.e("ERRORS RETRO!!", "Dunno what happened. Error came back nullio");
                 }
                 catch (Exception e) {
                     // catch all the exceptions
@@ -60,7 +61,14 @@ public class UpdateManager {
     private boolean batchesEmpty() {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         long count = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_RECORD_COUNT, null);
-        Log.d("COUNT", "database count " + count);
+        Log.d("COUNT", "batches database count " + count);
+        return count <= 0;
+    }
+
+    private boolean studentsEmpty() {
+        final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        long count = DatabaseUtils.longForQuery(db, HSData.HSer.SQL_RECORD_COUNT, null);
+        Log.d("COUNT", "student database count " + count);
         return count <= 0;
     }
 

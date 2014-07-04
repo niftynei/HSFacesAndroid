@@ -44,20 +44,20 @@ public class Student implements Serializable {
     public String mImageFilename = "";
 
     public Student(Cursor cursor) {
-        id = cursor.getLong(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_ID));
-        firstName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FIRST_NAME));
-        lastName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_LAST_NAME));
-        image = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_URL));
-        mImageFilename = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME));
-        email = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_EMAIL));
-        github = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_GITHUB));
-        twitter = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_TWITTER));
+        id = cursor.getLong(HSData.HSer.COL_ID);
+        firstName = cursor.getString(HSData.HSer.COL_FIRST_NAME);
+        lastName = cursor.getString(HSData.HSer.COL_LAST_NAME);
+        image = cursor.getString(HSData.HSer.COL_IMAGE_URL);
+        mImageFilename = cursor.getString(HSData.HSer.COL_IMAGE_FILENAME);
+        email = cursor.getString(HSData.HSer.COL_EMAIL);
+        github = cursor.getString(HSData.HSer.COL_GITHUB);
+        twitter = cursor.getString(HSData.HSer.COL_TWITTER);
         batch = new Batch(cursor);
 
         // TODO: ask for these in the API
-        mJob = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB));
-        mJobUrl = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_JOB_URL));
-        mSkills = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_SKILLS));
+        mJob = cursor.getString(HSData.HSer.COL_JOB);
+        mJobUrl = cursor.getString(HSData.HSer.COL_JOB_URL);
+        mSkills = cursor.getString(HSData.HSer.COL_SKILLS);
     }
 
     public String getFirstName() { return firstName == null ? "" : firstName; }
