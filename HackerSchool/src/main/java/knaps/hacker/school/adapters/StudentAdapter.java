@@ -27,11 +27,10 @@ public class StudentAdapter extends CursorAdapter {
     private static final int STATE_SECTIONED_CELL = 1;
     private static final int STATE_REGULAR_CELL = 2;
     private int[] mCellStates;
-    private CharArrayBuffer mBuffer = new CharArrayBuffer(128);
 
     public StudentAdapter(final Context context, final Cursor c, final int flags) {
         super(context, c, flags);
-        mCellStates = c == null ? null : new int[c.getCount()];
+        mCellStates = c == null ? new int[0] : new int[c.getCount()];
     }
 
     @Override
@@ -61,7 +60,6 @@ public class StudentAdapter extends CursorAdapter {
         boolean needsSeparator = false;
 
         final int position = cursor.getPosition();
-        cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_ID, holder.batchIdBuffer);
 
         switch (mCellStates[position]) {
             case STATE_SECTIONED_CELL:
@@ -76,11 +74,11 @@ public class StudentAdapter extends CursorAdapter {
                     needsSeparator = true;
                 }
                 else {
+                    int batchId = cursor.getInt(HSData.HSer.COL_BATCH_ID);
                     cursor.moveToPosition(position - 1);
+                    int nextBatchId = cursor.getInt(HSData.HSer.COL_BATCH_ID);
 
-                    cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_ID, mBuffer);
-                    if (mBuffer.sizeCopied > 0 && holder.batchIdBuffer.sizeCopied > 0 &&
-                            !Arrays.equals(mBuffer.data, holder.batchIdBuffer.data)) {
+                    if (batchId != nextBatchId) {
                         needsSeparator = true;
                     }
 
@@ -91,7 +89,6 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         if (needsSeparator) {
-            //cursor.copyStringToBuffer(HSData.HSer.BATCH_NAME, holder.batchNameBuffer);
             cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_NAME, holder.batchNameBuffer);
             holder.separatorBatchName.setText(holder.batchNameBuffer.data, 0, holder.batchNameBuffer.sizeCopied);
             holder.separatorBatchName.setVisibility(View.VISIBLE);
@@ -109,20 +106,19 @@ public class StudentAdapter extends CursorAdapter {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public Cursor swapCursor(final Cursor cursor) {
-        mCellStates = cursor == null ? null : new int[cursor.getCount()];
+        mCellStates = cursor == null ? new int[0] : new int[cursor.getCount()];
         return super.swapCursor(cursor);
     }
 
     @Override
     public void changeCursor(final Cursor cursor) {
         super.changeCursor(cursor);
-        mCellStates = cursor == null ? null : new int[cursor.getCount()];
+        mCellStates = cursor == null ? new int[0] : new int[cursor.getCount()];
     }
 
     private static class StudentViewHolder {
 
         public TextView separatorBatchName;
-        public CharArrayBuffer batchIdBuffer = new CharArrayBuffer(128);
         public CharArrayBuffer batchNameBuffer = new CharArrayBuffer(128);
         public TextView studentName;
     }
