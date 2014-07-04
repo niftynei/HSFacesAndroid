@@ -78,10 +78,8 @@ public class HSListFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
-        if (data != null && data.getCount() > 0) {
-            mAdapter.swapCursor(data);
-        }
-        else {
+        mAdapter.swapCursor(data);
+        if (data == null || data.getCount() > 0) {
             showEmpty();
         }
     }
