@@ -162,7 +162,7 @@ public final class HSData {
                         TABLE_NAME + DOT + COLUMN_NAME_LAST_UPDATED;
 
         public static final String SELECTION_NAME_SKILLS =
-                COLUMN_NAME_FIRST_NAME + LIKE_Q + AND +
+                COLUMN_NAME_FIRST_NAME + LIKE_Q + OR +
                         COLUMN_NAME_LAST_NAME + LIKE_Q + OR +
                         COLUMN_NAME_SKILLS + LIKE_Q;
 

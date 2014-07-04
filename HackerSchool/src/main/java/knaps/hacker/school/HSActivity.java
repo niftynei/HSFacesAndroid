@@ -30,10 +30,10 @@ import knaps.hacker.school.utils.Constants;
 
 public class HSActivity extends BaseFragmentActivity {
 
-    private StudentAdapter mAdapter;
-    private ListView mListView;
-    private String mCurrentFilter = "";
     private SearchView mSearchView;
+
+    private static final String LIST_FRAGMENT = "list";
+    private static final String LOGIN_FRAGMENT = "login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +43,11 @@ public class HSActivity extends BaseFragmentActivity {
         String name;
         if (!HSOAuthService.getService().isAuthorized()) {
             fragment = new LoginFragment();
-            name = "login";
+            name = LOGIN_FRAGMENT;
         }
         else {
             fragment = new HSListFragment();
-            name = "list";
+            name = LIST_FRAGMENT;
         }
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -61,8 +61,14 @@ public class HSActivity extends BaseFragmentActivity {
 
     private void handleIntent(Intent intent) {
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY);
+            String filter = intent.getStringExtra(SearchManager.QUERY);
+            performSearch(filter);
         }
+    }
+
+    private void performSearch(String filter) {
+        HSListFragment listFragment = (HSListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT);
+        if (listFragment != null) listFragment.filterSearch(filter);
     }
 
     /**
@@ -77,9 +83,8 @@ public class HSActivity extends BaseFragmentActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        // TODO: move this to a new Search Activity
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            mCurrentFilter = intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim();
+            performSearch(intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim());
         }
     }
 
@@ -96,15 +101,13 @@ public class HSActivity extends BaseFragmentActivity {
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(final String query) {
-                    mCurrentFilter = query;
-
-                    if (AppUtil.isHoneycomb()) invalidateOptionsMenu();
+                    performSearch(query);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(final String newText) {
-                    mCurrentFilter = newText;
+                    performSearch(newText);
                     return true;
                 }
             });

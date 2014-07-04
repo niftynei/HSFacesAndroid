@@ -32,7 +32,6 @@ public class HSListFragment extends Fragment implements
 
     private ListView mListView;
     private StudentAdapter mAdapter;
-    private String mCurrentFilter = ""; // currently always empty. TODO: implement search. Somewhere.
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -63,8 +62,8 @@ public class HSListFragment extends Fragment implements
     public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
         String selection = null;
         String[] selectionArgs = null;
-        if (!TextUtils.isEmpty(mCurrentFilter)) {
-            String filter = "%" + mCurrentFilter + "%";
+        if (args != null) {
+            String filter = "%" + args.getString("filter", "") + "%";
             selection = HSData.HSer.SELECTION_NAME_SKILLS;
             selectionArgs = new String[] {filter, filter, filter};
         }
@@ -101,5 +100,11 @@ public class HSListFragment extends Fragment implements
         final Intent intent = new Intent(getActivity(), HSProfileActivity.class);
         intent.putExtra(Constants.STUDENT, student);
         startActivity(intent);
+    }
+
+    public void filterSearch(final String currentFilter) {
+        Bundle args = new Bundle();
+        args.putString("filter", currentFilter);
+        getLoaderManager().restartLoader(0, args, this);
     }
 }
