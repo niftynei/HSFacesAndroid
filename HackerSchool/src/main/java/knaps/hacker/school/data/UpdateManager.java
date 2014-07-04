@@ -19,8 +19,7 @@ import retrofit.RetrofitError;
  */
 public class UpdateManager {
 
-    //private static final long UPDATE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // a week
-    private static final long UPDATE_THRESHOLD = 1000 * 30; // 1 second
+    private static final long UPDATE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // a week
     private final Context mContext;
     private HSDatabaseHelper mDbHelper;
 
