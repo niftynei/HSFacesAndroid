@@ -5,6 +5,10 @@
     <color name="success_color">#AA73D52E</color>
     <color name="fail_color">#AAd21524</color>
 
-    <!--Default colors-->
-    <color name="black_alpha_AA">#AA333333</color>
+    <color name="hacker_school_green_AA">#AA65A437</color>
+    <color name="hacker_school_green_highlight_AA">#AA73D52E</color>
+    <color name="black_7A">#7A000000</color>
+    <color name="black_90">#90000000</color>
+    <color name="black_77">#77000000</color>
+    <color name="black_66">#66000000</color>
 </resources>

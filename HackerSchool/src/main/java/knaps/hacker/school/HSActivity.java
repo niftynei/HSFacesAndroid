@@ -1,32 +1,20 @@
 package knaps.hacker.school;
 
-import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.text.TextUtils;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.view.ViewGroup;
 import android.widget.SearchView;
 
-import knaps.hacker.school.adapters.StudentAdapter;
-import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.data.HackerSchoolContentProvider;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.HSOAuthService;
-import knaps.hacker.school.utils.AppUtil;
-import knaps.hacker.school.utils.Constants;
 
 public class HSActivity extends BaseFragmentActivity {
 
@@ -34,26 +22,31 @@ public class HSActivity extends BaseFragmentActivity {
 
     private static final String LIST_FRAGMENT = "list";
     private static final String LOGIN_FRAGMENT = "login";
+    private ViewPager mViewPager;
+    private HSPagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mPagerAdapter = new HSPagerAdapter(getFragmentManager());
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOnPageChangeListener(mPagerListener);
 
         Fragment fragment;
         String name;
         if (needsToShowLogin()) {
             fragment = new LoginFragment();
             name = LOGIN_FRAGMENT;
-        }
-        else {
-            fragment = new HSListFragment();
-            name = LIST_FRAGMENT;
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.add(android.R.id.content, fragment, name);
+            transaction.addToBackStack(name);
+            transaction.commit();
         }
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(android.R.id.content, fragment, name);
-        transaction.addToBackStack(name);
-        transaction.commit();
 
         handleIntent(getIntent());
         setupActionBar();
@@ -62,7 +55,7 @@ public class HSActivity extends BaseFragmentActivity {
     private void handleIntent(Intent intent) {
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String filter = intent.getStringExtra(SearchManager.QUERY);
-            performSearch(filter);
+            mPagerAdapter.performSearch(filter);
         }
     }
 
@@ -70,66 +63,83 @@ public class HSActivity extends BaseFragmentActivity {
         return !HSOAuthService.getService().isAuthorized();
     }
 
-    private void performSearch(String filter) {
-        HSListFragment listFragment = (HSListFragment) getFragmentManager().findFragmentByTag(LIST_FRAGMENT);
-        if (listFragment != null) listFragment.filterSearch(filter);
-    }
-
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
-        if (AppUtil.isHoneycomb()) {
-            getActionBar().setDisplayHomeAsUpEnabled(false);
-        }
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        ActionBar.TabListener listener = new ActionBar.TabListener() {
+            @Override
+            public void onTabSelected(final ActionBar.Tab tab, final FragmentTransaction ft) {
+                int position = tab.getPosition();
+                closeSearchBox(position);
+                mViewPager.setCurrentItem(position);
+            }
+
+            @Override
+            public void onTabUnselected(final ActionBar.Tab tab, final FragmentTransaction ft) {
+                // hide the tab ??
+            }
+
+            @Override
+            public void onTabReselected(final ActionBar.Tab tab, final FragmentTransaction ft) { }
+        };
+
+        actionBar.addTab(actionBar.newTab()
+                                  .setText("$ Directory")
+                                  .setTabListener(listener));
+
+        actionBar.addTab(actionBar.newTab()
+                                  .setText("Play_")
+                                  .setTabListener(listener));
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            performSearch(intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim());
+            mPagerAdapter.performSearch(intent.getStringExtra(SearchManager.QUERY).toLowerCase().trim());
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
 
-        if (AppUtil.isHoneycomb()) {
-            final MenuItem searchItem = menu.findItem(R.id.search);
-            mSearchView = (SearchView) searchItem.getActionView();
-            mSearchView.setIconifiedByDefault(false);
-            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(final String query) {
-                    performSearch(query);
-                    return true;
-                }
+        final MenuItem searchItem = menu.findItem(R.id.search);
+        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchView.setIconifiedByDefault(true);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                mPagerAdapter.performSearch(query);
+                return true;
+            }
 
-                @Override
-                public boolean onQueryTextChange(final String newText) {
-                    performSearch(newText);
-                    return true;
-                }
-            });
-            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-
-                @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-                @Override
-                public boolean onClose() {
-                    searchItem.collapseActionView();
-                    return true;
-                }
-            });
-        }
-        else {
-            // fuck you gingerbread
-        }
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                mPagerAdapter.performSearch(newText);
+                return true;
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchItem.collapseActionView();
+                return true;
+            }
+        });
 
         return true;
+    }
+
+    private void closeSearchBox(int position) {
+        if (mSearchView != null && position != HSPagerAdapter.LIST_PAGE && !mSearchView.isIconified()) {
+            mSearchView.setIconified(true);
+        }
     }
 
     @Override
@@ -152,9 +162,60 @@ public class HSActivity extends BaseFragmentActivity {
                 //NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.search:
-                if (!AppUtil.isHoneycomb()) onSearchRequested();
+                // navigate to the list fragment
+                mViewPager.setCurrentItem(HSPagerAdapter.LIST_PAGE);
+                mSearchView.setIconified(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public ViewPager.SimpleOnPageChangeListener mPagerListener = new ViewPager.SimpleOnPageChangeListener() {
+        @Override
+        public void onPageSelected(final int position) {
+            closeSearchBox(position);
+            getActionBar().setSelectedNavigationItem(position);
+        }
+    };
+
+    public class HSPagerAdapter extends FragmentPagerAdapter {
+
+        public static final int LIST_PAGE = 0;
+        public static final int GAME_PAGE = 1;
+
+        HSListFragment mListFragment;
+        Fragment mGameFragment;
+
+        public HSPagerAdapter(final FragmentManager fm) {
+            super(fm);
+            mListFragment = new HSListFragment();
+            mGameFragment = new HSListFragment();
+        }
+
+        @Override
+        public Fragment getItem(final int i) {
+            switch (i) {
+                case LIST_PAGE:
+                    return mListFragment;
+                case GAME_PAGE:
+                    return mGameFragment;
+                default:
+                    return mListFragment;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(final int position) {
+            return position == LIST_PAGE ? "$ Directory" : "Play_";
+        }
+
+        public void performSearch(String searchTerm) {
+            mListFragment.filterSearch(searchTerm);
+        }
     }
 }

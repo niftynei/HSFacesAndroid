@@ -9,16 +9,34 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:actionBarStyle">@style/HSActionBar</item>
+        <item name="android:actionBarTabStyle">@style/HSActionBar.TabStyle</item>
+        <item name="android:actionBarTabBarStyle">@style/HSActionBar.TabBarStyle</item>
+        <item name="android:actionBarTabTextStyle">@style/HSActionBar.TabBarTextStyle</item>
     </style>
 
-    <style name="HSActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/actionbar_gradient</item>
+    <style name="HSActionBar" parent="android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@color/black_7A</item>
+        <item name="android:backgroundStacked">@color/black_90</item>
         <item name="android:titleTextStyle">@style/HSActionBar.TitleText</item>
     </style>
 
     <style name="HSActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:typeface">monospace</item>
+    </style>
+    
+    <style name="HSActionBar.TabStyle" parent="android:style/Widget.Holo.Tab" >
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="HSActionBar.TabBarStyle" parent="android:style/Widget.Holo.ActionBar.TabBar" >
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="HSActionBar.TabBarTextStyle" parent="android:style/Widget.Holo.ActionBar.TabText">
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/actionbar_tab_color_statelist</item>
     </style>
 
 </resources>

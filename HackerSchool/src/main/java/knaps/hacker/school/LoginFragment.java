@@ -115,7 +115,6 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
         if ((activity = getActivity()) != null) {
             FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
             transaction.remove(this);
-            transaction.add(android.R.id.content, new HSListFragment(), "list");
             transaction.commit();
         }
     }
