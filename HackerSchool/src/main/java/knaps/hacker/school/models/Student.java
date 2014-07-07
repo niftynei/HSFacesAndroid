@@ -79,4 +79,7 @@ public class Student implements Serializable {
         return Constants.GITHUB_URL + "/" + github;
     }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

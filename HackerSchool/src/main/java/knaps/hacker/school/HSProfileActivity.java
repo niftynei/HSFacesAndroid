@@ -64,7 +64,7 @@ public class HSProfileActivity extends BaseFragmentActivity
     private void populateViews(Student student) {
         new ImageDownloads.HSGetImageTask(student.image, this, this).execute();
 
-        mNameView.setText(student.firstName);
+        mNameView.setText(student.getFullName());
         mBatchView.setText(student.batch.name);
 
         if (!TextUtils.isEmpty(student.mSkills)) {
