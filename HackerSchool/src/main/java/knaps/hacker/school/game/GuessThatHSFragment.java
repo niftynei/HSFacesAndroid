@@ -130,7 +130,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
             mSeed = savedInstanceState.getLong(SEED);
         }
 
-        if (mIsRestart) {
+        if (mIsRestart && mSeed != 0) {
             mStartScreen.setVisibility(View.GONE);
         }
         else {
