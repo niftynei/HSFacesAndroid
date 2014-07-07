@@ -21,7 +21,6 @@ public class HSActivity extends BaseFragmentActivity {
 
     private SearchView mSearchView;
 
-    private static final String LIST_FRAGMENT = "list";
     private static final String LOGIN_FRAGMENT = "login";
     private ViewPager mViewPager;
     private HSPagerAdapter mPagerAdapter;

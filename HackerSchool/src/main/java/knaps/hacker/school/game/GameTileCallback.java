@@ -1,4 +1,4 @@
-package knaps.hacker.school.views;
+package knaps.hacker.school.game;
 
 /**
  * Created by lisaneigut on 16 Mar 2014.

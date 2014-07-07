@@ -1,4 +1,4 @@
-package knaps.hacker.school.data;
+package knaps.hacker.school.game;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
@@ -25,7 +25,7 @@ public class HSRandomCursorWrapper extends CursorWrapper {
      *
      * @param cursor The underlying cursor to wrap.
      */
-    public HSRandomCursorWrapper(Cursor cursor) {
+    public HSRandomCursorWrapper(Cursor cursor, long seed) {
         super(cursor);
 
         mWrappedCursor = cursor;
@@ -34,9 +34,8 @@ public class HSRandomCursorWrapper extends CursorWrapper {
         for (int i = 0; i < cursor.getCount(); i++) {
             randomizedOrder.add(i);
         }
-        long seed = System.nanoTime() % 1000000;
         Collections.shuffle(randomizedOrder, new Random(seed));
-        mCurrentIndex = 0;
+        mCurrentIndex = -1;
     }
 
     @Override
@@ -69,7 +68,7 @@ public class HSRandomCursorWrapper extends CursorWrapper {
     @Override
     public boolean moveToNext() {
         mCurrentIndex++;
-        if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
+        if (mCurrentIndex < 0 || mCurrentIndex >= randomizedOrder.size()) {
             throw new IndexOutOfBoundsException(
                     "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }
@@ -79,7 +78,7 @@ public class HSRandomCursorWrapper extends CursorWrapper {
     @Override
     public boolean moveToPrevious() {
         mCurrentIndex--;
-        if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
+        if (mCurrentIndex < 0 || mCurrentIndex >= randomizedOrder.size()) {
             throw new IndexOutOfBoundsException(
                     "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }
@@ -89,7 +88,7 @@ public class HSRandomCursorWrapper extends CursorWrapper {
     @Override
     public boolean moveToPosition(int position) {
         mCurrentIndex = position;
-        if (mCurrentIndex < 0 || mCurrentIndex > randomizedOrder.size()) {
+        if (mCurrentIndex < 0 || mCurrentIndex >= randomizedOrder.size()) {
             throw new IndexOutOfBoundsException(
                     "Current index is " + mCurrentIndex + " size is " + randomizedOrder.size());
         }

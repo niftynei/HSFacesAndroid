@@ -35,7 +35,7 @@
             android:layout_below="@+id/textGuessCount"
             android:layout_centerHorizontal="true"/>
 
-        <knaps.hacker.school.views.GameTileLayout
+        <knaps.hacker.school.game.GameTileLayout
             android:layout_height="@dimen/hs_image_height"
             android:layout_width="@dimen/hs_image_width"
             android:layout_gravity="center"
@@ -84,6 +84,7 @@
             android:id="@+id/buttonRestart"
             style="@style/HSButton"
             android:visibility="gone"
+            android:layout_centerHorizontal="true"
             android:layout_below="@id/text_flavor"
             />
 

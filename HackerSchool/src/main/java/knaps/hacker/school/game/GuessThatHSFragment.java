@@ -30,7 +30,6 @@ import java.util.Random;
 import knaps.hacker.school.R;
 import knaps.hacker.school.data.DbKeywords;
 import knaps.hacker.school.data.HSData;
-import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.HackerSchoolContentProvider;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
@@ -38,8 +37,6 @@ import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.KeyboardUtil;
 import knaps.hacker.school.utils.SharedPrefsUtil;
 import knaps.hacker.school.utils.StringUtil;
-import knaps.hacker.school.views.GameTileCallback;
-import knaps.hacker.school.views.GameTileLayout;
 
 public class GuessThatHSFragment extends Fragment implements View.OnClickListener,
                                                              LoaderManager.LoaderCallbacks<Cursor>,
@@ -52,6 +49,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private static final String HINT_MESSAGE_COUNT = "hint_count";
     private static final String GAME_OVER = "game_over";
     private static final long ALL_THE_BATCHES = -1L;
+    private static final String SEED = "seed";
 
     private View mStartScreen;
     private View mGameScreen;
@@ -66,7 +64,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private TextView mBatchText;
 
     private Student mCurrentStudent;
-    private static Cursor mStudentCursor;
+    private Cursor mStudentCursor;
     private int mCurrentScore;
     private int mCurrentGuesses;
     private int mHintCount = 0;
@@ -79,6 +77,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
 
     private boolean mIsRestart = false;
     private boolean mGameOver = false;
+    private long mSeed;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -128,6 +127,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
             mGameMax = savedInstanceState.getInt(Constants.GAME_MAX);
             mGameOver = savedInstanceState.getBoolean(GAME_OVER);
             mBatchId = savedInstanceState.getLong(Constants.BATCH_ID);
+            mSeed = savedInstanceState.getLong(SEED);
         }
 
         if (mIsRestart) {
@@ -156,6 +156,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onSaveInstanceState(Bundle icicle) {
+        icicle.putLong(SEED, mSeed);
         icicle.putInt(GUESS_COUNT, mCurrentGuesses);
         icicle.putInt(CORRECT_COUNT, mCurrentScore);
         icicle.putInt(SUCCESS_MESSAGE_COUNT, mSuccessMessageCount);
@@ -201,8 +202,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
 
     private void displayScore() {
         if (mStudentCursor != null) {
-            int count = Math.min(mGameMax - mCurrentGuesses - 1,
-                    mStudentCursor.getCount() - mCurrentGuesses - 1);
+            int count = mGameMax - mCurrentGuesses - 1;
             if (count > -1) mGuessCounter.setText(String.valueOf(count));
         }
     }
@@ -256,6 +256,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mHintCount = 0;
         mGameOver = false;
         mIsRestart = false;
+        mSeed = System.nanoTime() % 1000000;
 
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -367,6 +368,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
                 showNextStudent();
             }
             else {
+                if (mCurrentGuesses <= mStudentCursor.getCount()) mStudentCursor.moveToPosition(mCurrentGuesses);
                 showStudent();
             }
             mGuess.setEnabled(true);
@@ -409,7 +411,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        mStudentCursor = new HSRandomCursorWrapper(o);
+        mStudentCursor = new HSRandomCursorWrapper(o, mSeed);
         if (o != null && o.getCount() > 0 && getActivity() != null) {
             initGame();
         }

@@ -1,13 +1,11 @@
-package knaps.hacker.school.views;
+package knaps.hacker.school.game;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ public class GameTileLayout extends FrameLayout {
     private ImageView mImageView;
     private ViewGroup mResultView;
     private TextView mMessageText;
-    private ImageView mResultStatusView;
 
     public GameTileLayout(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -50,25 +47,21 @@ public class GameTileLayout extends FrameLayout {
         mImageView = (ImageView) baseView.findViewById(R.id.hs_image);
         mResultView = (ViewGroup) baseView.findViewById(R.id.layout_result);
         mMessageText = (TextView) mResultView.findViewById(R.id.text_result);
-        mResultStatusView = (ImageView) mResultView.findViewById(R.id.image_result);
         addView(baseView);
     }
 
     public void showSuccess(String successMessage, final GameTileCallback callback) {
         mResultView.setBackgroundColor(getResources().getColor(R.color.success_color));
         mMessageText.setText(successMessage);
-        mResultStatusView.setImageResource(R.drawable.ic_email);
         showMessage(callback);
     }
 
     public void showFail(String failMessage, final GameTileCallback callback) {
         mResultView.setBackgroundColor(getResources().getColor(R.color.fail_color));
         mMessageText.setText(failMessage);
-        mResultStatusView.setImageResource(R.drawable.ic_twitter);
         showMessage(callback);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showMessage(final GameTileCallback callback) {
         ValueAnimator animator = ObjectAnimator.ofFloat(mResultView, "translationY", -mResultView.getHeight(), 0);
         animator.setDuration(ANIMATION_DURATION);
