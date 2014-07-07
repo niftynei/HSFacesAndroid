@@ -1,22 +1,22 @@
 package knaps.hacker.school.game;
 
-import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.util.LruCache;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -27,10 +27,10 @@ import android.widget.Toast;
 import java.util.Arrays;
 import java.util.Random;
 
-import knaps.hacker.school.BaseFragmentActivity;
 import knaps.hacker.school.R;
 import knaps.hacker.school.data.DbKeywords;
 import knaps.hacker.school.data.HSData;
+import knaps.hacker.school.data.HSRandomCursorWrapper;
 import knaps.hacker.school.data.HackerSchoolContentProvider;
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
@@ -41,10 +41,10 @@ import knaps.hacker.school.utils.StringUtil;
 import knaps.hacker.school.views.GameTileCallback;
 import knaps.hacker.school.views.GameTileLayout;
 
-public class GuessThatHSActivity extends BaseFragmentActivity implements View.OnClickListener,
-                                                                         LoaderManager.LoaderCallbacks<Cursor>,
-                                                                         TextView.OnEditorActionListener,
-                                                                         ImageDownloads.ImageDownloadCallback {
+public class GuessThatHSFragment extends Fragment implements View.OnClickListener,
+                                                             LoaderManager.LoaderCallbacks<Cursor>,
+                                                             TextView.OnEditorActionListener,
+                                                             ImageDownloads.ImageDownloadCallback {
 
     private static final String GUESS_COUNT = "guess_count";
     private static final String CORRECT_COUNT = "correct_count";
@@ -53,10 +53,14 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private static final String GAME_OVER = "game_over";
     private static final long ALL_THE_BATCHES = -1L;
 
+    private View mStartScreen;
+    private View mGameScreen;
+
     private GameTileLayout mGameTileLayout;
     private EditText mEditGuess;
     private Button mGuess;
     private Button mRestartButton;
+    private TextView mFlavorText;
     private long mBatchId;
     private TextView mGuessCounter;
     private TextView mBatchText;
@@ -68,7 +72,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private int mHintCount = 0;
     private int mGameMax = Integer.MAX_VALUE;
     private int mSuccessMessageCount = 0;
-    private static int[] sSuccessMessages = {R.string.success_generic_one, R.string.success_generic_two, R.string.success_generic_three };
+    private static int[] sSuccessMessages = {R.string.success_generic_one, R.string.success_generic_two, R.string.success_generic_three};
     private static String[] sHintMessages = new String[] {"Give it a try.", "Not a guess?", "Hint: Starts with %s"};
 
     private LruCache<String, Bitmap> mMemoryCache;
@@ -77,34 +81,44 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     private boolean mGameOver = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_guess);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_guess, container, false);
+        mGameTileLayout = (GameTileLayout) view.findViewById(R.id.gameTile);
 
-        mGameTileLayout = (GameTileLayout) findViewById(R.id.gameTile);
-
-        mEditGuess = (EditText) findViewById(R.id.editGuess);
+        mEditGuess = (EditText) view.findViewById(R.id.editGuess);
         mEditGuess.setOnEditorActionListener(this);
-        mGuess = (Button) findViewById(R.id.buttonGuess);
+        mGuess = (Button) view.findViewById(R.id.buttonGuess);
         mGuess.setOnClickListener(this);
         mGuess.setEnabled(false);
-        mRestartButton = (Button) findViewById(R.id.buttonRestart);
+        mRestartButton = (Button) view.findViewById(R.id.buttonRestart);
         mRestartButton.setOnClickListener(this);
-        mGuessCounter = (TextView) findViewById(R.id.textGuessCount);
-        mBatchText = (TextView) findViewById(R.id.textBatchName);
+        mFlavorText = (TextView) view.findViewById(R.id.text_flavor);
 
-        ImageDownloads.RetainFragment retainFragment = ImageDownloads.RetainFragment.findOrCreateRetainFragment(getSupportFragmentManager());
+        mGuessCounter = (TextView) view.findViewById(R.id.textGuessCount);
+        mBatchText = (TextView) view.findViewById(R.id.textBatchName);
+        mStartScreen = view.findViewById(R.id.start_screen);
+        mGameScreen = view.findViewById(R.id.game_play);
+        view.findViewById(R.id.start_button).setOnClickListener(this);
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(final Activity activity) {
+        super.onAttach(activity);
+        ImageDownloads.RetainFragment retainFragment =
+                ImageDownloads.RetainFragment.findOrCreateRetainFragment(activity.getFragmentManager());
         mMemoryCache = retainFragment.mRetainedCache;
         if (mMemoryCache == null) {
             mMemoryCache = ImageDownloads.getBitmapMemoryCache();
             retainFragment.mRetainedCache = mMemoryCache;
         }
+    }
 
-        if (getIntent() != null) {
-            mGameMax = getIntent().getIntExtra(Constants.GAME_MAX, Constants.INVALID_MIN);
-            mBatchId = getIntent().getLongExtra(Constants.BATCH_ID, ALL_THE_BATCHES);
+    @Override
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        }
         if (savedInstanceState != null) {
             mIsRestart = true;
             mCurrentGuesses = savedInstanceState.getInt(GUESS_COUNT);
@@ -116,22 +130,18 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             mBatchId = savedInstanceState.getLong(Constants.BATCH_ID);
         }
 
-        // TODO: figure out a way to get batch by name from ID! ;)
-        //if (mBatchId != null && !Constants.BATCH_ID.equals(mBatchId)) {
-        //    mBatchText.setText(mBatchId);
-        //}
-
-        setupActionBar();
-
-        if (!mIsRestart) {
-            showGameSettingsDialog();
+        if (mIsRestart) {
+            mStartScreen.setVisibility(View.GONE);
+        }
+        else {
+            mGameScreen.setVisibility(View.GONE);
         }
 
-        getSupportLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private void showGameSettingsDialog() {
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
         ChooseGameFragment fragment = new ChooseGameFragment();
         fragment.setOnChooseGameListener(new ChooseGameFragment.OnChooseGameListener() {
             @Override
@@ -144,28 +154,8 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         fragment.show(fm, "fragment_choose_dialog");
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void setupActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle icicle) {
+    public void onSaveInstanceState(Bundle icicle) {
         icicle.putInt(GUESS_COUNT, mCurrentGuesses);
         icicle.putInt(CORRECT_COUNT, mCurrentScore);
         icicle.putInt(SUCCESS_MESSAGE_COUNT, mSuccessMessageCount);
@@ -182,7 +172,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                 mGuess.setClickable(false);
                 final String guess = mEditGuess.getText().toString().toLowerCase().trim();
                 if ("".equals(guess)) {
-                    Toast.makeText(this, String.format(sHintMessages[mHintCount], mCurrentStudent.firstName.charAt(0)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), String.format(sHintMessages[mHintCount], mCurrentStudent.firstName.charAt(0)), Toast.LENGTH_SHORT).show();
                     incrementHint();
                     mGuess.setClickable(true);
                 }
@@ -197,7 +187,9 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
                 }
                 break;
             case R.id.buttonRestart:
+            case R.id.start_button:
                 showGameSettingsDialog();
+                break;
             default:
                 //no default
         }
@@ -233,9 +225,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
     }
 
     private void showNoStudentsAndExit() {
-        Toast.makeText(this, "No valid students found. Try connecting to the internet.",
-                Toast.LENGTH_SHORT).show();
-        this.finish();
+        Toast.makeText(getActivity(), "No valid students found. Try connecting to the internet.", Toast.LENGTH_SHORT).show();
     }
 
     private void showStudent() {
@@ -244,13 +234,22 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mHintCount = 0;
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            KeyboardUtil.showKeyboard(this, mEditGuess);
+            KeyboardUtil.showKeyboard(getActivity(), mEditGuess);
         }
 
-        new ImageDownloads.HSGetImageTask(mCurrentStudent.image, this, this).execute();
+        new ImageDownloads.HSGetImageTask(mCurrentStudent.image, getActivity(), this).execute();
     }
 
     private void restartGame() {
+        mGameScreen.setVisibility(View.VISIBLE);
+        mStartScreen.setVisibility(View.GONE);
+
+        mGuess.setVisibility(View.VISIBLE);
+        mEditGuess.setVisibility(View.VISIBLE);
+        mGameTileLayout.setVisibility(View.VISIBLE);
+        mRestartButton.setVisibility(View.GONE);
+        mFlavorText.setVisibility(View.GONE);
+
         mCurrentScore = 0;
         mCurrentGuesses = 0;
         mSuccessMessageCount = 0;
@@ -258,38 +257,41 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         mGameOver = false;
         mIsRestart = false;
 
-        mRestartButton.setVisibility(View.GONE);
-        mGuess.setVisibility(View.VISIBLE);
-        mEditGuess.setVisibility(View.VISIBLE);
-        getSupportLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     private void showEndGame() {
         mGameOver = true;
+
         mEditGuess.setVisibility(View.GONE);
         mGuess.setVisibility(View.GONE);
+        mGameTileLayout.setVisibility(View.GONE);
+
         mRestartButton.setVisibility(View.VISIBLE);
+        mFlavorText.setVisibility(View.VISIBLE);
+
         mGameTileLayout.setHSPicture(R.drawable.ic_launcher);
         double finalScore = mCurrentScore / (mCurrentGuesses * 1.0) * 100;
         mGuessCounter.setText(String.format("Final Score: %.0f%%", finalScore));
 
-        SharedPrefsUtil.saveUserHighScore(this, (int) Math.round(finalScore));
-        SharedPrefsUtil.saveUserStats(this, mCurrentScore, mCurrentGuesses);
+        SharedPrefsUtil.saveUserHighScore(getActivity(), (int) Math.round(finalScore));
+        SharedPrefsUtil.saveUserStats(getActivity(), mCurrentScore, mCurrentGuesses);
 
-        String message;
+        showFinalFlavorText(finalScore);
+    }
+
+    private void showFinalFlavorText(double finalScore) {
+        int message;
         if (finalScore >= 90) {
-            message = "Aces!";
+            message = R.string.score_90_aces;
         }
         else if (finalScore >= 70) {
-            message = "The source is with you!";
-        }
-        else if (finalScore >= 30) {
-            message = "Dr's orders: an alumni happy hour";
+            message = R.string.score_70_source;
         }
         else {
-            message = "Have you asked Govind about the memory palace?";
+            message = R.string.score_sub70_hh;
         }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        mFlavorText.setText(message);
     }
 
     private void showFail() {
@@ -377,7 +379,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         String limit = null;
         StringBuilder selection = new StringBuilder();
         String[] selectionArgs = new String[0];
-        if (!ImageDownloads.isOnline(this)) {
+        if (!ImageDownloads.isOnline(getActivity())) {
             if (selection.length() > 0) selection.append(DbKeywords.AND);
             selection.append(HSData.HSer.COLUMN_NAME_IMAGE_FILENAME).append(DbKeywords.IS_NOT_NULL);
         }
@@ -389,25 +391,28 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
             selection.append(HSData.HSer.COLUMN_NAME_IMAGE_URL).append(DbKeywords.NOT_LIKE_Q);
             selectionArgs = new String[] {String.valueOf(mBatchId), "%no_photo%"};
         }
-        if (!TextUtils.isEmpty(SharedPrefsUtil.getUserEmail(this))) {
+        if (!TextUtils.isEmpty(SharedPrefsUtil.getUserEmail(getActivity()))) {
             if (selection.length() > 0) selection.append(DbKeywords.AND);
             selection.append(HSData.HSer.SQL_NOT_LIKE_YOU);
             selectionArgs = Arrays.copyOf(selectionArgs, selectionArgs.length + 1);
-            selectionArgs[selectionArgs.length - 1] = "%" + SharedPrefsUtil.getUserEmail(this) + "%";
+            selectionArgs[selectionArgs.length - 1] = "%" + SharedPrefsUtil.getUserEmail(getActivity()) + "%";
         }
-        return new CursorLoader(this,
+        return new CursorLoader(getActivity(),
                 HackerSchoolContentProvider.Uris.STUDENTS.getUri()
                                                          .buildUpon().appendQueryParameter(DbKeywords.LIMIT, limit).build(),
                 HSData.HSer.PROJECTION_ALL_BATCH,
                 selection.toString(),
                 selectionArgs,
-                HSData.HSer.SORT_DEFAULT);
+                HSData.HSer.SORT_DEFAULT
+        );
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> objectLoader, Cursor o) {
-        mStudentCursor = o;
-        initGame();
+        mStudentCursor = new HSRandomCursorWrapper(o);
+        if (o != null && o.getCount() > 0 && getActivity() != null) {
+            initGame();
+        }
     }
 
     @Override
@@ -420,8 +425,7 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
         if ((event != null && event.getKeyCode() == KeyEvent.FLAG_EDITOR_ACTION) ||
                 (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO)) {
             mGuess.performClick();
-            final InputMethodManager imm = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
+            final InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mEditGuess.getWindowToken(), 0);
             return true;
         }
@@ -442,11 +446,13 @@ public class GuessThatHSActivity extends BaseFragmentActivity implements View.On
 
     @Override
     public void onImageFailed(boolean wasNetworkError) {
-        mGameTileLayout.setHSPicture(R.drawable.ic_launcher);
+        if (getActivity() != null) {
+            mGameTileLayout.setHSPicture(R.drawable.ic_launcher);
 
-        if (!wasNetworkError) {
-            Toast.makeText(this, "Error loading image.", Toast.LENGTH_SHORT).show();
+            if (!wasNetworkError) {
+                Toast.makeText(getActivity(), "Error loading image.", Toast.LENGTH_SHORT).show();
+            }
+            showNextStudent();
         }
-        showNextStudent();
     }
 }

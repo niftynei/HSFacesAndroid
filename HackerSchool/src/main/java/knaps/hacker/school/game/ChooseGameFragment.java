@@ -1,9 +1,9 @@
 package knaps.hacker.school.game;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -9,11 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import knaps.hacker.school.game.GuessThatHSFragment;
 import knaps.hacker.school.networking.HSOAuthService;
 
 public class HSActivity extends BaseFragmentActivity {
@@ -24,11 +25,16 @@ public class HSActivity extends BaseFragmentActivity {
     private static final String LOGIN_FRAGMENT = "login";
     private ViewPager mViewPager;
     private HSPagerAdapter mPagerAdapter;
+    private String mFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            mFilter = savedInstanceState.getString("filter");
+        }
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mPagerAdapter = new HSPagerAdapter(getFragmentManager());
@@ -46,7 +52,6 @@ public class HSActivity extends BaseFragmentActivity {
             transaction.addToBackStack(name);
             transaction.commit();
         }
-
 
         handleIntent(getIntent());
         setupActionBar();
@@ -105,6 +110,12 @@ public class HSActivity extends BaseFragmentActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("filter", mFilter);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
@@ -137,14 +148,21 @@ public class HSActivity extends BaseFragmentActivity {
     }
 
     private void closeSearchBox(int position) {
-        if (mSearchView != null && position != HSPagerAdapter.LIST_PAGE && !mSearchView.isIconified()) {
+        if (mSearchView != null && position != HSPagerAdapter.LIST_PAGE && !mSearchView.isIconified() && TextUtils.isEmpty(mFilter)) {
             mSearchView.setIconified(true);
         }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        menu.findItem(R.id.search).collapseActionView();
+        if (!TextUtils.isEmpty(mFilter)) {
+            menu.findItem(R.id.search).expandActionView();
+            mSearchView.setQuery(mFilter, true);
+        }
+        else {
+            menu.findItem(R.id.search).collapseActionView();
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -163,8 +181,8 @@ public class HSActivity extends BaseFragmentActivity {
                 return true;
             case R.id.search:
                 // navigate to the list fragment
+                item.expandActionView();
                 mViewPager.setCurrentItem(HSPagerAdapter.LIST_PAGE);
-                mSearchView.setIconified(false);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -188,18 +206,19 @@ public class HSActivity extends BaseFragmentActivity {
 
         public HSPagerAdapter(final FragmentManager fm) {
             super(fm);
-            mListFragment = new HSListFragment();
-            mGameFragment = new HSListFragment();
         }
 
         @Override
         public Fragment getItem(final int i) {
             switch (i) {
                 case LIST_PAGE:
+                    mListFragment = new HSListFragment();
                     return mListFragment;
                 case GAME_PAGE:
+                    mGameFragment = new GuessThatHSFragment();
                     return mGameFragment;
                 default:
+                    mListFragment = new HSListFragment();
                     return mListFragment;
             }
         }
@@ -215,7 +234,17 @@ public class HSActivity extends BaseFragmentActivity {
         }
 
         public void performSearch(String searchTerm) {
-            mListFragment.filterSearch(searchTerm);
+            mFilter = searchTerm;
+            if (mListFragment == null) {
+                final long itemId = getItemId(LIST_PAGE);
+                mListFragment = (HSListFragment) getFragmentManager().findFragmentByTag(makeFragmentName(mViewPager.getId(), itemId));
+            }
+
+            if (mListFragment != null) mListFragment.filterSearch(searchTerm);
+        }
+
+        private String makeFragmentName(int viewId, long id) {
+            return "android:switcher:" + viewId + ":" + id;
         }
     }
 }

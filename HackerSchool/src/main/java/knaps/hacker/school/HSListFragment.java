@@ -12,7 +12,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ import knaps.hacker.school.utils.Constants;
 
 /**
  * A fragment that shows a list view of all Hacker Schoolers.
- *
+ * <p/>
  * Still need to figure out how this works with a background loader
  * of all the hacker school batches
  */
@@ -39,6 +38,7 @@ public class HSListFragment extends Fragment implements
     private StudentAdapter mAdapter;
     private View mEmptyView;
     private View mLoadingView;
+    private String mFilter;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -62,8 +62,7 @@ public class HSListFragment extends Fragment implements
         mListView.setClipToPadding(false);
         mListView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 
-        getActivity().getLoaderManager().initLoader(0, null, this);
-
+        getActivity().getLoaderManager().initLoader(0, savedInstanceState, this);
     }
 
     private BroadcastReceiver mLoadingReceiver = new BroadcastReceiver() {
@@ -95,6 +94,12 @@ public class HSListFragment extends Fragment implements
     }
 
     @Override
+    public void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("filter", mFilter);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
         String selection = null;
         String[] selectionArgs = null;
@@ -122,6 +127,7 @@ public class HSListFragment extends Fragment implements
             showList();
         }
     }
+
     @Override
     public void onLoaderReset(final Loader<Cursor> loader) {
         mAdapter.swapCursor(null);
@@ -146,8 +152,11 @@ public class HSListFragment extends Fragment implements
     }
 
     public void filterSearch(final String currentFilter) {
-        Bundle args = new Bundle();
-        args.putString("filter", currentFilter);
-        getLoaderManager().restartLoader(0, args, this);
+        if (getActivity() != null) {
+            mFilter = currentFilter;
+            Bundle args = new Bundle();
+            args.putString("filter", currentFilter);
+            getLoaderManager().restartLoader(0, args, this);
+        }
     }
 }

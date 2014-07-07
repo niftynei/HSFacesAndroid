@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,7 +24,7 @@ import knaps.hacker.school.R;
  */
 public class GameTileLayout extends FrameLayout {
 
-    private static final int ANIMATION_DURATION = 1000;
+    private static final int ANIMATION_DURATION = 400;
     private ImageView mImageView;
     private ViewGroup mResultView;
     private TextView mMessageText;
@@ -71,14 +72,20 @@ public class GameTileLayout extends FrameLayout {
     private void showMessage(final GameTileCallback callback) {
         ValueAnimator animator = ObjectAnimator.ofFloat(mResultView, "translationY", -mResultView.getHeight(), 0);
         animator.setDuration(ANIMATION_DURATION);
+        animator.setInterpolator(new DecelerateInterpolator());
         animator.addListener(new Animator.AnimatorListener() {
+            public int mLayerType;
+
             @Override
             public void onAnimationStart(final Animator animation) {
+                mLayerType = GameTileLayout.this.getLayerType();
+                GameTileLayout.this.setLayerType(LAYER_TYPE_HARDWARE, null);
                 mResultView.setVisibility(VISIBLE);
             }
 
             @Override
             public void onAnimationEnd(final Animator animation) {
+                GameTileLayout.this.setLayerType(mLayerType, null);
                 if (callback != null) callback.onAnimationEnd();
             }
 
@@ -96,7 +103,6 @@ public class GameTileLayout extends FrameLayout {
 
     public void showImage() {
         mResultView.setVisibility(GONE);
-        // TODO: card flip to show the image
     }
 
     public void clearHSPicture() {

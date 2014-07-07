@@ -23,13 +23,16 @@
     <!--Game Messages-->
     <string name="success_skill">You got it.\n %1$s is a %2$s ninja.</string>
     <string name="success_job">Right on.\n %1$s is a %2$s ninja.</string>
-    <string name="success_generic_one">Totally.\n This is %1$s</string>
-    <string name="success_generic_two">Yup.\n %1$s says \"high fives\".</string>
-    <string name="success_generic_three">Yes!\n You totes know %1$s.</string>
+    <string name="success_generic_one">Right on.\nThis is %1$s</string>
+    <string name="success_generic_two">You got it.\n%1$s says nice job.</string>
+    <string name="success_generic_three">Yes.\n You know %1$s.</string>
     <string name="fail_message">Say hello to\n %1$s</string>
     <string name="somethings_wrong">Something went wrong. Check your internet connection and try again.</string>
     <string name="loading_message">Loading...</string>
     <string name="no_results">No Results</string>
+    <string name="score_90_aces">Aces! Way to be a Hacker School guru</string>
+    <string name="score_70_source">Nicely done. The source is with you!</string>
+    <string name="score_sub70_hh">I think an alumni happy hour is in order!</string>
 
 
 </resources>
