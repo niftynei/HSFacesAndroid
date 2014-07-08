@@ -25,6 +25,8 @@ public class HSActivity extends BaseFragmentActivity {
     private ViewPager mViewPager;
     private HSPagerAdapter mPagerAdapter;
     private String mFilter;
+    private MenuItem mSearchItem;
+    private boolean mUsingMethod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,8 +121,8 @@ public class HSActivity extends BaseFragmentActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.list, menu);
 
-        final MenuItem searchItem = menu.findItem(R.id.search);
-        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchItem = menu.findItem(R.id.search);
+        mSearchView = (SearchView) mSearchItem.getActionView();
         mSearchView.setIconifiedByDefault(true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -131,14 +133,14 @@ public class HSActivity extends BaseFragmentActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                mPagerAdapter.performSearch(newText);
+                if (!mUsingMethod) mPagerAdapter.performSearch(newText);
                 return true;
             }
         });
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                searchItem.collapseActionView();
+                mSearchItem.collapseActionView();
                 return true;
             }
         });
@@ -147,19 +149,19 @@ public class HSActivity extends BaseFragmentActivity {
     }
 
     private void closeSearchBox(int position) {
-        if (mSearchView != null && position != HSPagerAdapter.LIST_PAGE && !mSearchView.isIconified() && TextUtils.isEmpty(mFilter)) {
-            mSearchView.setIconified(true);
+        if (mSearchView != null && position != HSPagerAdapter.LIST_PAGE
+                && !mSearchView.isIconified() && TextUtils.isEmpty(mFilter)) {
+            mSearchItem.collapseActionView();
         }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
         if (!TextUtils.isEmpty(mFilter)) {
+            mUsingMethod = true;
             menu.findItem(R.id.search).expandActionView();
             mSearchView.setQuery(mFilter, true);
-        }
-        else {
-            menu.findItem(R.id.search).collapseActionView();
+            mUsingMethod = false;
         }
 
         return super.onPrepareOptionsMenu(menu);
