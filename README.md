@@ -3,14 +3,9 @@
 This is a port of [HSFaces](https://github.com/adamfraser/HSFaces) project.  It's a memory game and Hacker School directory
 for former and current students.
 
-It's currently in the middle of a port from using a scraped version of the site over to the Hacker School API.  I most likely will not be accepting pull requests until this port and redesign are finished. Note that if you wish to build and run this version, you'll need to supply your own API key.
-You can obtain one from the Hacker School settings portal.
-
-*Please note that everything is pretty broken right now, as we're in the middle of a huge refactoring project*
-
 ## Game Play
 
-Users are shown a randomly selected subset of all Hacker Schoolers.  After a number of guesses, the game ends.
+Users are shown a randomly selected subset of all Hacker Schoolers.  After a designated number of guesses, the game ends.
 
 ## Browsing for a Hacker Schooler
 
@@ -20,14 +15,14 @@ Hacker Schooler.
 
 # Onward and upward
 ## Current work in progress
-- [ ] Massive refactoring and look and feel project to make app easier to use and more delightful
-- [ ] Moving over from a local database model populated via a scrape to a local database model populated via the API.
+- [x] Massive refactoring and look and feel project to make app easier to use and more delightful
+- [x] Moving over from a local database model populated via a scrape to a local database model populated via the API.
 
 
 ## Proposed future work
 - [ ] Keep list of common nicknames
 - [ ] Integration with phone contacts
-- [ ] Ability to message a Hacker Schooler from the app
+- [ ] Ability to message a Hacker Schooler from the app -- Requires exposing phone numbers via API
 
 
 # Getting the app up and running
