@@ -20,7 +20,7 @@ public final class Constants {
     public static final String OAUTH_TOKEN = HACKER_SCHOOL_URL + OAUTH + "/token";
     public static final String REDIRECT_URI = "hsfaces://oauth";
     public static final String CLIENT_SECRET = BuildConfig.API_SECRET;
-    public static final String CLIENT_ID = "576c1008783cdc3bbb8e0b875c9df9f1e7d2fb0b28f0e59b777476f831605340";
+    public static final String CLIENT_ID = BuildConfig.CLIENT_ID;
 
     public static final String API_ENDPOINT = "/api/v1";
     public static final String PEOPLE = "/people";

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/HSFacesAndroid.iml" filepath="$PROJECT_DIR$/HSFacesAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/HackerSchool/HackerSchool.iml" filepath="$PROJECT_DIR$/HackerSchool/HackerSchool.iml" />
-      <module fileurl="file://$PROJECT_DIR$/HackerSchoolProject.iml" filepath="$PROJECT_DIR$/HackerSchoolProject.iml" />
     </modules>
   </component>
 </project>
