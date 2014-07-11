@@ -47,6 +47,7 @@ workspace.xml
 tasks.xml
 *.ipr
 *.iws
+*.iml
 out
 
 #Plugins and errata
