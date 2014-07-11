@@ -33,7 +33,7 @@ Should be filed as Issues on the Github page for this project.
 
 ## How to build
 1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html). Currently builds and runs on Android Studio version 0.8.2.
-2. In Android Studio use the SDK Manager (button in toolbar or in menu under Tools -> Android) to install Android Support Repository, Google Repository (in Extras) and sources for API 18 (or one supported by your device)
+2. In Android Studio use the SDK Manager (button in toolbar or in menu under Tools -> Android) to install Android Support Repository, Google Repository (in Extras) and sources for API 18 (or one supported by your device). You'll also need the build tools v20.
 3. Open (not import) the project in Android Studio
 4. Copy over local.properties.sample to local.properties, edit if you installed Android Studio in a different location
 5. "Sync Project with Gradle Files" (button in toolbar or in menu under Tools -> Android)
