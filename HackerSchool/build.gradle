@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
 
@@ -18,7 +18,7 @@ def apiKey = (project.hasProperty("api_secret")) ? project.('api_secret') : ""
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "19.0.1"
+    buildToolsVersion "20"
 
     signingConfigs {
         release {
