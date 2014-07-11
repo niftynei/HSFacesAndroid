@@ -1,6 +1,6 @@
 # HSFaces, the Android Port
 
-This is a port of [HSFaces](https://github.com/adamfraser/HSFaces) project.  It's a memory game and Hacker School directory
+This is a port of [HSFaces](https://github.com/adamfraser/HSFaces) project.  It's a memory game and Hacker School directory.
 for former and current students.
 
 ## Game Play
@@ -43,7 +43,7 @@ __ See note about API keys before running __
 
 ## Using API Keys
 
-The app uses Gradle properties to keep Hacker School API secrets a secret.  You'll need to supply your own API key in order for the app to funciton properly. (All Hacker Schoolers can get one from the Hacker School login portal).
+The app uses Gradle properties to keep Hacker School API secrets a secret.  You'll need to supply your own API key in order for the app to function properly. (All Hacker Schoolers can get one from the Hacker School login portal).
 
 Once you've obtained a super secret Key and Client ID, you'll need to replace the ones that are in this build.
 
@@ -59,15 +59,12 @@ This keys will automatically be picked up and injected into the app as a Build c
 
 ## A Note on IDEs
 
-This project is not intended to be run on Eclipse.  It is not designed to run on Eclipse.  If you want to port it to Eclipse to be able to use it, by all means please do but I don't want to hear about it.
+This project works well with Android Studio.  It is not set up to be run on Eclipse.  If you want to port it to Eclipse to be able to use it, by all means please do, but I don't want to hear about it.
 
 
 ## Contributions
 
 I love that you're contributing!  Thanks for contributing!
-
-Pull requests are welcome, however as we're in the middle of moving over to use the API and a massive redesign, I probably won't be accepting much until most of this work is finished.
-Most of this is undocumented, send me a note if anything's super unclear.
 
 If there's a feature that you'd like to add, please open up an Issue on this Github project before you begin so that I know what you're planning to work on.
 
