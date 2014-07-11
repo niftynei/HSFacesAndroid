@@ -13,6 +13,10 @@ This app also provides a directory of Hacker Schoolers.  It's sorted (at the mom
 this allows you to visit their github, twitter, or email from within the app.  You can drill down to see more details for each 
 Hacker Schooler.
 
+### Bug reports
+
+Should be filed as Issues on the Github page for this project.
+
 # Onward and upward
 ## Current work in progress
 - [x] Massive refactoring and look and feel project to make app easier to use and more delightful
@@ -28,7 +32,7 @@ Hacker Schooler.
 # Getting the app up and running
 
 ## How to build
-1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html).  I'm currently developing using version 6.1 as 8.1 is a bit unstable.
+1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html). Currently builds and runs on Android Studio version 0.8.2.
 2. In Android Studio use the SDK Manager (button in toolbar or in menu under Tools -> Android) to install Android Support Repository, Google Repository (in Extras) and sources for API 18 (or one supported by your device)
 3. Open (not import) the project in Android Studio
 4. Copy over local.properties.sample to local.properties, edit if you installed Android Studio in a different location
@@ -43,15 +47,14 @@ The app uses Gradle properties to keep Hacker School API secrets a secret.  You'
 
 Once you've obtained a super secret Key and Client ID, you'll need to replace the ones that are in this build.
 
-The Client ID can be found in the Constants.java file.  You can replace this with your own.
-
 To add your Secret key to the project, create a `gradle.properties` file in the project's root directory and add the following:
 
 ```
     api_secret=<your_secret_key>
+    client_id=<your_client_id>
 ```
 
-This key will automatically be picked up and injected into the app as a Build config as part of the build process.  (Gradle is magic).
+This keys will automatically be picked up and injected into the app as a Build config as part of the build process.  (Gradle is magic).
 
 
 ## A Note on IDEs
