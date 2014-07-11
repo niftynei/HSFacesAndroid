@@ -44,7 +44,7 @@ public class HSActivity extends BaseFragmentActivity {
 
         Fragment fragment;
         String name;
-        if (needsToShowLogin()) {
+        if (needsToShowLogin() && getFragmentManager().findFragmentByTag(LOGIN_FRAGMENT) == null) {
             fragment = new LoginFragment();
             name = LOGIN_FRAGMENT;
 

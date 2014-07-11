@@ -28,8 +28,6 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     private View mProgressView;
     private View mErrorView;
 
-    // TODO: what if rotates!?!
-
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +46,10 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupWebView();
+
+        if (savedInstanceState == null) {
+            setupWebView();
+        }
     }
 
     private void setupWebView() {
