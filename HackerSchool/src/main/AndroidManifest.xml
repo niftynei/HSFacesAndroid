@@ -23,7 +23,8 @@
             android:name=".HSActivity"
             android:label="@string/title_activity_list"
             android:launchMode="singleTop"
-            android:parentActivityName="knaps.hacker.school.LoginActivity" >
+            android:windowSoftInputMode="adjustPan"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
