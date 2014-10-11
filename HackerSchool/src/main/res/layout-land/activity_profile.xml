@@ -40,7 +40,7 @@
             android:layout_height="@dimen/contact_icon_height"
             android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:background="@null"
+            android:background="@drawable/ten_percent_black_selector"
             android:src="@drawable/ic_twitter"
             android:id="@+id/buttonTwitter"
             />
@@ -51,7 +51,7 @@
             android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:background="@null"
+            android:background="@drawable/ten_percent_black_selector"
             android:src="@drawable/ic_github"
             android:id="@+id/buttonGithub"
             />
@@ -62,7 +62,7 @@
             android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:background="@null"
+            android:background="@drawable/ten_percent_black_selector"
             android:src="@drawable/ic_email"
             android:id="@+id/buttonEmail"
             />
@@ -73,7 +73,7 @@
             android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
-            android:background="@null"
+            android:background="@drawable/ten_percent_black_selector"
             android:src="@drawable/ic_sms"
             android:id="@+id/buttonSms"
             />

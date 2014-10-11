@@ -50,6 +50,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private static final String GAME_OVER = "game_over";
     private static final long ALL_THE_BATCHES = -1L;
     private static final String SEED = "seed";
+    private static final String STUDENT = "student";
 
     private View mStartScreen;
     private View mGameScreen;
@@ -130,6 +131,9 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
             mGameOver = savedInstanceState.getBoolean(GAME_OVER);
             mBatchId = savedInstanceState.getLong(Constants.BATCH_ID);
             mSeed = savedInstanceState.getLong(SEED);
+            mCurrentStudent = (Student) savedInstanceState.getSerializable(STUDENT);
+
+            getLoaderManager().restartLoader(0, null, this);
         }
 
         if (mIsRestart && mSeed != 0) {
@@ -138,8 +142,6 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         else {
             mGameScreen.setVisibility(View.GONE);
         }
-
-        getLoaderManager().initLoader(0, null, this);
     }
 
     private void showGameSettingsDialog() {
@@ -166,6 +168,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         icicle.putInt(Constants.GAME_MAX, mGameMax);
         icicle.putBoolean(GAME_OVER, mGameOver);
         icicle.putLong(Constants.BATCH_ID, mBatchId);
+        icicle.putSerializable(STUDENT, mCurrentStudent);
     }
 
     @Override
@@ -260,7 +263,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mIsRestart = false;
         mSeed = System.nanoTime() % 1000000;
 
-        getLoaderManager().restartLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private void showEndGame() {
@@ -321,12 +324,15 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private String getSuccessMessage() {
         if (mCurrentStudent.getSkills().length > 0 && mSuccessMessageCount % 3 == 2) {
             String[] skills = mCurrentStudent.getSkills();
-            Random random = new Random(System.currentTimeMillis());
-            int skillToShow = random.nextInt(skills.length - 1);
+            int skillToShow = 0;
+            if (skills.length > 1) {
+                Random random = new Random(System.currentTimeMillis());
+                skillToShow = random.nextInt(skills.length);
+            }
             return getString(R.string.success_skill, mCurrentStudent.firstName, skills[skillToShow]);
         }
         else if (!TextUtils.isEmpty(mCurrentStudent.getJob()) && mSuccessMessageCount % 3 == 1) {
-            return getString(R.string.success_skill, mCurrentStudent.firstName, mCurrentStudent.getJob());
+            return getString(R.string.success_job, mCurrentStudent.firstName, mCurrentStudent.getJob());
         }
         else {
             return getString(sSuccessMessages[mSuccessMessageCount], mCurrentStudent.firstName);
@@ -416,7 +422,6 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         else if (o != null && o.getCount() == 0) {
             // No results found!
             Toast.makeText(getActivity(), getString(R.string.no_students_found), Toast.LENGTH_LONG);
-            mStartButton.setEnabled(false);
         }
     }
 
