@@ -220,7 +220,7 @@ public class HSOAuthService {
         Intent intent = new Intent(mContext, HSActivity.class);
         // clear the backstack
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(new Intent(mContext, HSActivity.class));
+        mContext.startActivity(intent);
     }
 
     public boolean shouldRefresh() {

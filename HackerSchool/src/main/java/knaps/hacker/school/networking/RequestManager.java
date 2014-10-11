@@ -43,7 +43,7 @@ public class RequestManager {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setConverter(new GsonConverter(gson))
-                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setLogLevel(RestAdapter.LogLevel.NONE)
                 .setEndpoint(Constants.HACKER_SCHOOL_URL)
                 .setRequestInterceptor(new AuthInterceptor())
                 .setErrorHandler(new UnauthorizedErrorHandler())
