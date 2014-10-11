@@ -15,24 +15,17 @@ Hacker Schooler.
 
 ### Bug reports
 
-Should be filed as Issues on the Github page for this project.
+Thanks for filing a bug.  Any issues that you have should be filed in the Issues section of the Github project.
 
 # Onward and upward
-## Current work in progress
-- [x] Massive refactoring and look and feel project to make app easier to use and more delightful
-- [x] Moving over from a local database model populated via a scrape to a local database model populated via the API.
-
-
 ## Proposed future work
 - [ ] Keep list of common nicknames
 - [ ] Integration with phone contacts
-- [ ] Ability to message a Hacker Schooler from the app -- Requires exposing phone numbers via API
-
 
 # Getting the app up and running
 
 ## How to build
-1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html). Currently builds and runs on Android Studio version 0.8.2.
+1. Install [Android Studio](https://developer.android.com/sdk/installing/studio.html). Currently builds and runs on Android Studio version 0.8.8.
 2. In Android Studio use the SDK Manager (button in toolbar or in menu under Tools -> Android) to install Android Support Repository, Google Repository (in Extras) and sources for API 18 (or one supported by your device). You'll also need the build tools v20.
 3. Open (not import) the project in Android Studio
 4. Copy over local.properties.sample to local.properties, edit if you installed Android Studio in a different location
@@ -59,12 +52,9 @@ This keys will automatically be picked up and injected into the app as a Build c
 
 ## A Note on IDEs
 
-This project works well with Android Studio.  It is not set up to be run on Eclipse.  If you want to port it to Eclipse to be able to use it, by all means please do, but I don't want to hear about it.
-
+This project works well with Android Studio.  I haven't tried using it with Eclipse.
 
 ## Contributions
-
-I love that you're contributing!  Thanks for contributing!
 
 If there's a feature that you'd like to add, please open up an Issue on this Github project before you begin so that I know what you're planning to work on.
 
@@ -72,9 +62,7 @@ Bug fixes always welcome.
 
 
 # Due Diligence
-
 This app owes much to:
-Apache's Oltu project, a Java OAuth library
-Square's Retrofit, a network / object marshalling library
-Jake Wharton's Nine Old Androids, an Animation framework for Gingerbread
+- Apache's [Oltu](https://oltu.apache.org/) project, a Java OAuth library
+- Square's [Retrofit](http://square.github.io/retrofit/), a network / object marshalling library
 
