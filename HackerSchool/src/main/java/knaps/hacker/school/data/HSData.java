@@ -167,10 +167,11 @@ public final class HSData {
                         TABLE_NAME + DOT + COLUMN_NAME_IS_HACKER_SCHOOLER + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_LAST_UPDATED;
 
-        public static final String SELECTION_NAME_SKILLS =
+        public static final String SELECTION_NAME_SKILLS_COMPANY =
                 COLUMN_NAME_FIRST_NAME + LIKE_Q + OR +
                         COLUMN_NAME_LAST_NAME + LIKE_Q + OR +
-                        COLUMN_NAME_SKILLS + LIKE_Q;
+                        COLUMN_NAME_SKILLS + LIKE_Q + OR +
+                        COLUMN_NAME_JOB + LIKE_Q;
 
 
         private static String _ALL_WITH_BATCH =

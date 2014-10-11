@@ -105,8 +105,8 @@ public class HSListFragment extends Fragment implements
         String[] selectionArgs = null;
         if (args != null) {
             String filter = "%" + args.getString("filter", "") + "%";
-            selection = HSData.HSer.SELECTION_NAME_SKILLS;
-            selectionArgs = new String[] {filter, filter, filter};
+            selection = HSData.HSer.SELECTION_NAME_SKILLS_COMPANY;
+            selectionArgs = new String[] {filter, filter, filter, filter};
         }
 
         return new CursorLoader(getActivity(),
