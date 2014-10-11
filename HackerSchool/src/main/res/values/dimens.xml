@@ -7,4 +7,5 @@
 
     <dimen name="progress_bar_size">200dp</dimen>
     <dimen name="contact_icon_height">32dp</dimen>
+    <dimen name="small_margin">8dp</dimen>
 </resources>

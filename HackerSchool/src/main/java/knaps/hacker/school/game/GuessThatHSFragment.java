@@ -64,6 +64,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private TextView mGuessCounter;
     private TextView mBatchText;
     private View mStartButton;
+    private View mStartOverButton;
 
     private Student mCurrentStudent;
     private Cursor mStudentCursor;
@@ -94,12 +95,14 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mRestartButton = (Button) view.findViewById(R.id.buttonRestart);
         mRestartButton.setOnClickListener(this);
         mFlavorText = (TextView) view.findViewById(R.id.text_flavor);
+        mStartOverButton = view.findViewById(R.id.buttonStartOver);
+        mStartOverButton.setOnClickListener(this);
 
         mGuessCounter = (TextView) view.findViewById(R.id.textGuessCount);
         mBatchText = (TextView) view.findViewById(R.id.textBatchName);
         mStartScreen = view.findViewById(R.id.start_screen);
         mGameScreen = view.findViewById(R.id.game_play);
-        mStartButton = view.findViewById(R.id.start_button);
+        mStartButton = view.findViewById(R.id.buttonStart);
         mStartButton.setOnClickListener(this);
 
         return view;
@@ -193,7 +196,8 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
                 }
                 break;
             case R.id.buttonRestart:
-            case R.id.start_button:
+            case R.id.buttonStartOver:
+            case R.id.buttonStart:
                 showGameSettingsDialog();
                 break;
             default:
@@ -252,6 +256,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mGuess.setVisibility(View.VISIBLE);
         mEditGuess.setVisibility(View.VISIBLE);
         mGameTileLayout.setVisibility(View.VISIBLE);
+        mStartOverButton.setVisibility(View.VISIBLE);
         mRestartButton.setVisibility(View.GONE);
         mFlavorText.setVisibility(View.GONE);
 
@@ -263,7 +268,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mIsRestart = false;
         mSeed = System.nanoTime() % 1000000;
 
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     private void showEndGame() {
@@ -272,6 +277,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mEditGuess.setVisibility(View.GONE);
         mGuess.setVisibility(View.GONE);
         mGameTileLayout.setVisibility(View.GONE);
+        mStartOverButton.setVisibility(View.GONE);
 
         mRestartButton.setVisibility(View.VISIBLE);
         mFlavorText.setVisibility(View.VISIBLE);

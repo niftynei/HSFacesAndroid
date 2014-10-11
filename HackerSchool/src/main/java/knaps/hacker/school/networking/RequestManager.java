@@ -15,11 +15,16 @@ import org.apache.oltu.oauth2.common.OAuth;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import knaps.hacker.school.utils.Constants;
 import knaps.hacker.school.utils.StringUtil;
+import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Header;
+import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 
 /**
@@ -41,6 +46,7 @@ public class RequestManager {
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(Constants.HACKER_SCHOOL_URL)
                 .setRequestInterceptor(new AuthInterceptor())
+                .setErrorHandler(new UnauthorizedErrorHandler())
                 .build();
 
         mService = restAdapter.create(HSApiService.class);
@@ -59,6 +65,12 @@ public class RequestManager {
         @Override
         public void intercept(final RequestFacade request) {
             // TODO: look at marrying OLTU with Retrofit more closely?
+
+            // If the current access token is expired, be proactive in updating it
+            if (HSOAuthService.getService().shouldRefresh()) {
+                HSOAuthService.getService().refreshAccessTokenSynchronously();
+            }
+
             if (HSOAuthService.getService().isAuthorized()) {
                 final String accessToken = HSOAuthService.getService().getAccessToken();
                 String bearerString = OAuth.OAUTH_HEADER_NAME + " " + accessToken;
@@ -89,6 +101,31 @@ public class RequestManager {
                 Log.d("JSON", "Error parsing date string");
             }
             return null;
+        }
+    }
+
+    /**
+     * Catch all unauthorized calls. Check to see if this is because our token has been revoked.
+     * If so, go and get a new token!
+     */
+    private static class UnauthorizedErrorHandler implements ErrorHandler {
+
+        @Override
+        public Throwable handleError(RetrofitError cause) {
+            Response r = cause.getResponse();
+            if (r != null & r.getStatus() == 401) {
+                List<Header> headers = r.getHeaders();
+                if (headers != null) {
+                    for (Header header : headers) {
+                        if ("Www-Authenticate".equals(header.getName()) && header.getValue().contains("invalid_token")) {
+                            // go and fetch a new access token!
+                            HSOAuthService.getService().refreshAccessToken(null);
+                        }
+                    }
+                }
+            }
+
+            return cause;
         }
     }
 }

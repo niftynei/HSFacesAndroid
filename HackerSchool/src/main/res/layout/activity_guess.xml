@@ -68,6 +68,17 @@
             android:layout_marginTop="13dp"/>
 
         <TextView
+            android:id="@+id/buttonStartOver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/CodeStyleFont"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/buttonGuess"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="@string/restart"
+            />
+
+        <TextView
             android:id="@+id/text_flavor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,7 +116,7 @@
             android:src="@drawable/ic_launcher"
             />
         <Button
-            android:id="@+id/start_button"
+            android:id="@+id/buttonStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/HSButton"

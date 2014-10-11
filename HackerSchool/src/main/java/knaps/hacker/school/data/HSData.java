@@ -194,7 +194,7 @@ public final class HSData {
                         COLUMN_NAME_PHONE_NUMBER + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_GITHUB + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TWITTER + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_BATCH_ID + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_BATCH_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_IS_HACKER_SCHOOLER + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_IS_FACULTY + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LAST_UPDATED + TEXT_TYPE + COMMA_SEP +
@@ -304,11 +304,8 @@ public final class HSData {
         };
 
         public static final String SORT_DEFAULT =
-                TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + DESC + COMMA_SEP +
+                Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_START_DATE + ASC + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME + ASC;
-
-        public static final String SORT_BATCH =
-                TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + ASC;
     }
 
 }
