@@ -52,10 +52,11 @@ public class HSActivity extends BaseFragmentActivity {
             transaction.add(android.R.id.content, fragment, name);
             transaction.addToBackStack(name);
             transaction.commit();
+
         }
 
-        handleIntent(getIntent());
         setupActionBar();
+        handleIntent(getIntent());
     }
 
     private void handleIntent(Intent intent) {
@@ -118,34 +119,34 @@ public class HSActivity extends BaseFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.list, menu);
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.list, menu);
 
-        mSearchItem = menu.findItem(R.id.search);
-        mSearchView = (SearchView) mSearchItem.getActionView();
-        mSearchView.setIconifiedByDefault(true);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String query) {
-                mPagerAdapter.performSearch(query);
-                return true;
-            }
+            mSearchItem = menu.findItem(R.id.search);
+            mSearchView = (SearchView) mSearchItem.getActionView();
+            mSearchView.setIconifiedByDefault(true);
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(final String query) {
+                    mPagerAdapter.performSearch(query);
+                    return true;
+                }
 
-            @Override
-            public boolean onQueryTextChange(final String newText) {
-                if (!mUsingMethod) mPagerAdapter.performSearch(newText);
-                return true;
-            }
-        });
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mSearchItem.collapseActionView();
-                return true;
-            }
-        });
+                @Override
+                public boolean onQueryTextChange(final String newText) {
+                    if (!mUsingMethod) mPagerAdapter.performSearch(newText);
+                    return true;
+                }
+            });
+            mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    mSearchItem.collapseActionView();
+                    return true;
+                }
+            });
 
-        return true;
+            return true;
     }
 
     private void closeSearchBox(int position) {
@@ -157,11 +158,16 @@ public class HSActivity extends BaseFragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        if (!TextUtils.isEmpty(mFilter)) {
-            mUsingMethod = true;
-            menu.findItem(R.id.search).expandActionView();
-            mSearchView.setQuery(mFilter, true);
-            mUsingMethod = false;
+        if (needsToShowLogin()) {
+            menu.findItem(R.id.search).setVisible(false);
+        }
+        else {
+            if (!TextUtils.isEmpty(mFilter)) {
+                mUsingMethod = true;
+                menu.findItem(R.id.search).expandActionView();
+                mSearchView.setQuery(mFilter, true);
+                mUsingMethod = false;
+            }
         }
 
         return super.onPrepareOptionsMenu(menu);

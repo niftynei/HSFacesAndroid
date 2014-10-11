@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -17,10 +18,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.protocol.HTTP;
+
+import java.util.Arrays;
 import java.util.Random;
 
 import knaps.hacker.school.models.Student;
 import knaps.hacker.school.networking.ImageDownloads;
+import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
 
 public class HSProfileActivity extends BaseFragmentActivity
@@ -35,6 +40,7 @@ public class HSProfileActivity extends BaseFragmentActivity
     private ImageButton mGithubButton;
     private ImageButton mTwitterButton;
     private ImageButton mEmailButton;
+    private ImageButton mSmsButton;
     private TextView mBatchView;
     private Student mStudent;
 
@@ -55,6 +61,7 @@ public class HSProfileActivity extends BaseFragmentActivity
         mJobView = (TextView) findViewById(R.id.textJob);
         mGithubButton = (ImageButton) findViewById(R.id.buttonGithub);
         mTwitterButton = (ImageButton) findViewById(R.id.buttonTwitter);
+        mSmsButton = (ImageButton) findViewById(R.id.buttonSms);
         mEmailButton = (ImageButton) findViewById(R.id.buttonEmail);
 
         mStudent = (Student) getIntent().getSerializableExtra(Constants.STUDENT);
@@ -67,19 +74,25 @@ public class HSProfileActivity extends BaseFragmentActivity
         mNameView.setText(student.getFullName());
         mBatchView.setText(student.batch.name);
 
-        if (!TextUtils.isEmpty(student.mSkills)) {
-            mSkillsView.setText(student.mSkills);
+        if (student.getSkills().length > 0) {
+            String[] skills = student.getSkills();
+            StringBuilder builder = new StringBuilder();
+            for (String skill : skills) {
+                if (builder.length() > 0) {
+                    builder.append(", ");
+                }
+                builder.append(skill);
+            }
+
+            mSkillsView.setText(builder.toString());
         }
         else {
             mSkillsLabel.setVisibility(View.GONE);
             mSkillsView.setVisibility(View.GONE);
         }
 
-        if (!TextUtils.isEmpty(student.mJob)) {
-            mJobView.setText(student.mJob);
-            if (!TextUtils.isEmpty(student.mJobUrl)) {
-                mJobView.setOnClickListener(this);
-            }
+        if (!TextUtils.isEmpty(student.getJob())) {
+            mJobView.setText(student.getJob());
         }
         else {
             mJobView.setVisibility(View.GONE);
@@ -89,14 +102,19 @@ public class HSProfileActivity extends BaseFragmentActivity
         mGithubButton.setOnClickListener(this);
         mTwitterButton.setOnClickListener(this);
         mEmailButton.setOnClickListener(this);
+        mSmsButton.setOnClickListener(this);
+
         if (TextUtils.isEmpty(student.github)) {
-            mGithubButton.setVisibility(View.INVISIBLE);
+            mGithubButton.setVisibility(View.GONE);
         }
         if (TextUtils.isEmpty(student.twitter)) {
-            mTwitterButton.setVisibility(View.INVISIBLE);
+            mTwitterButton.setVisibility(View.GONE);
         }
         if (TextUtils.isEmpty(student.email)) {
-            mEmailButton.setVisibility(View.INVISIBLE);
+            mEmailButton.setVisibility(View.GONE);
+        }
+        if (TextUtils.isEmpty(student.getPhoneNumber())) {
+            mSmsButton.setVisibility(View.GONE);
         }
     }
 
@@ -120,25 +138,46 @@ public class HSProfileActivity extends BaseFragmentActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonTwitter:
                 Intent twitter = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.getTwitterUrl()));
-                startActivity(twitter);
+                if (twitter.resolveActivity(getPackageManager()) != null) {
+                    startActivity(twitter);
+                }
                 break;
             case R.id.buttonGithub:
                 Intent github = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.getGithubUrl()));
-                startActivity(github);
+                if (github.resolveActivity(getPackageManager()) != null) {
+                    startActivity(github);
+                }
                 break;
             case R.id.buttonEmail:
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", mStudent.email, null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Hey there " + mStudent.firstName);
                 startActivity(Intent.createChooser(emailIntent, "Send email..."));
                 break;
-            case R.id.textJob:
-                Intent job = new Intent(Intent.ACTION_VIEW, Uri.parse(mStudent.mJobUrl));
-                startActivity(job);
+            case R.id.buttonSms:
+                Intent smsIntent;
+                if (AppUtil.isKitKat()) {
+                    String defaultPackageName = Telephony.Sms.getDefaultSmsPackage(this);
+                    smsIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + mStudent.getPhoneNumber()));
+                    if (defaultPackageName != null) {
+                        smsIntent.setPackage(defaultPackageName);
+                    }
+                }
+                else {
+                    smsIntent = new Intent(Intent.ACTION_VIEW);
+                    smsIntent.setData(Uri.parse("smsto:" + mStudent.getPhoneNumber()));
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.putExtra("address", mStudent.getPhoneNumber());
+                }
+
+                if (smsIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(smsIntent);
+                }
                 break;
             default:
                 // do nothing

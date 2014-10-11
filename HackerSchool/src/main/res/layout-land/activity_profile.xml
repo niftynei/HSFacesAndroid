@@ -32,35 +32,51 @@
         android:orientation="horizontal"
         android:paddingLeft="30dp"
         android:paddingRight="30dp"
-        android:layout_marginTop="8dp"
         >
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_twitter"
-        android:id="@+id/buttonTwitter"
-        android:background="@null"
-        />
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:src="@drawable/ic_github"
-        android:id="@+id/buttonGithub"
-    />
-    <ImageButton
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        android:layout_weight="1"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_email"
-        android:id="@+id/buttonEmail"
-        android:background="@null"
-        />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_height="@dimen/contact_icon_height"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_twitter"
+            android:id="@+id/buttonTwitter"
+            />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="@dimen/contact_icon_height"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_github"
+            android:id="@+id/buttonGithub"
+            />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="@dimen/contact_icon_height"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_email"
+            android:id="@+id/buttonEmail"
+            />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="@dimen/contact_icon_height"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_sms"
+            android:id="@+id/buttonSms"
+            />
     </LinearLayout>
 
     </LinearLayout>

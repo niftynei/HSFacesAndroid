@@ -6,4 +6,5 @@
     <dimen name="hs_image_height">200dp</dimen>
 
     <dimen name="progress_bar_size">200dp</dimen>
+    <dimen name="contact_icon_height">32dp</dimen>
 </resources>

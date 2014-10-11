@@ -20,7 +20,7 @@
         <item name="android:titleTextStyle">@style/HSActionBar.TitleText</item>
     </style>
 
-    <style name="HSActionBar.TitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <style name="HSActionBar.TitleText" >
         <item name="android:textColor">@android:color/white</item>
         <item name="android:typeface">monospace</item>
     </style>

@@ -24,7 +24,7 @@
         android:id="@+id/imageStudent"
 />
     <LinearLayout
-        android:layout_width="120dp"
+        android:layout_width="@dimen/hs_image_width"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
@@ -33,7 +33,9 @@
         >
     <ImageButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_height="@dimen/contact_icon_height"
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@null"
@@ -42,7 +44,9 @@
         />
     <ImageButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/contact_icon_height"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@null"
@@ -51,13 +55,26 @@
     />
     <ImageButton
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/contact_icon_height"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_weight="1"
         android:scaleType="fitCenter"
         android:background="@null"
         android:src="@drawable/ic_email"
         android:id="@+id/buttonEmail"
         />
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="@dimen/contact_icon_height"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:src="@drawable/ic_sms"
+            android:id="@+id/buttonSms"
+            />
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
