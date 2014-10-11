@@ -13,6 +13,7 @@ import java.util.List;
 
 import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.networking.RequestManager;
 import knaps.hacker.school.utils.Constants;
 import retrofit.RetrofitError;

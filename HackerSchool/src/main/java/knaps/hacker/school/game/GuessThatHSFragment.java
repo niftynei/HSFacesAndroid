@@ -62,6 +62,7 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     private long mBatchId;
     private TextView mGuessCounter;
     private TextView mBatchText;
+    private View mStartButton;
 
     private Student mCurrentStudent;
     private Cursor mStudentCursor;
@@ -97,7 +98,8 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mBatchText = (TextView) view.findViewById(R.id.textBatchName);
         mStartScreen = view.findViewById(R.id.start_screen);
         mGameScreen = view.findViewById(R.id.game_play);
-        view.findViewById(R.id.start_button).setOnClickListener(this);
+        mStartButton = view.findViewById(R.id.start_button);
+        mStartButton.setOnClickListener(this);
 
         return view;
     }
@@ -317,18 +319,14 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
     };
 
     private String getSuccessMessage() {
-        if (!"".equals(
-                mCurrentStudent.mSkills) && mCurrentStudent.mSkills != null && mSuccessMessageCount % 3 == 2) {
-            String[] skills = mCurrentStudent.mSkills.split(",");
-            String skill = mCurrentStudent.mSkills;
-            if (skills.length > 0) {
-                skill = skills[0];
-            }
-            return getString(R.string.success_skill, mCurrentStudent.firstName, skill);
+        if (mCurrentStudent.getSkills().length > 0 && mSuccessMessageCount % 3 == 2) {
+            String[] skills = mCurrentStudent.getSkills();
+            Random random = new Random(System.currentTimeMillis());
+            int skillToShow = random.nextInt(skills.length - 1);
+            return getString(R.string.success_skill, mCurrentStudent.firstName, skills[skillToShow]);
         }
-        else if (!""
-                .equals(mCurrentStudent.mJob) && mCurrentStudent.mJob != null && mSuccessMessageCount % 3 == 1) {
-            return getString(R.string.success_skill, mCurrentStudent.firstName, mCurrentStudent.mJob);
+        else if (!TextUtils.isEmpty(mCurrentStudent.getJob()) && mSuccessMessageCount % 3 == 1) {
+            return getString(R.string.success_skill, mCurrentStudent.firstName, mCurrentStudent.getJob());
         }
         else {
             return getString(sSuccessMessages[mSuccessMessageCount], mCurrentStudent.firstName);
@@ -414,6 +412,11 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         mStudentCursor = new HSRandomCursorWrapper(o, mSeed);
         if (o != null && o.getCount() > 0 && getActivity() != null) {
             initGame();
+        }
+        else if (o != null && o.getCount() == 0) {
+            // No results found!
+            Toast.makeText(getActivity(), getString(R.string.no_students_found), Toast.LENGTH_LONG);
+            mStartButton.setEnabled(false);
         }
     }
 

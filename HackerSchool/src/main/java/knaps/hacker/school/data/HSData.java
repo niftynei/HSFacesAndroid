@@ -136,7 +136,6 @@ public final class HSData {
         public static final String COLUMN_NAME_IMAGE_URL = "imageUrl";
         public static final String COLUMN_NAME_IMAGE_FILENAME = "imageFilename";
         public static final String COLUMN_NAME_JOB = "job";
-        public static final String COLUMN_NAME_JOB_URL = "jobUrl";
         public static final String COLUMN_NAME_SKILLS = "skills";
         public static final String COLUMN_NAME_EMAIL = "email";
         public static final String COLUMN_NAME_TWITTER = "twitterAccount";
@@ -144,21 +143,28 @@ public final class HSData {
         public static final String COLUMN_NAME_BATCH_ID = "batch_id";
         public static final String COLUMN_NAME_LAST_UPDATED = "updated";
         public static final String IDX_ID = "index_hackerschool_id";
+        public static final String COLUMN_NAME_PHONE_NUMBER = "phone";
+        public static final String COLUMN_NAME_HAS_PHOTO = "hasPhoto";
+        public static final String COLUMN_NAME_IS_HACKER_SCHOOLER = "isHSer";
+        public static final String COLUMN_NAME_IS_FACULTY = "isFaculty";
 
         private static final String _ALL =
                 TABLE_NAME + DOT + COLUMN_NAME_ID + COMMA_SEP +
                         TABLE_NAME + DOT + _ID + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_LAST_NAME + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_HAS_PHOTO + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_IMAGE_URL + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_IMAGE_FILENAME + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_JOB + COMMA_SEP +
-                        TABLE_NAME + DOT + COLUMN_NAME_JOB_URL + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_PHONE_NUMBER + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_SKILLS + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_EMAIL + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_GITHUB + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_TWITTER + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_IS_FACULTY + COMMA_SEP +
+                        TABLE_NAME + DOT + COLUMN_NAME_IS_HACKER_SCHOOLER + COMMA_SEP +
                         TABLE_NAME + DOT + COLUMN_NAME_LAST_UPDATED;
 
         public static final String SELECTION_NAME_SKILLS =
@@ -179,15 +185,18 @@ public final class HSData {
                         COLUMN_NAME_ID + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_FIRST_NAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LAST_NAME + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_HAS_PHOTO + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_IMAGE_URL + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_IMAGE_FILENAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_JOB + TEXT_TYPE + COMMA_SEP +
-                        COLUMN_NAME_JOB_URL + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_SKILLS + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_EMAIL + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_PHONE_NUMBER + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_GITHUB + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_TWITTER + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_BATCH_ID + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_IS_HACKER_SCHOOLER + INT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_IS_FACULTY + INT_TYPE + COMMA_SEP +
                         COLUMN_NAME_LAST_UPDATED + TEXT_TYPE + COMMA_SEP +
                         UNIQUE + PARENS_OPEN + COLUMN_NAME_ID + PARENS_CLOSE + ON + CONFLICT_REPLACE +
                         PARENS_CLOSE;
@@ -204,16 +213,22 @@ public final class HSData {
                         COLUMN_NAME_ID + COMMA_SEP +
                         COLUMN_NAME_FIRST_NAME + COMMA_SEP +
                         COLUMN_NAME_LAST_NAME + COMMA_SEP +
+                        COLUMN_NAME_HAS_PHOTO + COMMA_SEP +
                         COLUMN_NAME_IMAGE_URL + COMMA_SEP +
                         COLUMN_NAME_JOB + COMMA_SEP +
-                        COLUMN_NAME_JOB_URL + COMMA_SEP +
                         COLUMN_NAME_SKILLS + COMMA_SEP +
                         COLUMN_NAME_EMAIL + COMMA_SEP +
                         COLUMN_NAME_GITHUB + COMMA_SEP +
                         COLUMN_NAME_TWITTER + COMMA_SEP +
+                        COLUMN_NAME_PHONE_NUMBER + COMMA_SEP +
+                        COLUMN_NAME_IS_FACULTY + COMMA_SEP +
+                        COLUMN_NAME_IS_HACKER_SCHOOLER + COMMA_SEP +
                         COLUMN_NAME_BATCH_ID + COMMA_SEP +
                         COLUMN_NAME_LAST_UPDATED +
                         PARENS_CLOSE + VALUES + PARENS_OPEN +
+                        Q + COMMA_SEP +
+                        Q + COMMA_SEP +
+                        Q + COMMA_SEP +
                         Q + COMMA_SEP +
                         Q + COMMA_SEP +
                         Q + COMMA_SEP +
@@ -264,60 +279,29 @@ public final class HSData {
         public static final String SQL_NOT_LIKE_YOU =
                 TABLE_NAME + DOT + COLUMN_NAME_EMAIL + NOT_LIKE_Q;
 
-        public static final String[] PROJECTION_ALL = {
-                _ID,
-                COLUMN_NAME_ID,
-                COLUMN_NAME_FIRST_NAME,
-                COLUMN_NAME_IMAGE_URL,
-                COLUMN_NAME_IMAGE_FILENAME,
-                COLUMN_NAME_JOB,
-                COLUMN_NAME_JOB_URL,
-                COLUMN_NAME_SKILLS,
-                COLUMN_NAME_EMAIL,
-                COLUMN_NAME_GITHUB,
-                COLUMN_NAME_TWITTER,
-                COLUMN_NAME_BATCH_ID,
-                COLUMN_NAME_LAST_UPDATED
-        };
 
         public static final String[] PROJECTION_ALL_BATCH = {
                 TABLE_NAME + DOT + _ID,
                 TABLE_NAME + DOT + COLUMN_NAME_ID,
                 TABLE_NAME + DOT + COLUMN_NAME_FIRST_NAME,
                 TABLE_NAME + DOT + COLUMN_NAME_LAST_NAME,
+                TABLE_NAME + DOT + COLUMN_NAME_HAS_PHOTO,
                 TABLE_NAME + DOT + COLUMN_NAME_IMAGE_URL,
                 TABLE_NAME + DOT + COLUMN_NAME_IMAGE_FILENAME,
                 TABLE_NAME + DOT + COLUMN_NAME_JOB,
-                TABLE_NAME + DOT + COLUMN_NAME_JOB_URL,
                 TABLE_NAME + DOT + COLUMN_NAME_SKILLS,
                 TABLE_NAME + DOT + COLUMN_NAME_EMAIL,
                 TABLE_NAME + DOT + COLUMN_NAME_GITHUB,
                 TABLE_NAME + DOT + COLUMN_NAME_TWITTER,
+                TABLE_NAME + DOT + COLUMN_NAME_PHONE_NUMBER,
+                TABLE_NAME + DOT + COLUMN_NAME_IS_HACKER_SCHOOLER,
+                TABLE_NAME + DOT + COLUMN_NAME_IS_FACULTY,
                 TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID,
                 TABLE_NAME + DOT + COLUMN_NAME_LAST_UPDATED,
                 Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_NAME,
                 Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_START_DATE,
-                Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE
+                Batch.TABLE_NAME + DOT + Batch.COLUMN_NAME_END_DATE,
         };
-
-
-        public static final int COL_ID = 0;
-        public static final int COL_NAME_ID = 1;
-        public static final int COL_FIRST_NAME = 2;
-        public static final int COL_LAST_NAME = 3;
-        public static final int COL_IMAGE_URL = 4;
-        public static final int COL_IMAGE_FILENAME = 5;
-        public static final int COL_JOB = 6;
-        public static final int COL_JOB_URL = 7;
-        public static final int COL_SKILLS = 8;
-        public static final int COL_EMAIL = 9;
-        public static final int COL_GITHUB = 10;
-        public static final int COL_TWITTER = 11;
-        public static final int COL_BATCH_ID = 12;
-        public static final int COL_LAST_UPDATED = 13;
-        public static final int COL_BATCH_NAME = 14;
-        public static final int COL_BATCH_START = 15;
-        public static final int COL_BATCH_END = 16;
 
         public static final String SORT_DEFAULT =
                 TABLE_NAME + DOT + COLUMN_NAME_BATCH_ID + DESC + COMMA_SEP +

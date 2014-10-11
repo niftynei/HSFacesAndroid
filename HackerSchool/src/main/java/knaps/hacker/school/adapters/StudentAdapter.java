@@ -74,9 +74,9 @@ public class StudentAdapter extends CursorAdapter {
                     needsSeparator = true;
                 }
                 else {
-                    int batchId = cursor.getInt(HSData.HSer.COL_BATCH_ID);
+                    int batchId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
                     cursor.moveToPosition(position - 1);
-                    int nextBatchId = cursor.getInt(HSData.HSer.COL_BATCH_ID);
+                    int nextBatchId = cursor.getInt(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_BATCH_ID));
 
                     if (batchId != nextBatchId) {
                         needsSeparator = true;
@@ -89,7 +89,7 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         if (needsSeparator) {
-            cursor.copyStringToBuffer(HSData.HSer.COL_BATCH_NAME, holder.batchNameBuffer);
+            cursor.copyStringToBuffer(cursor.getColumnIndex(HSData.Batch.COLUMN_NAME_NAME), holder.batchNameBuffer);
             holder.separatorBatchName.setText(holder.batchNameBuffer.data, 0, holder.batchNameBuffer.sizeCopied);
             holder.separatorBatchName.setVisibility(View.VISIBLE);
         }
@@ -98,8 +98,8 @@ public class StudentAdapter extends CursorAdapter {
         }
 
         /*  NAME */
-        String firstName = cursor.getString(HSData.HSer.COL_FIRST_NAME);
-        String lastName = cursor.getString(HSData.HSer.COL_LAST_NAME);
+        String firstName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_FIRST_NAME));
+        String lastName = cursor.getString(cursor.getColumnIndex(HSData.HSer.COLUMN_NAME_LAST_NAME));
         holder.studentName.setText(firstName + " " + lastName);
     }
 

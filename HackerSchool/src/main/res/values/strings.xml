@@ -33,6 +33,7 @@
     <string name="score_90_aces">Aces! Way to be a Hacker School guru</string>
     <string name="score_70_source">Nicely done. The source is with you!</string>
     <string name="score_sub70_hh">I think an alumni happy hour is in order!</string>
+    <string name="no_students_found">No students found</string>
 
 
 </resources>

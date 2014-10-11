@@ -1,8 +1,10 @@
 package knaps.hacker.school;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import knaps.hacker.school.networking.HSOAuthService;
@@ -31,25 +34,48 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_login, container, false);
-        mWebView = (WebView) view.findViewById(R.id.webView);
+        FrameLayout frameView = (FrameLayout) view;
+
+        int progressViewVisibility = View.VISIBLE;
+        int errorViewVisibility = View.GONE;
+
+        if (mWebView == null) {
+            mWebView = new WebView(getActivity().getApplicationContext());
+            setupWebView();
+        }
+        else {
+            FrameLayout layout = (FrameLayout) mWebView.getParent();
+            if (layout != null) {
+                layout.removeAllViews();
+            }
+
+            progressViewVisibility = mProgressView.getVisibility();
+            errorViewVisibility = mErrorView.getVisibility();
+        }
+
         mProgressView = view.findViewById(R.id.loading_view);
         mErrorView = view.findViewById(R.id.error_screen);
+
+        mProgressView.setVisibility(progressViewVisibility);
+        mErrorView.setVisibility(errorViewVisibility);
+
+        frameView.addView(mWebView, 0);
 
         return view;
     }
 
     @Override
-    public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            setupWebView();
-        }
+        // hide the action bar tabs!
+        getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
     }
 
     private void setupWebView() {
@@ -114,6 +140,11 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
 
         Activity activity;
         if ((activity = getActivity()) != null) {
+
+            //reset the action bar
+            getActivity().getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            getActivity().invalidateOptionsMenu();
+
             FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
             transaction.remove(this);
             transaction.commit();

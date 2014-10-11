@@ -3,12 +3,6 @@
              android:layout_height="match_parent"
     >
 
-    <WebView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/webView"
-        ></WebView>
-
     <FrameLayout
         android:id="@+id/loading_view"
         android:layout_height="match_parent"

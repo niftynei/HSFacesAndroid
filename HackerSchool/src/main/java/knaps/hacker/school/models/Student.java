@@ -1,22 +1,13 @@
 package knaps.hacker.school.models;
 
 import android.database.Cursor;
-import android.util.Log;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.utils.Constants;
+
+import static knaps.hacker.school.data.HSData.HSer.*;
 
 /**
  * Created by lisaneigut on 14 Sep 2013.
@@ -32,32 +23,37 @@ public class Student implements Serializable {
     public String email = "";
     public String github = "";
     public String twitter = "";
+    public String phoneNumber = "";
+    public boolean hasPhoto = false;
+    public boolean isFaculty = false;
+    public boolean isHackerSchooler = true;
+    public String job = "";
+    public String[] skills = new String[0];
+
     public long batchId = 0; // for gson binding to save to db
     public Batch batch;
-
-    // Things not returned by the API
-    public String mJob = "";
-    public String mJobUrl = "";
-    public String mSkills = "";
 
     // local to app
     public String mImageFilename = "";
 
     public Student(Cursor cursor) {
-        id = cursor.getLong(HSData.HSer.COL_ID);
-        firstName = cursor.getString(HSData.HSer.COL_FIRST_NAME);
-        lastName = cursor.getString(HSData.HSer.COL_LAST_NAME);
-        image = cursor.getString(HSData.HSer.COL_IMAGE_URL);
-        mImageFilename = cursor.getString(HSData.HSer.COL_IMAGE_FILENAME);
-        email = cursor.getString(HSData.HSer.COL_EMAIL);
-        github = cursor.getString(HSData.HSer.COL_GITHUB);
-        twitter = cursor.getString(HSData.HSer.COL_TWITTER);
-        batch = new Batch(cursor);
+        id = cursor.getLong(cursor.getColumnIndex(COLUMN_NAME_ID));
+        firstName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_FIRST_NAME));
+        lastName = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_LAST_NAME));
+        image = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_IMAGE_URL));
+        mImageFilename = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_IMAGE_FILENAME));
+        email = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_EMAIL));
+        github = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_GITHUB));
+        twitter = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TWITTER));
+        phoneNumber = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PHONE_NUMBER));
+        job = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_JOB));
+        skills = cursor.getString(cursor.getColumnIndex(COLUMN_NAME_SKILLS)).split(",");
 
-        // TODO: ask for these in the API
-        mJob = cursor.getString(HSData.HSer.COL_JOB);
-        mJobUrl = cursor.getString(HSData.HSer.COL_JOB_URL);
-        mSkills = cursor.getString(HSData.HSer.COL_SKILLS);
+        isHackerSchooler = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_IS_HACKER_SCHOOLER)) == 1;
+        isFaculty = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_IS_FACULTY)) == 1;
+
+        batch = new Batch(cursor);
+        batchId = batch.id;
     }
 
     public String getFirstName() { return firstName == null ? "" : firstName; }
@@ -66,9 +62,12 @@ public class Student implements Serializable {
     public String getEmail() { return email == null ? "" : email; }
     public String getGithub() { return github == null ? "" : github; }
     public String getTwitter() { return twitter == null ? "" : twitter; }
-    public String getJob() { return mJob == null ? "" : mJob; }
-    public String getJobUrl() { return mJobUrl == null ? "" : mJobUrl; }
-    public String getSkills() { return mSkills == null ? "" : mSkills; }
+    public String getJob() { return job == null ? "" : job; }
+    public String[] getSkills() { return skills == null ? new String[0] : skills; }
+    public String getPhoneNumber() { return phoneNumber == null ? "" : phoneNumber; }
+    public boolean hasPhoto() { return hasPhoto; }
+    public boolean isHackerSchooler() { return isHackerSchooler; }
+    public boolean isFaculty() {return isFaculty;}
 
 
     public String getTwitterUrl() {

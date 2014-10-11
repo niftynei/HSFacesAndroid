@@ -38,6 +38,7 @@ public class RequestManager {
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setConverter(new GsonConverter(gson))
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(Constants.HACKER_SCHOOL_URL)
                 .setRequestInterceptor(new AuthInterceptor())
                 .build();
@@ -58,11 +59,16 @@ public class RequestManager {
         @Override
         public void intercept(final RequestFacade request) {
             // TODO: look at marrying OLTU with Retrofit more closely?
-            final String accessToken = HSOAuthService.getService().getAccessToken();
-            String bearerString = OAuth.OAUTH_HEADER_NAME + " " + accessToken;
-            request.addHeader(OAuth.HeaderType.AUTHORIZATION, bearerString);
+            if (HSOAuthService.getService().isAuthorized()) {
+                final String accessToken = HSOAuthService.getService().getAccessToken();
+                String bearerString = OAuth.OAUTH_HEADER_NAME + " " + accessToken;
+                request.addHeader(OAuth.HeaderType.AUTHORIZATION, bearerString);
 
-            Log.d("REtrofit", "Bearer string added" + bearerString);
+                Log.d("REtrofit", "Bearer string added" + bearerString);
+            }
+            else {
+                Log.d("REtrofit", "Auth token not available");
+            }
         }
     }
 

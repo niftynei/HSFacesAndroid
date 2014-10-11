@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import knaps.hacker.school.models.Batch;
@@ -106,15 +107,28 @@ public class HSDatabaseUtil {
         stmt.bindLong(1, student.id);
         stmt.bindString(2, student.getFirstName());
         stmt.bindString(3, student.getLastName());
-        stmt.bindString(4, student.getImage());
-        stmt.bindString(5, student.getJob());
-        stmt.bindString(6, student.getJobUrl());
-        stmt.bindString(7, student.getSkills());
+        stmt.bindLong(4, student.hasPhoto() ? 1 : 0);
+        stmt.bindString(5, student.getImage());
+        stmt.bindString(6, student.getJob());
+
+        String[] skills = student.getSkills();
+        StringBuilder builder = new StringBuilder();
+        for (String skill : skills) {
+            if (builder.length() > 0) {
+                builder.append(", ");
+            }
+            builder.append(skill);
+        }
+
+        stmt.bindString(7, builder.toString());
         stmt.bindString(8, student.getEmail());
         stmt.bindString(9, student.getGithub());
         stmt.bindString(10, student.getTwitter());
-        stmt.bindLong(11, student.batchId);
-        stmt.bindLong(12, startTime);
+        stmt.bindString(11, student.getPhoneNumber());
+        stmt.bindLong(12, student.isFaculty() ? 1 : 0);
+        stmt.bindLong(13, student.isHackerSchooler() ? 1 : 0);
+        stmt.bindLong(14, student.batchId);
+        stmt.bindLong(15, startTime);
         stmt.execute();
         stmt.clearBindings();
     }
