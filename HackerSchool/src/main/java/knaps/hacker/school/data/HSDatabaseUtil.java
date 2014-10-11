@@ -3,14 +3,13 @@ package knaps.hacker.school.data;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 
 import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
+import knaps.hacker.school.utils.DebugUtil;
 import knaps.hacker.school.utils.StringUtil;
 
 /**
@@ -41,7 +40,7 @@ public class HSDatabaseUtil {
         db.setTransactionSuccessful();
         db.endTransaction();
 
-        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     public static void writeBatchToDatabase(final HSDatabaseHelper dbHelper, final Batch batch) {
@@ -86,7 +85,7 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
     protected static void writeStudentToDatabase(final HSDatabaseHelper dbHelper, final Student student) {
@@ -99,7 +98,7 @@ public class HSDatabaseUtil {
 
         db.setTransactionSuccessful();
         db.endTransaction();
-        Log.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
+        DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
 
     }
 

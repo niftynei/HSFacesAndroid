@@ -7,10 +7,10 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
-import android.text.style.TypefaceSpan;
-import android.util.Log;
 
 import java.util.HashMap;
+
+import knaps.hacker.school.utils.DebugUtil;
 
 /**
  * Created by lisaneigut on 15 Sep 2013.
@@ -38,7 +38,7 @@ public class TypefaceCache {
                     mCache.put(file, t);
                 }
                 catch (Exception e) {
-                    Log.e("Error", "Could not get typeface '" + file + "' because " + e.getMessage());
+                    DebugUtil.e("Error", "Could not get typeface '" + file + "' because " + e.getMessage());
                     return null;
                 }
             }

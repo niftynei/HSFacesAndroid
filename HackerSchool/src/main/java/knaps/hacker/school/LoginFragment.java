@@ -4,11 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +17,7 @@ import android.widget.TextView;
 
 import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.DebugUtil;
 
 /**
  * This fragment displays a web view where you can log into (aka authenticate) the app.
@@ -89,7 +88,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
 
             @Override
             public void onReceivedError(final WebView view, final int errorCode, final String description, final String failingUrl) {
-                Log.e("LoginFragment", "Error loading the webpage. Error code " + errorCode);
+                DebugUtil.e("LoginFragment", "Error loading the webpage. Error code " + errorCode);
                 webpageLoadError(description);
             }
 

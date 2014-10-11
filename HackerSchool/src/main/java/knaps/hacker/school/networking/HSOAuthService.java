@@ -6,24 +6,18 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
-import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
-import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
 import knaps.hacker.school.HSActivity;
-import knaps.hacker.school.models.Student;
 import knaps.hacker.school.utils.Constants;
-import knaps.hacker.school.utils.SharedPrefsUtil;
-import retrofit.RetrofitError;
+import knaps.hacker.school.utils.DebugUtil;
 
 /**
  * Created by lisaneigut on 24 Mar 2014.
@@ -85,7 +79,7 @@ public class HSOAuthService {
                     .buildQueryMessage();
         }
         catch (OAuthSystemException e) {
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
 
         return request.getLocationUri();
@@ -105,7 +99,7 @@ public class HSOAuthService {
             new GetToken(request, callback).execute();
         }
         catch (OAuthSystemException e) {
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
     }
 
@@ -131,7 +125,7 @@ public class HSOAuthService {
             new GetToken(request, callback).execute();
         }
         catch (OAuthSystemException e) {
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
     }
 
@@ -152,7 +146,7 @@ public class HSOAuthService {
             makeOauthRequest(request);
         }
         catch (OAuthSystemException e) {
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
     }
 
@@ -202,7 +196,7 @@ public class HSOAuthService {
             return true;
         }
         catch (OAuthSystemException e) {
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
         catch (OAuthProblemException e) {
             if ("invalid_request".equals(e.getError())) {
@@ -210,7 +204,7 @@ public class HSOAuthService {
                 clearAllTokens();
                 forceLogout();
             }
-            Log.e(TAG, "exception loading oauth ", e);
+            DebugUtil.e(TAG, "exception loading oauth ", e);
         }
 
         return false;

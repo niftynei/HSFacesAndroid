@@ -7,15 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import java.util.List;
 
 import knaps.hacker.school.models.Batch;
 import knaps.hacker.school.models.Student;
-import knaps.hacker.school.networking.HSOAuthService;
 import knaps.hacker.school.networking.RequestManager;
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.DebugUtil;
 import retrofit.RetrofitError;
 
 /**
@@ -47,17 +46,21 @@ public class UpdateManager {
                     else {
                         // return a count of all the student records
                         long count = DatabaseUtils.longForQuery(mDbHelper.getReadableDatabase(), HSData.HSer.SQL_RECORD_COUNT, null);
-                        Log.d("TAG", "Count of all student records " + count);
+                        DebugUtil.d("TAG", "Count of all student records " + count);
                     }
                 }
                 catch (RetrofitError error) {
-                    if (error != null && error.getResponse() != null) Log.e("ERRORS RETRO", error.getResponse().getReason(), error);
-                    else Log.e("ERRORS RETRO!!", "No reason given. Is network error?" + error.isNetworkError());
+                    if (error != null && error.getResponse() != null) {
+                        DebugUtil.e("ERRORS RETRO", error.getResponse().getReason(), error);
+                    }
+                    else {
+                        DebugUtil.e("ERRORS RETRO!!", "No reason given. Is network error?" + error.isNetworkError());
+                    }
                     sendBroadcast(Constants.ACTION_LOADING_ENDED);
                 }
                 catch (Exception e) {
                     // catch all the exceptions
-                    Log.e("ERRORS", "all the errors", e);
+                    DebugUtil.e("ERRORS", "all the errors", e);
                     sendBroadcast(Constants.ACTION_LOADING_ENDED);
                 }
             }
@@ -72,14 +75,14 @@ public class UpdateManager {
     private boolean batchesEmpty() {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         long count = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_RECORD_COUNT, null);
-        Log.d("COUNT", "batches database count " + count);
+        DebugUtil.d("COUNT", "batches database count " + count);
         return count <= 0;
     }
 
     private boolean studentsEmpty() {
         final SQLiteDatabase db = mDbHelper.getReadableDatabase();
         long count = DatabaseUtils.longForQuery(db, HSData.HSer.SQL_RECORD_COUNT, null);
-        Log.d("COUNT", "student database count " + count);
+        DebugUtil.d("COUNT", "student database count " + count);
         return count <= 0;
     }
 
@@ -92,12 +95,12 @@ public class UpdateManager {
         try {
             long lastUpdateDate = DatabaseUtils.longForQuery(db, HSData.Batch.SQL_LAST_BATCH_UPDATE_TIME,
                     new String[] {id < 0 ? "%" : String.valueOf(id)});
-            Log.d("COUNT", "database last updated " + DateUtils.formatDateRange(mContext, lastUpdateDate, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
+            DebugUtil.d("COUNT", "database last updated " + DateUtils.formatDateRange(mContext, lastUpdateDate, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
             return lastUpdateDate + UPDATE_THRESHOLD < System.currentTimeMillis();
         }
         catch (SQLiteDoneException ex) {
             // no value returned
-            Log.d("COUNT", "no value returned for batch need update query", ex);
+            DebugUtil.d("COUNT", "no value returned for batch need update query", ex);
         }
         return true;
     }

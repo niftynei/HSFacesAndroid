@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +19,7 @@ import java.net.URL;
 
 import knaps.hacker.school.utils.AppUtil;
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.DebugUtil;
 
 /**
  * Created by lisaneigut on 15 Sep 2013.
@@ -53,10 +53,10 @@ public class ImageDownloads {
             bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
         }
         catch (MalformedURLException e) {
-            Log.e("Error!", "Unable to write to file", e);
+            DebugUtil.e("Error!", "Unable to write to file", e);
         }
         catch (IOException e) {
-            Log.e("Error!", "Unable to write to file", e);
+            DebugUtil.e("Error!", "Unable to write to file", e);
         }
         return bitmap;
     }

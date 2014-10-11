@@ -1,7 +1,5 @@
 package knaps.hacker.school.networking;
 
-import android.util.Log;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import knaps.hacker.school.utils.Constants;
+import knaps.hacker.school.utils.DebugUtil;
 import knaps.hacker.school.utils.StringUtil;
 import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
@@ -76,10 +75,10 @@ public class RequestManager {
                 String bearerString = OAuth.OAUTH_HEADER_NAME + " " + accessToken;
                 request.addHeader(OAuth.HeaderType.AUTHORIZATION, bearerString);
 
-                Log.d("REtrofit", "Bearer string added" + bearerString);
+                DebugUtil.d("REtrofit", "Bearer string added" + bearerString);
             }
             else {
-                Log.d("REtrofit", "Auth token not available");
+                DebugUtil.d("REtrofit", "Auth token not available");
             }
         }
     }
@@ -98,7 +97,7 @@ public class RequestManager {
                 return StringUtil.getSimpleDateFormatter().parse(dateString);
             }
             catch (ParseException e) {
-                Log.d("JSON", "Error parsing date string");
+                DebugUtil.d("JSON", "Error parsing date string");
             }
             return null;
         }

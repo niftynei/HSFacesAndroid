@@ -7,12 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.*;
 
 import knaps.hacker.school.data.HSData;
 import knaps.hacker.school.data.HSDatabaseHelper;
+import knaps.hacker.school.utils.DebugUtil;
 
 /**
  * Created by lisaneigut on 16 Sep 2013.
@@ -35,7 +35,7 @@ public class ImageSaver {
     public File getPrivatePicturesExternalStorage(final Context context, final String filename) {
         final File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), filename);
         if (!file.mkdirs()) {
-            Log.e("Error", "Directory not created!");
+            DebugUtil.e("Error", "Directory not created!");
         }
         return file;
     }
@@ -43,7 +43,7 @@ public class ImageSaver {
     public File getPicturesInternalStorage(final Context context, final String filename) {
         final File file = new File(context.getFilesDir(), filename);
         if (!file.getParentFile().mkdirs()) {
-            Log.e("Error!", "Directory not created!!");
+            DebugUtil.e("Error!", "Directory not created!!");
         }
         return file;
     }
@@ -82,7 +82,7 @@ public class ImageSaver {
             success = true;
         }
         catch (IOException e) {
-            Log.e("Error!", "Unable to write to file", e);
+            DebugUtil.e("Error!", "Unable to write to file", e);
         }
         finally {
             try {
@@ -91,13 +91,13 @@ public class ImageSaver {
                 }
             }
             catch (IOException e) {
-                Log.e("Error!", "Unable to write to file", e);
+                DebugUtil.e("Error!", "Unable to write to file", e);
             }
             try {
                 is.close();
             }
             catch (IOException e) {
-                Log.e("Error!", "Unable to write to file", e);
+                DebugUtil.e("Error!", "Unable to write to file", e);
             }
         }
         return success;
