@@ -61,7 +61,5 @@ dependencies {
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0'
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.android.support:support-v13:20.0.0'
-    compile 'org.ccil.cowan.tagsoup:tagsoup:1.2'
-    compile 'com.nineoldandroids:parent:2.2.0'
     compile files('libs/libGoogleAnalyticsServices.jar')
 }
