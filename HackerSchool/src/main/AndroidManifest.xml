@@ -52,6 +52,7 @@
             android:enabled="true"
             android:exported="false" >
         </provider>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="29d2a52e66d75d1535c30b8af164fca46f42fe7c"/>
     </application>
 
 </manifest>

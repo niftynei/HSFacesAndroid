@@ -29,16 +29,19 @@ public class HSDatabaseUtil {
         long startTime = System.currentTimeMillis();
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
+        try {
+            final SQLiteStatement stmt = db.compileStatement(HSData.Batch.SQL_UPSERT_ALL);
+            final SimpleDateFormat formatter = StringUtil.getSimpleDateFormatter();
 
-        final SQLiteStatement stmt = db.compileStatement(HSData.Batch.SQL_UPSERT_ALL);
-        final SimpleDateFormat formatter = StringUtil.getSimpleDateFormatter();
+            for (Batch batch : batches) {
+                bindBatch(stmt, batch, formatter, startTime);
+            }
 
-        for (Batch batch : batches) {
-            bindBatch(stmt, batch, formatter, startTime);
+            db.setTransactionSuccessful();
         }
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
+        finally {
+            db.endTransaction();
+        }
 
         DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
@@ -48,13 +51,17 @@ public class HSDatabaseUtil {
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
 
-        final SQLiteStatement stmt = db.compileStatement(HSData.Batch.SQL_UPSERT_ALL);
-        final SimpleDateFormat formatter = StringUtil.getSimpleDateFormatter();
+        try {
+            final SQLiteStatement stmt = db.compileStatement(HSData.Batch.SQL_UPSERT_ALL);
+            final SimpleDateFormat formatter = StringUtil.getSimpleDateFormatter();
 
-        bindBatch(stmt, batch, formatter, startTime);
+            bindBatch(stmt, batch, formatter, startTime);
 
-        db.setTransactionSuccessful();
-        db.endTransaction();
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
     }
 
     private static void bindBatch(SQLiteStatement stmt, final Batch batch, SimpleDateFormat formatter, final long startTime) {
@@ -77,14 +84,19 @@ public class HSDatabaseUtil {
         long startTime = System.currentTimeMillis();
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
-        final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
+        try {
+            final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 
-        for (Student student : students) {
-            bindStudent(stmt, student, startTime);
+            for (Student student : students) {
+                bindStudent(stmt, student, startTime);
+            }
+
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
         }
 
-        db.setTransactionSuccessful();
-        db.endTransaction();
         DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
     }
 
@@ -92,12 +104,17 @@ public class HSDatabaseUtil {
         long startTime = System.currentTimeMillis();
         final SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.beginTransaction();
-        final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
 
-        bindStudent(stmt, student, startTime);
+        try {
+            final SQLiteStatement stmt = db.compileStatement(HSData.HSer.SQL_UPSERT_ALL);
+            bindStudent(stmt, student, startTime);
 
-        db.setTransactionSuccessful();
-        db.endTransaction();
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
+
         DebugUtil.d("DB _ timing", "Total time for writing to db: " + (System.currentTimeMillis() - startTime) + "ms");
 
     }
