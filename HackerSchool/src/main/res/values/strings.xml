@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hacker School Faces</string>
+    <string name="app_name">Recurse Faces</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_list">Hacker School</string>
-    <string name="title_activity_guess_that_hs">Guess That Hacker Schooler</string>
+    <string name="title_activity_list">Recurse Center</string>
+    <string name="title_activity_guess_that_hs">Guess That Recurser</string>
     <string name="current_score">Current Score: %.2f%%</string>
     <string name="submit_guess">Submit Guess</string>
     <string name="guess_name">guess name</string>
@@ -28,12 +28,12 @@
     <string name="success_generic_three">Yes.\n You know %1$s.</string>
     <string name="fail_message">Say hello to\n %1$s</string>
     <string name="somethings_wrong">Something went wrong. Check your internet connection and try again.</string>
-    <string name="loading_message">Loading...</string>
+    <string name="loading_message">Loading…</string>
     <string name="no_results">No Results</string>
-    <string name="score_90_aces">Aces! Way to be a Hacker School guru</string>
+    <string name="score_90_aces">Aces! Way to recurse</string>
     <string name="score_70_source">Nicely done. The source is with you!</string>
     <string name="score_sub70_hh">I think an alumni happy hour is in order!</string>
-    <string name="no_students_found">No students found</string>
+    <string name="no_students_found">No recursers found</string>
     <string name="restart">Restart?</string>
 
 
