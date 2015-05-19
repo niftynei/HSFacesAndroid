@@ -4,8 +4,8 @@ buildscript {
         maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.16.0'
     }
 }
 
@@ -23,8 +23,8 @@ def clientID = (project.hasProperty("client_id")) ? project.('client_id') : ""
 
 
 android {
-    compileSdkVersion 20
-    buildToolsVersion "20"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     signingConfigs {
         release {
@@ -36,7 +36,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 20
+        targetSdkVersion 22
 
         buildConfigField "String", "API_SECRET", "\"$apiKey\""
         buildConfigField "String", "CLIENT_ID", "\"$clientID\""
@@ -44,7 +44,6 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
         }
     }
@@ -63,8 +62,8 @@ dependencies {
 
     compile 'com.squareup.retrofit:retrofit:1.5.0'
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0'
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:22.1.1'
     compile 'com.android.support:support-v13:20.0.0'
     compile files('libs/libGoogleAnalyticsServices.jar')
-    compile 'com.crashlytics.android:crashlytics:1.+'
+    compile 'com.crashlytics.android:crashlytics:1.1.13'
 }
