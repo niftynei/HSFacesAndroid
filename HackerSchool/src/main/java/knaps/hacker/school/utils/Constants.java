@@ -13,7 +13,7 @@ public final class Constants {
     public static final String ACTION_LOADING_START = "knaps.hacker.school.LOADING_START";
     public static final String ACTION_LOADING_ENDED = "knaps.hacker.school.LOADING_ENDED";
 
-    public final static String HACKER_SCHOOL_URL = "https://www.hackerschool.com";
+    public final static String HACKER_SCHOOL_URL = "https://www.recurse.com";
 
     public static final String OAUTH = "/oauth";
     public final static String OAUTH_AUTHORIZE = HACKER_SCHOOL_URL + OAUTH + "/authorize";
