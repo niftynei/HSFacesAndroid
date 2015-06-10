@@ -4,7 +4,7 @@
     <string name="app_name">Recurse Faces</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_list">Recurse Center</string>
+    <string name="title_activity_list">Recurse Faces</string>
     <string name="title_activity_guess_that_hs">Guess That Recurser</string>
     <string name="current_score">Current Score: %.2f%%</string>
     <string name="submit_guess">Submit Guess</string>
