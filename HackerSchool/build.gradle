@@ -64,6 +64,6 @@ dependencies {
     compile 'org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:1.0.0'
     compile 'com.android.support:support-v4:22.1.1'
     compile 'com.android.support:support-v13:20.0.0'
-    compile files('libs/libGoogleAnalyticsServices.jar')
+    compile 'com.google.android.gms:play-services-analytics:7.5.0'
     compile 'com.crashlytics.android:crashlytics:1.1.13'
 }

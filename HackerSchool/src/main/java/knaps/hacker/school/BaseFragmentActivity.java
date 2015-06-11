@@ -1,14 +1,10 @@
 package knaps.hacker.school;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.google.analytics.tracking.android.EasyTracker;
+import com.google.android.gms.analytics.GoogleAnalytics;
 
-import knaps.hacker.school.utils.AppUtil;
-import knaps.hacker.school.views.TypefaceCache;
 
 /**
  * Created by lisaneigut on 20 Sep 2013.
@@ -23,13 +19,17 @@ public class BaseFragmentActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (!BuildConfig.DEBUG) EasyTracker.getInstance(this).activityStart(this);
+        if (!BuildConfig.DEBUG) {
+            GoogleAnalytics.getInstance(this).reportActivityStart(this);
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (!BuildConfig.DEBUG) EasyTracker.getInstance(this).activityStop(this);
+        if (!BuildConfig.DEBUG) {
+            GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        }
     }
 
 }
