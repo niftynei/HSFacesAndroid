@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 
 import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
 import knaps.hacker.school.game.GuessThatHSFragment;
 import knaps.hacker.school.networking.HSOAuthService;
 
@@ -32,7 +34,7 @@ public class HSActivity extends BaseFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
+
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
