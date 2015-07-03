@@ -427,7 +427,9 @@ public class GuessThatHSFragment extends Fragment implements View.OnClickListene
         }
         else if (o != null && o.getCount() == 0) {
             // No results found!
-            Toast.makeText(getActivity(), getString(R.string.no_students_found), Toast.LENGTH_LONG);
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), getString(R.string.no_students_found), Toast.LENGTH_LONG);
+            }
         }
     }
 
