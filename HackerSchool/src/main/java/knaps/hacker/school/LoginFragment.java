@@ -45,7 +45,7 @@ public class LoginFragment extends Fragment implements HSOAuthService.RequestCal
         int errorViewVisibility = View.GONE;
 
         if (mWebView == null) {
-            mWebView = new WebView(getActivity().getApplicationContext());
+            mWebView = new WebView(getActivity());
             setupWebView();
         }
         else {
